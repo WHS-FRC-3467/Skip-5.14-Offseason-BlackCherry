@@ -7,19 +7,14 @@ package frc.robot.subsystems;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.ExampleComplexSubsystemConstants;
 import frc.robot.Constants.ShooterRollersConstants;
 import lombok.Getter;
@@ -55,7 +50,7 @@ public class ShooterRollers extends SubsystemBase {
     TalonFX m_motor = new TalonFX(ShooterRollersConstants.ID_LEADER);
     TalonFX m_follower = new TalonFX(ShooterRollersConstants.ID_FOLLOWER); 
     
-    private final VelocityVoltage m_velocity = new VelocityVoltage(0).withSlot(0);
+    private final VelocityVoltage m_velocity = new VelocityVoltage(0).withSlot(1);
     private final NeutralOut m_neutral = new NeutralOut();
 
     private double goalSpeed;

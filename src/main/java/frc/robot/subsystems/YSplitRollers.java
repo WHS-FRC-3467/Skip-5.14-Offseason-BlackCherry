@@ -43,22 +43,20 @@ public class YSplitRollers extends SubsystemBase {
   TalonFX m_roller1 = new TalonFX(Constants.YSplitRollersConstants.ID_YSPLIT_ROLLER1);
   TalonFX m_roller2 = new TalonFX(Constants.YSplitRollersConstants.ID_YSPLIT_ROLLER2);
   private final DutyCycleOut m_percent = new DutyCycleOut(0);
-  private final NeutralOut m_brake = new NeutralOut();
+  private final NeutralOut m_neutral = new NeutralOut();
 
   /** Creates a new YSplitRollers. */
   public YSplitRollers() {
     m_roller1.getConfigurator().apply(Constants.YSplitRollersConstants.motorConfig());
     m_roller2.getConfigurator().apply(Constants.YSplitRollersConstants.motorConfig());
-
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
 
     if (state == State.OFF) {
-      m_roller1.setControl(m_brake);
-      m_roller2.setControl(m_brake);
+      m_roller1.setControl(m_neutral);
+      m_roller2.setControl(m_neutral);
     } else {
       m_roller1.setControl(m_percent.withOutput(state.getRoller1()));
       m_roller2.setControl(m_percent.withOutput(state.getRoller2()));

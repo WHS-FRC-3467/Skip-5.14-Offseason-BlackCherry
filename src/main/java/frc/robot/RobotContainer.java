@@ -4,29 +4,16 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
-
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.ComplexSubsystem;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.SimpleSubsystem;
+import frc.robot.subsystems.*;
 
 public class RobotContainer {
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
   public final Drivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
-
-  public final SimpleSubsystem simpleSubsystem = new SimpleSubsystem();
-  public final ComplexSubsystem complexSubsystem = new ComplexSubsystem();
-
-
 
   /* Path follower */
   private Command runAuto = drivetrain.getAutoPath("Tests");
@@ -40,9 +27,6 @@ public class RobotContainer {
     drivetrain.registerTelemetry(logger::telemeterize);
 
     //joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
-
-    joystick.a().whileTrue(complexSubsystem.setStateCommand(ComplexSubsystem.State.SCORE));
-    joystick.b().whileTrue(simpleSubsystem.setStateCommand(SimpleSubsystem.State.ON));
 
   }
 

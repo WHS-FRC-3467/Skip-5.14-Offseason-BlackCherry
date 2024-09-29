@@ -4,15 +4,19 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ElevatorJointConstants;
 import frc.robot.Constants.ExampleComplexSubsystemConstants;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +28,7 @@ public class ElevatorJoint extends SubsystemBase {
   @Getter
   public enum State {
     HOME(0.0),
+    HOMING(0.0),
     SCORE(90.0);
 
     private final double output;
@@ -37,8 +42,11 @@ public class ElevatorJoint extends SubsystemBase {
   @Setter
   private State state = State.HOME;
 
-  TalonFX m_motor = new TalonFX(ExampleComplexSubsystemConstants.ID_Motor);
+  TalonFX m_motor = new TalonFX(ElevatorJointConstants.ID_LEADER);
+  TalonFX m_follower = new TalonFX(ElevatorJointConstants.ID_LEADER);
+
   private final MotionMagicVoltage m_magic = new MotionMagicVoltage(state.getStateOutput());
+  private final DutyCycleOut m_duty = new DutyCycleOut(0.0);
   private final NeutralOut m_neutral = new NeutralOut();
 
   private double goalAngle;
@@ -46,15 +54,29 @@ public class ElevatorJoint extends SubsystemBase {
 
   /** Creates a new ComplexSubsystem. */
   public ElevatorJoint() {
-    m_motor.getConfigurator().apply(ExampleComplexSubsystemConstants.motorConfig());
+    m_motor.getConfigurator().apply(ElevatorJointConstants.motorConfig());
+    m_follower.getConfigurator().apply(ElevatorJointConstants.motorConfig());
+    m_follower.setControl(new Follower(ElevatorJointConstants.ID_LEADER, false));
   }
 
   @Override
   public void periodic() {
-    goalAngle = MathUtil.clamp(state.getStateOutput(), ExampleComplexSubsystemConstants.lowerLimit, ExampleComplexSubsystemConstants.upperLimit);
+    goalAngle = MathUtil.clamp(state.getStateOutput(), ElevatorJointConstants.lowerLimit, ElevatorJointConstants.upperLimit);
 
     if (state == State.HOME && atGoal()) {
+    
       m_motor.setControl(m_neutral);
+
+    } else if (state == State.HOMING) {
+
+      m_motor.setControl(m_duty.withOutput(-0.2));
+
+      if (m_motor.getSupplyCurrent().getValueAsDouble() > 10.0) {
+
+        m_motor.setPosition(0.0);
+        this.state = State.HOME;
+      }
+
     } else {
       m_motor.setControl(m_magic.withPosition(goalAngle).withSlot(1));
     }

@@ -17,7 +17,7 @@ import frc.robot.generated.TunerConstants;
 /** Add your docs here. */
 public class Constants {
 
-        public static final Mode currentMode = Mode.REAL;
+    public static final Mode currentMode = Mode.REAL;
 
     public static enum Mode {
         REAL,
@@ -359,6 +359,7 @@ public class Constants {
         public static final double upperLimit = Units.degreesToRadians(180);
         public static final double lowerLimit = Units.degreesToRadians(0);
         public static final double tolerance = Units.degreesToRadians(1);
+        public static final double homingCurrent = 10.0;
 
         public static TalonFXConfiguration motorConfig() {
             TalonFXConfiguration m_configuration = new TalonFXConfiguration();

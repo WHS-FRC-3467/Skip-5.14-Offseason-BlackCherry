@@ -43,7 +43,6 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         TELEOP,
         HEADING,
         CARDINAL;
-
     }
 
     @Setter
