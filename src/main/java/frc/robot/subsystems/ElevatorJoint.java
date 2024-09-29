@@ -4,12 +4,8 @@
 
 package frc.robot.subsystems;
 
-import java.util.function.DoubleSupplier;
-
-import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
@@ -22,19 +18,18 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-public class DynamicSubsystem extends SubsystemBase {
+public class ElevatorJoint extends SubsystemBase {
 
   @RequiredArgsConstructor
   @Getter
   public enum State {
-    HOME(() -> 0.0),
-    SCORE(() -> 90.0), //Static angle
-    AIM(() -> 10.0); //Dynamic aiming
+    HOME(0.0),
+    SCORE(90.0);
 
-    private final DoubleSupplier outputSupplier;
+    private final double output;
 
     private double getStateOutput() {
-      return Units.degreesToRadians(outputSupplier.getAsDouble());
+      return Units.degreesToRadians(output);
     }
   }
 
@@ -43,15 +38,14 @@ public class DynamicSubsystem extends SubsystemBase {
   private State state = State.HOME;
 
   TalonFX m_motor = new TalonFX(ExampleComplexSubsystemConstants.ID_Motor);
-  private final static MotionMagicVoltage m_magic = new MotionMagicVoltage(0);
-  private final static PositionVoltage m_position = new PositionVoltage(0);
+  private final MotionMagicVoltage m_magic = new MotionMagicVoltage(state.getStateOutput());
   private final NeutralOut m_neutral = new NeutralOut();
 
   private double goalAngle;
 
 
   /** Creates a new ComplexSubsystem. */
-  public DynamicSubsystem() {
+  public ElevatorJoint() {
     m_motor.getConfigurator().apply(ExampleComplexSubsystemConstants.motorConfig());
   }
 
@@ -61,8 +55,6 @@ public class DynamicSubsystem extends SubsystemBase {
 
     if (state == State.HOME && atGoal()) {
       m_motor.setControl(m_neutral);
-    } else if (state == State.AIM) {
-      m_motor.setControl(m_position.withPosition(goalAngle).withSlot(0));
     } else {
       m_motor.setControl(m_magic.withPosition(goalAngle).withSlot(1));
     }

@@ -11,17 +11,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.ElevatorRollersConstants;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-public class SimpleSubsystem extends SubsystemBase {
+public class ElevatorRollers extends SubsystemBase {
 
   @RequiredArgsConstructor
   @Getter
   public enum State {
     OFF(0.0),
-    ON(1.0);
+    On(1.0);
 
     private final double output;
   }
@@ -32,13 +33,13 @@ public class SimpleSubsystem extends SubsystemBase {
 
   private boolean debug = true;
 
-  TalonFX m_motor = new TalonFX(Constants.ExampleSimpleSubsystemConstants.ID_Motor);
+  TalonFX m_motor = new TalonFX(ElevatorRollersConstants.ID_Motor);
   private final DutyCycleOut m_percent = new DutyCycleOut(0);
   private final NeutralOut m_neutral = new NeutralOut();
 
   /** Creates a new SimpleSubsystem. */
-  public SimpleSubsystem() {
-    m_motor.getConfigurator().apply(Constants.ExampleSimpleSubsystemConstants.motorConfig());
+  public ElevatorRollers() {
+    m_motor.getConfigurator().apply(ElevatorRollersConstants.motorConfig());
 
   }
 

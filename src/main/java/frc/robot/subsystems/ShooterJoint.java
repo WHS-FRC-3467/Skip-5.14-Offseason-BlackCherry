@@ -6,62 +6,64 @@ package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
 
-import com.ctre.phoenix6.controls.ControlRequest;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.filter.Debouncer;
+import frc.robot.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ExampleComplexSubsystemConstants;
+import frc.robot.Constants.ShooterPivotConstants;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-public class DynamicSubsystem extends SubsystemBase {
+public class ShooterJoint extends SubsystemBase {
 
   @RequiredArgsConstructor
   @Getter
   public enum State {
-    HOME(() -> 0.0),
-    SCORE(() -> 90.0), //Static angle
-    AIM(() -> 10.0); //Dynamic aiming
+    STOW(() -> 0.0),
+    PODIUM(() -> 30.0),
+    SUBWOOFER(() -> 20.0),
+    CLIMBCLEARANCE(() -> 20.0),
+    DYNAMIC(() -> RobotState.getInstance().getShotAngle());
 
     private final DoubleSupplier outputSupplier;
 
     private double getStateOutput() {
-      return Units.degreesToRadians(outputSupplier.getAsDouble());
+      return outputSupplier.getAsDouble();
     }
   }
 
   @Getter
   @Setter
-  private State state = State.HOME;
+  private State state = State.STOW;
 
-  TalonFX m_motor = new TalonFX(ExampleComplexSubsystemConstants.ID_Motor);
+  private double goalAngle;
+
+  private Debouncer m_debounce = new Debouncer(.1);
+
+  TalonFX m_motor = new TalonFX(ShooterPivotConstants.ID_MOTOR);
   private final static MotionMagicVoltage m_magic = new MotionMagicVoltage(0);
   private final static PositionVoltage m_position = new PositionVoltage(0);
   private final NeutralOut m_neutral = new NeutralOut();
 
-  private double goalAngle;
-
-
   /** Creates a new ComplexSubsystem. */
-  public DynamicSubsystem() {
-    m_motor.getConfigurator().apply(ExampleComplexSubsystemConstants.motorConfig());
+  public ShooterJoint() {
+    m_motor.getConfigurator().apply(ShooterPivotConstants.motorConfig());
   }
 
   @Override
   public void periodic() {
-    goalAngle = MathUtil.clamp(state.getStateOutput(), ExampleComplexSubsystemConstants.lowerLimit, ExampleComplexSubsystemConstants.upperLimit);
+    goalAngle = MathUtil.clamp(state.getStateOutput(), ShooterPivotConstants.lowerLimit, ShooterPivotConstants.upperLimit);
 
-    if (state == State.HOME && atGoal()) {
+    if (state == State.STOW && atGoal()) {
       m_motor.setControl(m_neutral);
-    } else if (state == State.AIM) {
+    } else if (state == State.DYNAMIC) {
       m_motor.setControl(m_position.withPosition(goalAngle).withSlot(0));
     } else {
       m_motor.setControl(m_magic.withPosition(goalAngle).withSlot(1));
@@ -71,11 +73,11 @@ public class DynamicSubsystem extends SubsystemBase {
   }
 
   public boolean atGoal() {
-    return Math.abs(state.getStateOutput() - m_motor.getPosition().getValueAsDouble()) < ExampleComplexSubsystemConstants.tolerance;
+    return m_debounce.calculate(Math.abs(state.getStateOutput() - m_motor.getPosition().getValueAsDouble()) < ShooterPivotConstants.tolerance);
   }
 
   public Command setStateCommand(State state) {
-    return startEnd(() -> this.state = state, () -> this.state = State.HOME);
+    return startEnd(() -> this.state = state, () -> this.state = State.STOW);
   }
 
   private void displayInfo(boolean debug) {

@@ -1,43 +1,58 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import java.util.function.DoubleSupplier;
+
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
+
+import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ExampleComplexSubsystemConstants;
+//import frc.robot.RobotState;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import frc.robot.Constants.ClimberConstants;
 
-public class ComplexSubsystem extends SubsystemBase {
-
-  @RequiredArgsConstructor
-  @Getter
+public class ClimberJoint extends SubsystemBase{
+    @RequiredArgsConstructor
+    @Getter
   public enum State {
-    HOME(0.0),
-    SCORE(90.0);
+    
+    //Following are rough esitamtes
+    CLIMB(0.0),
+    DOWN(110.0),
+    STOW(120.0);
 
-    private final double output;
+    private final double outputSupplier;
 
     private double getStateOutput() {
-      return Units.degreesToRadians(output);
+      return Units.degreesToRadians(outputSupplier);
     }
   }
 
   @Getter
   @Setter
-  private State state = State.HOME;
+  private State state = State.STOW;
 
-  TalonFX m_motor = new TalonFX(ExampleComplexSubsystemConstants.ID_Motor);
+  TalonFX m_motor = new TalonFX(ClimberConstants.ID_LEADER);
+  TalonFX m_follower = new TalonFX(ClimberConstants.ID_FOLLOWER);
   private final PositionVoltage m_position = new PositionVoltage(state.getStateOutput());
   //private final MotionMagicVoltage m_magic = new MotionMagicVoltage(state.getStateOutput());
   private final NeutralOut m_neutral = new NeutralOut();
@@ -46,15 +61,17 @@ public class ComplexSubsystem extends SubsystemBase {
 
 
   /** Creates a new ComplexSubsystem. */
-  public ComplexSubsystem() {
-    m_motor.getConfigurator().apply(ExampleComplexSubsystemConstants.motorConfig());
+  public ClimberJoint() {
+    m_motor.getConfigurator().apply(ClimberConstants.motorConfig());
+    m_follower.getConfigurator().apply(ClimberConstants.motorConfig());
+    m_follower.setControl(new Follower(ClimberConstants.ID_LEADER, false));
   }
 
   @Override
   public void periodic() {
-    goalAngle = MathUtil.clamp(state.getStateOutput(), ExampleComplexSubsystemConstants.lowerLimit, ExampleComplexSubsystemConstants.upperLimit);
+    goalAngle = MathUtil.clamp(state.getStateOutput(), ClimberConstants.lowerLimit, ClimberConstants.upperLimit);
 
-    if (state == State.HOME && atGoal()) {
+    if (state == State.STOW && atGoal()) {
       m_motor.setControl(m_neutral);
     } else {
       m_motor.setControl(m_position.withPosition(goalAngle).withSlot(0));
@@ -64,11 +81,11 @@ public class ComplexSubsystem extends SubsystemBase {
   }
 
   public boolean atGoal() {
-    return Math.abs(state.getStateOutput() - m_motor.getPosition().getValueAsDouble()) < ExampleComplexSubsystemConstants.tolerance;
+    return Math.abs(state.getStateOutput() - m_motor.getPosition().getValueAsDouble()) < ClimberConstants.tolerance;
   }
 
   public Command setStateCommand(State state) {
-    return startEnd(() -> this.state = state, () -> this.state = State.HOME);
+    return startEnd(() -> this.state = state, () -> this.state = State.STOW);
   }
 
   private void displayInfo(boolean debug) {
