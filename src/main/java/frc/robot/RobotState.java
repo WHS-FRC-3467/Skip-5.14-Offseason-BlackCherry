@@ -33,6 +33,8 @@ public class RobotState {
     @Getter
     public enum TARGET {
         NONE(null,null),
+        NOTE(null,null), //TODO: Add supplier from LL
+        SUBWOOFER(Constants.FieldConstants.BLUE_SPEAKER,Constants.FieldConstants.RED_SPEAKER),
         SPEAKER(Constants.FieldConstants.BLUE_SPEAKER,Constants.FieldConstants.RED_SPEAKER),
         AMP(Constants.FieldConstants.BLUE_AMP,Constants.FieldConstants.RED_AMP),
         FEED(Constants.FieldConstants.BLUE_FEED,Constants.FieldConstants.RED_FEED);

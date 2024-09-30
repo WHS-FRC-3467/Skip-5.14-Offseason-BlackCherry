@@ -25,10 +25,11 @@ public class YSplitRollers extends SubsystemBase {
   @Getter
   public enum State {
     OFF(0.0,0.0), //No movement
+    INTAKE(1.0,0.0), //Roller 1 only
     SHOOTER(1.0,1.0), //Roller 1 intakes, Roller 2 sends to shooter
     REVSHOOTER(-1.0,-1.0), //Reverse out of shooter
-    ELEVATOR(1.0,-1.0), //Roller 1 intake, Roller 2 sends to elevator
-    REVELEVATOR(-1.0,1.0); //Reverse out of elevator
+    AMP(1.0,-1.0), //Roller 1 intake, Roller 2 sends to elevator
+    REVAMP(-1.0,1.0); //Reverse out of elevator
 
     private final double roller1; //From the intake
     private final double roller2; //Decides to shooter or to elevator

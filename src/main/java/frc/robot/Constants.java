@@ -398,6 +398,14 @@ public class Constants {
             return m_configuration;
         }
     }
+
+    public static final class SensorConstants {
+
+        public static final int ID_LC1 = 30;
+        public static final int ID_LC2 = 31;
+        public static final int PORT_BB1 = 0; //DIO port for beam break
+
+    }
     public static final class ControllerConstants {
 
         public static final double leftTriggerMin = 0.3;

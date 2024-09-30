@@ -27,7 +27,7 @@ public class ElevatorJoint extends SubsystemBase {
   @RequiredArgsConstructor
   @Getter
   public enum State {
-    HOME(0.0),
+    STOW(0.0),
     HOMING(0.0),
     SCORE(90.0);
 
@@ -40,7 +40,7 @@ public class ElevatorJoint extends SubsystemBase {
 
   @Getter
   @Setter
-  private State state = State.HOME;
+  private State state = State.STOW;
 
   TalonFX m_motor = new TalonFX(ElevatorJointConstants.ID_LEADER);
   TalonFX m_follower = new TalonFX(ElevatorJointConstants.ID_LEADER);
@@ -63,7 +63,7 @@ public class ElevatorJoint extends SubsystemBase {
   public void periodic() {
     goalAngle = MathUtil.clamp(state.getStateOutput(), ElevatorJointConstants.lowerLimit, ElevatorJointConstants.upperLimit);
 
-    if (state == State.HOME && atGoal()) {
+    if (state == State.STOW && atGoal()) {
     
       m_motor.setControl(m_neutral);
 
@@ -74,7 +74,7 @@ public class ElevatorJoint extends SubsystemBase {
       if (m_motor.getSupplyCurrent().getValueAsDouble() > 10.0) {
 
         m_motor.setPosition(0.0);
-        this.state = State.HOME;
+        this.state = State.STOW;
       }
 
     } else {
@@ -89,7 +89,7 @@ public class ElevatorJoint extends SubsystemBase {
   }
 
   public Command setStateCommand(State state) {
-    return startEnd(() -> this.state = state, () -> this.state = State.HOME);
+    return startEnd(() -> this.state = state, () -> this.state = State.STOW);
   }
 
   private void displayInfo(boolean debug) {

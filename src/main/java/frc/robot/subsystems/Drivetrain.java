@@ -139,6 +139,11 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
     @Override
     public void periodic() {
+        
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+            controllerX = -controllerX;
+            controllerY = -controllerY;
+        }
 
         RobotState.getInstance().setRobotPose(getState().Pose); //Tell RobotState current pose
         RobotState.getInstance().setRobotSpeeds(getCurrentRobotChassisSpeeds()); //Tell RobotState current speeds

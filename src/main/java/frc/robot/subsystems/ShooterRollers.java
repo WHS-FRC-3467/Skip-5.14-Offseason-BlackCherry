@@ -28,12 +28,10 @@ public class ShooterRollers extends SubsystemBase {
     public enum State { // RPS
         OFF(() -> 0.0),
         PASSTHROUGH(() -> 10.0), // Poop & Scoot
-        AMP(() -> 40.0),
         SUBWOOFER(() -> 27.0),
-        SHOOT(() -> 75.0), // Default
+        SPEAKER(() -> 75.0), // Default
         FEED(() -> 28.0),
-        REVERSE(() -> -20.0), // Hopefully never have to use this irl
-        AIMING(() -> 75.0); // Robotstate to be created
+        REVERSE(() -> -20.0); // Hopefully never have to use this irl
 
         private final DoubleSupplier velocitySupplier;
 

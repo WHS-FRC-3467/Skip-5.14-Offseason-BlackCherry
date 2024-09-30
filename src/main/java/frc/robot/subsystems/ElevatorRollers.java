@@ -21,7 +21,9 @@ public class ElevatorRollers extends SubsystemBase {
   @Getter
   public enum State {
     OFF(0.0),
-    On(1.0);
+    INTAKE(0.5),
+    SCORE(1.0),
+    EJECT(-1.0);
 
     private final double output;
   }
