@@ -118,7 +118,7 @@ public class Constants {
             m_configuration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
             m_configuration.Feedback.SensorToMechanismRatio = 1;
 
-            m_configuration.Slot0.kP = 1; // output per unit of error in position (output/rotation)
+            m_configuration.Slot0.kP = 0; // output per unit of error in position (output/rotation)
             m_configuration.Slot0.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
             m_configuration.Slot0.kD = 0; // output per unit of error derivative in position (output/rps)
 
@@ -126,7 +126,7 @@ public class Constants {
             m_configuration.Slot1.kS = 0; // output to overcome static friction (output)
             m_configuration.Slot1.kV = 0; // output per unit of requested velocity (output/rps)
             m_configuration.Slot1.kA = 0; // unused, as there is no target acceleration
-            m_configuration.Slot1.kP = 1; // output per unit of error in position (output/rotation)
+            m_configuration.Slot1.kP = 0; // output per unit of error in position (output/rotation)
             m_configuration.Slot1.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
             m_configuration.Slot1.kD = 0; // output per unit of error derivative in position (output/rps)
 
@@ -290,7 +290,7 @@ public class Constants {
     
         public static final double upperLimit = Units.degreesToRotations(0);
         public static final double lowerLimit = Units.degreesToRotations(-100);
-        public static final double tolerance = Units.degreesToRadians(2);
+        public static final double tolerance = Units.degreesToRotations(5);
 
         public static TalonFXConfiguration motorConfig() {
             TalonFXConfiguration m_configuration = new TalonFXConfiguration();
@@ -356,9 +356,9 @@ public class Constants {
         public static final int ID_LEADER = 22;
         public static final int ID_FOLLOWER = 23;
 
-        public static final double upperLimit = Units.degreesToRadians(180);
-        public static final double lowerLimit = Units.degreesToRadians(0);
-        public static final double tolerance = Units.degreesToRadians(1);
+        public static final double upperLimit = 1000;
+        public static final double lowerLimit = 0;
+        public static final double tolerance = Units.degreesToRotations(10);
         public static final double homingCurrent = 10.0;
 
         public static TalonFXConfiguration motorConfig() {
@@ -372,7 +372,7 @@ public class Constants {
             m_configuration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
             m_configuration.Feedback.SensorToMechanismRatio = 1;
 
-            m_configuration.Slot0.kP = 1; // output per unit of error in position (output/rotation)
+            m_configuration.Slot0.kP = 0; // output per unit of error in position (output/rotation)
             m_configuration.Slot0.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
             m_configuration.Slot0.kD = 0; // output per unit of error derivative in position (output/rps)
 
@@ -380,7 +380,7 @@ public class Constants {
             m_configuration.Slot1.kS = 0; // output to overcome static friction (output)
             m_configuration.Slot1.kV = 0; // output per unit of requested velocity (output/rps)
             m_configuration.Slot1.kA = 0; // unused, as there is no target acceleration
-            m_configuration.Slot1.kP = 1; // output per unit of error in position (output/rotation)
+            m_configuration.Slot1.kP = 0; // output per unit of error in position (output/rotation)
             m_configuration.Slot1.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
             m_configuration.Slot1.kD = 0; // output per unit of error derivative in position (output/rps)
 
