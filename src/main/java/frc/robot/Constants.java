@@ -153,7 +153,7 @@ public class Constants {
             TalonFXConfiguration m_configuration = new TalonFXConfiguration();
 
             m_configuration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-            m_configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+            m_configuration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
             m_configuration.Voltage.PeakForwardVoltage = 12.0;
             m_configuration.Voltage.PeakReverseVoltage = -12.0;
 
@@ -168,14 +168,13 @@ public class Constants {
         }
     }
 
-    public static final class ShooterRollersConstants {
-        public static final int ID_LEADER = 20;
-        public static final int ID_FOLLOWER = 21;
+    public static final class ShooterPivotConstants {
+        public static final int ID_MOTOR = 18;
         public static final int ID_ENCODER = 19;
 
         //RPS
         public static final double upperLimit = Units.degreesToRadians(75);
-        public static final double lowerLimit = Units.degreesToRadians(15);
+        public static final double lowerLimit = Units.degreesToRadians(0);
         public static final double tolerance = Units.degreesToRadians(.5);
 
         public static TalonFXConfiguration motorConfig() {
@@ -188,7 +187,7 @@ public class Constants {
 
             m_configuration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
             m_configuration.Feedback.FeedbackRemoteSensorID = ID_ENCODER;
-            m_configuration.Feedback.SensorToMechanismRatio = 1;
+            m_configuration.Feedback.SensorToMechanismRatio = 5168.0/95.0;
 
             m_configuration.Slot0.kP = 1; // output per unit of error in position (output/rotation)
             m_configuration.Slot0.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
@@ -217,24 +216,25 @@ public class Constants {
         }
     }
 
-    public static final class ShooterPivotConstants {
-        public static final int ID_MOTOR = 18;
+    public static final class ShooterRollersConstants {
+        public static final int ID_LEADER = 20;
+        public static final int ID_FOLLOWER = 21;
 
         //RPS
-        public static final double upperLimit = 100.0;
+        public static final double upperLimit = 200.0;
         public static final double lowerLimit = -upperLimit;
         public static final double tolerance = 10;
 
         public static TalonFXConfiguration motorConfig() {
             TalonFXConfiguration m_configuration = new TalonFXConfiguration();
 
-            m_configuration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+            m_configuration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
             m_configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
             m_configuration.Voltage.PeakForwardVoltage = 12.0;
             m_configuration.Voltage.PeakReverseVoltage = -12.0;
 
             m_configuration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-            m_configuration.Feedback.SensorToMechanismRatio = 1;
+            m_configuration.Feedback.SensorToMechanismRatio = 24.0/15.0;
 
             m_configuration.Slot0.kP = 1; // output per unit of error in position (output/rotation)
             m_configuration.Slot0.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
@@ -242,9 +242,9 @@ public class Constants {
 
             m_configuration.Slot1.kG = 0; // output to overcome gravity (output)
             m_configuration.Slot1.kS = 0; // output to overcome static friction (output)
-            m_configuration.Slot1.kV = 0; // output per unit of requested velocity (output/rps)
+            m_configuration.Slot1.kV = 0.13; // output per unit of requested velocity (output/rps)
             m_configuration.Slot1.kA = 0; // unused, as there is no target acceleration
-            m_configuration.Slot1.kP = 1; // output per unit of error in position (output/rotation)
+            m_configuration.Slot1.kP = 0.03; // output per unit of error in position (output/rotation)
             m_configuration.Slot1.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
             m_configuration.Slot1.kD = 0; // output per unit of error derivative in position (output/rps)
 
@@ -270,7 +270,7 @@ public class Constants {
             TalonFXConfiguration m_configuration = new TalonFXConfiguration();
 
             m_configuration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-            m_configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+            m_configuration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
             m_configuration.Voltage.PeakForwardVoltage = 12.0;
             m_configuration.Voltage.PeakReverseVoltage = -12.0;
 
@@ -288,9 +288,9 @@ public class Constants {
     public static final class IntakeJointConstants {
         public static final int ID_Motor = 14;
     
-        public static final double upperLimit = Units.degreesToRadians(180);
-        public static final double lowerLimit = Units.degreesToRadians(0);
-        public static final double tolerance = Units.degreesToRadians(1);
+        public static final double upperLimit = Units.degreesToRotations(0);
+        public static final double lowerLimit = Units.degreesToRotations(-100);
+        public static final double tolerance = Units.degreesToRadians(2);
 
         public static TalonFXConfiguration motorConfig() {
             TalonFXConfiguration m_configuration = new TalonFXConfiguration();
@@ -301,7 +301,7 @@ public class Constants {
             m_configuration.Voltage.PeakReverseVoltage = -12.0;
 
             m_configuration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-            m_configuration.Feedback.SensorToMechanismRatio = 1;
+            m_configuration.Feedback.SensorToMechanismRatio = 500.0/7.0;
 
             m_configuration.Slot0.kP = 1; // output per unit of error in position (output/rotation)
             m_configuration.Slot0.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
@@ -311,13 +311,13 @@ public class Constants {
             m_configuration.Slot1.kS = 0; // output to overcome static friction (output)
             m_configuration.Slot1.kV = 0; // output per unit of requested velocity (output/rps)
             m_configuration.Slot1.kA = 0; // unused, as there is no target acceleration
-            m_configuration.Slot1.kP = 1; // output per unit of error in position (output/rotation)
+            m_configuration.Slot1.kP = 20; // output per unit of error in position (output/rotation)
             m_configuration.Slot1.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
             m_configuration.Slot1.kD = 0; // output per unit of error derivative in position (output/rps)
 
-            m_configuration.MotionMagic.MotionMagicCruiseVelocity = 10;
-            m_configuration.MotionMagic.MotionMagicAcceleration = 10;
-            m_configuration.MotionMagic.MotionMagicJerk = 10;
+            m_configuration.MotionMagic.MotionMagicCruiseVelocity = 5;
+            m_configuration.MotionMagic.MotionMagicAcceleration = 50;
+            m_configuration.MotionMagic.MotionMagicJerk = 0;
 
             m_configuration.CurrentLimits.SupplyCurrentLimit = 20;
             m_configuration.CurrentLimits.SupplyCurrentThreshold = 40;
@@ -337,7 +337,7 @@ public class Constants {
             TalonFXConfiguration m_configuration = new TalonFXConfiguration();
 
             m_configuration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-            m_configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+            m_configuration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
             m_configuration.Voltage.PeakForwardVoltage = 12.0;
             m_configuration.Voltage.PeakReverseVoltage = -12.0;
 

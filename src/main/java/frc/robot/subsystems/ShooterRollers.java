@@ -74,7 +74,7 @@ public class ShooterRollers extends SubsystemBase {
     }
 
     public boolean atGoal() {
-        return Math.abs(state.getStateOutput() - m_motor.getPosition().getValueAsDouble()) < ExampleComplexSubsystemConstants.tolerance;
+        return Math.abs(state.getStateOutput() - m_motor.getVelocity().getValueAsDouble()) < ShooterRollersConstants.tolerance;
     }
 
     public Command setStateCommand(State state) {

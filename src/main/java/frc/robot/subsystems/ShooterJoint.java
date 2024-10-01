@@ -12,6 +12,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.util.Units;
 import frc.robot.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -85,6 +86,7 @@ public class ShooterJoint extends SubsystemBase {
       SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());
       SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint ", state.getStateOutput());
       SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", m_motor.getPosition().getValueAsDouble());
+      SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output deg ", Units.radiansToDegrees(m_motor.getPosition().getValueAsDouble()));
       SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw", m_motor.getSupplyCurrent().getValueAsDouble());
       SmartDashboard.putBoolean(this.getClass().getSimpleName() + " atGoal", atGoal());
     }

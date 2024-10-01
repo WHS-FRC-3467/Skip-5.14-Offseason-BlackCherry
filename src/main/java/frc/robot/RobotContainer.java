@@ -19,8 +19,8 @@ public class RobotContainer {
   private final CommandXboxController joystick = new CommandXboxController(0); 
   public final Drivetrain drivetrain = TunerConstants.DriveTrain; 
   public final RobotState robotState = RobotState.getInstance();
-  public final ClimberJoint climberJoint = new ClimberJoint();
-  public final ElevatorJoint elevatorJoint = new ElevatorJoint();
+  //public final ClimberJoint climberJoint = new ClimberJoint();
+  //public final ElevatorJoint elevatorJoint = new ElevatorJoint();
   public final ElevatorRollers elevatorRollers = new ElevatorRollers();
   public final IntakeJoint intakeJoint = new IntakeJoint();
   public final IntakeRollers intakeRollers = new IntakeRollers();
@@ -33,13 +33,14 @@ public class RobotContainer {
   private final DigitalInput bb1 = new DigitalInput(SensorConstants.PORT_BB1);
 
 
-  private final Trigger LC1 = new Trigger(() -> lc1.isClose());
+   private final Trigger LC1 = new Trigger(() -> lc1.isClose());
   private final Trigger LC2 = new Trigger(() -> lc2.isClose());
   private final Trigger noteStored = new Trigger(() -> (lc1.isClose() || lc2.isClose()));
   private final Trigger noteAmp = new Trigger(() -> !bb1.get());
+  /* 
   private final Trigger readyToShoot = new Trigger(() -> (shooterRollers.getState() != ShooterRollers.State.OFF) && shooterRollers.atGoal() && shooterJoint.atGoal());
   private final Trigger readyToAmp = new Trigger(() -> (elevatorJoint.getState() != ElevatorJoint.State.SCORE) && elevatorJoint.atGoal());
-  private final Trigger scoreTrigger = joystick.rightTrigger();
+  private final Trigger scoreTrigger = joystick.rightTrigger(); */
 
   /* Path follower */
   private Command runAuto = drivetrain.getAutoPath("Tests");
@@ -54,7 +55,7 @@ public class RobotContainer {
 
     //joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
 
-    //Intake
+     //Intake
     joystick.leftTrigger()
         .whileTrue(robotState.setTargetCommand(RobotState.TARGET.NOTE)
             .alongWith(intakeJoint.setStateCommand(IntakeJoint.State.INTAKE)
@@ -62,6 +63,7 @@ public class RobotContainer {
                     .andThen(intakeRollers.setStateCommand(IntakeRollers.State.INTAKE)
                         .alongWith(ySplitRollers.setStateCommand(YSplitRollers.State.INTAKE))))
                 .until(LC2)));
+                
 
     //Subwoofer
     joystick.a()
@@ -81,13 +83,16 @@ public class RobotContainer {
                 .andThen(elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE))
                 .alongWith(Commands.waitUntil(scoreTrigger.and(readyToAmp))
                     .andThen(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE))))); */
-    // Feed
+     // Feed
     joystick.y()
         .whileTrue(robotState.setTargetCommand(RobotState.TARGET.FEED)
-            .alongWith(shooterRollers.setStateCommand(ShooterRollers.State.FEED))
-            .alongWith(shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
+            .alongWith(ySplitRollers.setStateCommand(YSplitRollers.State.AMP))
+        );
+            //.alongWith(shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
 
-    //Speaker
+    joystick.back().whileTrue(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE));
+
+/*     //Speaker
     joystick.x().whileTrue(robotState.setTargetCommand(RobotState.TARGET.SPEAKER)
             .alongWith(shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER))
             .alongWith(shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
@@ -96,7 +101,7 @@ public class RobotContainer {
     joystick.start()
         .whileTrue(shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE)
             .alongWith(Commands.waitUntil(shooterJoint::atGoal)
-                .andThen(climberJoint.setStateCommand(ClimberJoint.State.CLIMB))));
+                .andThen(climberJoint.setStateCommand(ClimberJoint.State.CLIMB))));  */
 
   }
 

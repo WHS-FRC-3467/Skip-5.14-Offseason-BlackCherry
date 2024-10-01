@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -24,13 +25,13 @@ public class IntakeJoint extends SubsystemBase {
   @RequiredArgsConstructor
   @Getter
   public enum State {
-    STOW(90.0),
-    INTAKE(0.0);
+    STOW(0.0),
+    INTAKE(-90.0);
 
     private final double output;
 
     private double getStateOutput() {
-      return Units.degreesToRadians(output);
+      return Units.degreesToRotations(output);
     }
   }
 
@@ -39,8 +40,7 @@ public class IntakeJoint extends SubsystemBase {
   private State state = State.STOW;
 
   TalonFX m_motor = new TalonFX(IntakeJointConstants.ID_Motor);
-  private final PositionVoltage m_position = new PositionVoltage(state.getStateOutput());
-  //private final MotionMagicVoltage m_magic = new MotionMagicVoltage(state.getStateOutput());
+  private final MotionMagicVoltage m_position = new MotionMagicVoltage(state.getStateOutput());
   private final NeutralOut m_neutral = new NeutralOut();
 
   private double goalAngle;
@@ -49,6 +49,7 @@ public class IntakeJoint extends SubsystemBase {
   /** Creates a new ComplexSubsystem. */
   public IntakeJoint() {
     m_motor.getConfigurator().apply(IntakeJointConstants.motorConfig());
+    m_motor.setPosition(0.0);
   }
 
   @Override
@@ -58,7 +59,7 @@ public class IntakeJoint extends SubsystemBase {
     if (state == State.STOW && atGoal()) {
       m_motor.setControl(m_neutral);
     } else {
-      m_motor.setControl(m_position.withPosition(goalAngle).withSlot(0));
+      m_motor.setControl(m_position.withPosition(goalAngle).withSlot(1));
     }
 
     displayInfo(true);
@@ -76,7 +77,7 @@ public class IntakeJoint extends SubsystemBase {
     if (debug) {
       SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());
       SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint ", state.getStateOutput());
-      SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", m_motor.getPosition().getValueAsDouble());
+      SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", Units.rotationsToDegrees(m_motor.getPosition().getValueAsDouble()));
       SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw", m_motor.getSupplyCurrent().getValueAsDouble());
       SmartDashboard.putBoolean(this.getClass().getSimpleName() + " atGoal", atGoal());
     }
