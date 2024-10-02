@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
@@ -14,7 +13,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ExampleComplexSubsystemConstants;
 import frc.robot.Constants.IntakeJointConstants;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -66,7 +64,7 @@ public class IntakeJoint extends SubsystemBase {
   }
 
   public boolean atGoal() {
-    return Math.abs(state.getStateOutput() - m_motor.getPosition().getValueAsDouble()) < ExampleComplexSubsystemConstants.tolerance;
+    return Math.abs(state.getStateOutput() - m_motor.getPosition().getValueAsDouble()) < IntakeJointConstants.tolerance;
   }
 
   public Command setStateCommand(State state) {

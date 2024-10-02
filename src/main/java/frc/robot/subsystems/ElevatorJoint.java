@@ -12,12 +12,10 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorJointConstants;
-import frc.robot.Constants.ExampleComplexSubsystemConstants;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -72,7 +70,6 @@ public class ElevatorJoint extends SubsystemBase {
       m_motor.setControl(m_duty.withOutput(-0.2));
 
       if (m_motor.getSupplyCurrent().getValueAsDouble() > 10.0) {
-
         m_motor.setPosition(0.0);
         this.state = State.STOW;
       }
@@ -85,7 +82,7 @@ public class ElevatorJoint extends SubsystemBase {
   }
 
   public boolean atGoal() {
-    return Math.abs(state.getStateOutput() - m_motor.getPosition().getValueAsDouble()) < ExampleComplexSubsystemConstants.tolerance;
+    return Math.abs(state.getStateOutput() - m_motor.getPosition().getValueAsDouble()) < ElevatorJointConstants.tolerance;
   }
 
   public Command setStateCommand(State state) {
