@@ -59,59 +59,72 @@ public class RobotContainer {
     //joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
 
      //Intake
-     joystick.leftTrigger()
-             .whileTrue(robotState.setTargetCommand(RobotState.TARGET.NOTE)
-                     .alongWith(intakeJoint.setStateCommand(IntakeJoint.State.INTAKE)
-                             .alongWith(Commands.waitUntil(intakeJoint::atGoal)
-                                     .andThen(intakeRollers.setStateCommand(IntakeRollers.State.INTAKE)
-                                             .alongWith(ySplitRollers.setStateCommand(YSplitRollers.State.INTAKE))))
-                             .until(LC1)
-                             .andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SLOWINTAKE))
-                             .until(LC2)));
+     joystick.leftTrigger().whileTrue(Commands.parallel(
+             robotState.setTargetCommand(RobotState.TARGET.NOTE),
+             intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
+             Commands.waitUntil(intakeJoint::atGoal)
+                     .andThen(Commands.deadline(
+                             Commands.waitUntil(LC1),
+                             intakeRollers.setStateCommand(IntakeRollers.State.INTAKE),
+                             ySplitRollers.setStateCommand(YSplitRollers.State.INTAKE)))
+                     .andThen(Commands.deadline(
+                             Commands.waitUntil(LC2),
+                             ySplitRollers.setStateCommand(YSplitRollers.State.SLOWINTAKE)))));
 
     //Subwoofer
     joystick.a()
-        .whileTrue(robotState.setTargetCommand(RobotState.TARGET.SUBWOOFER)
-            .alongWith(shooterRollers.setStateCommand(ShooterRollers.State.SUBWOOFER))
-            .alongWith(shooterJoint.setStateCommand(ShooterJoint.State.SUBWOOFER)));
-    
-    // AMP
-    joystick.b()
-            .whileTrue(robotState.setTargetCommand(RobotState.TARGET.AMP)
-                    .alongWith(elevatorJoint.setStateCommand(ElevatorJoint.State.STOW)
-                            .alongWith(Commands.waitUntil(elevatorJoint::atGoal)
-                                    .andThen(ySplitRollers.setStateCommand(YSplitRollers.State.AMP)
-                                            .alongWith(elevatorRollers.setStateCommand(ElevatorRollers.State.INTAKE))))
-                            .until(noteAmp))
-                    .withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+            .whileTrue(Commands.parallel(
+                    robotState.setTargetCommand(RobotState.TARGET.SUBWOOFER),
+                    shooterRollers.setStateCommand(ShooterRollers.State.SUBWOOFER),
+                    shooterJoint.setStateCommand(ShooterJoint.State.SUBWOOFER)));
 
-     // Feed
-    joystick.y()
-        .whileTrue(robotState.setTargetCommand(RobotState.TARGET.FEED)
-            .alongWith(shooterRollers.setStateCommand(ShooterRollers.State.FEED))
-            .alongWith(shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
+    //Amp
+    joystick.b().whileTrue(Commands.parallel(
+            robotState.setTargetCommand(RobotState.TARGET.AMP),
+            elevatorJoint.setStateCommand(ElevatorJoint.State.STOW),
+            Commands.waitUntil(elevatorJoint::atGoal)
+                    .andThen(Commands.deadline(
+                            Commands.waitUntil(noteAmp),
+                            ySplitRollers.setStateCommand(YSplitRollers.State.AMP),
+                            elevatorRollers.setStateCommand(ElevatorRollers.State.INTAKE))))
+            .withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+
+    //Feed
+     joystick.y()
+             .whileTrue(Commands.parallel(
+                     robotState.setTargetCommand(RobotState.TARGET.FEED),
+                     //drivetrain.setStateCommand(Drivetrain.State.HEADING),
+                     shooterRollers.setStateCommand(ShooterRollers.State.FEED),
+                     shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
 
 
      //Speaker
-    joystick.x().whileTrue(robotState.setTargetCommand(RobotState.TARGET.SPEAKER)
-            .alongWith(shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER))
-            .alongWith(shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
+    joystick.x()
+            .whileTrue(Commands.parallel(
+                    robotState.setTargetCommand(RobotState.TARGET.SPEAKER),
+                    //drivetrain.setStateCommand(Drivetrain.State.HEADING),
+                    shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
+                    shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
 
-    //Climb
+    // Climb
     joystick.start()
-        .whileTrue(shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE)
-            .alongWith(Commands.waitUntil(shooterJoint::atGoal)
-                .andThen(climberJoint.setStateCommand(ClimberJoint.State.CLIMB))));
+            .whileTrue(Commands.parallel(
+                    shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
+                    Commands.waitUntil(shooterJoint::atGoal)
+                            .andThen(climberJoint.setStateCommand(ClimberJoint.State.CLIMB))));
 
-    //Score
+    // Score
     joystick.rightTrigger()
             .whileTrue(Commands.either(
-                    Commands.deadline(Commands.waitUntil(noteAmp.negate()),
-                            elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE)
-                                    .alongWith(Commands.waitUntil(readyToAmp)
-                                            .andThen(ySplitRollers.setStateCommand(YSplitRollers.State.AMP)))),
-                    Commands.deadline(Commands.waitUntil(noteStored.negate()),
-                            Commands.waitUntil(readyToShoot).andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER))),
+                    Commands.deadline(
+                            Commands.waitUntil(noteAmp.negate()),
+                            elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE),
+                            Commands.waitUntil(readyToAmp)
+                                    .andThen(ySplitRollers.setStateCommand(YSplitRollers.State.AMP))),
+                    Commands.deadline(
+                            Commands.waitUntil(noteStored.negate()),
+                            Commands.waitUntil(readyToShoot)
+                                    .andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER))),
                     noteAmp));
 
   }
