@@ -14,6 +14,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.util.Units;
 import frc.robot.RobotState;
+import frc.robot.Util.TunableNumber;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -31,12 +32,13 @@ public class ShooterJoint extends SubsystemBase {
     PODIUM(() -> 30.0),
     SUBWOOFER(() -> 20.0),
     CLIMBCLEARANCE(() -> 20.0),
-    DYNAMIC(() -> RobotState.getInstance().getShotAngle());
+    DYNAMIC(() -> RobotState.getInstance().getShotAngle()),
+    TUNING(() -> RobotState.getInstance().getShooterTuningAngle().get());
 
     private final DoubleSupplier outputSupplier;
 
     private double getStateOutput() {
-      return outputSupplier.getAsDouble();
+      return Units.degreesToRotations(outputSupplier.getAsDouble());
     }
   }
 
@@ -47,6 +49,7 @@ public class ShooterJoint extends SubsystemBase {
   private double goalAngle;
 
   private Debouncer m_debounce = new Debouncer(.1);
+
 
   TalonFX m_motor = new TalonFX(ShooterPivotConstants.ID_MOTOR);
   private final static MotionMagicVoltage m_magic = new MotionMagicVoltage(0);

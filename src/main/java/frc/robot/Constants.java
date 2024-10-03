@@ -345,6 +345,10 @@ public class Constants {
 
     }
 
+    public static final class RobotConstants {
+        public static final boolean kIsTuningMode = true;
+    }
+
     public static class FieldConstants {
 
         public static final Pose2d BLUE_SPEAKER = new Pose2d(Units.inchesToMeters(-1.5 + 12), Units.inchesToMeters(218.42), new Rotation2d(0));

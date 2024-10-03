@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Util.TunableNumber;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -49,6 +50,10 @@ public class RobotState {
     private TARGET target = TARGET.NONE;
 
     private double deltaT = .15; 
+
+    @Getter
+    @Setter
+    TunableNumber shooterTuningAngle = new TunableNumber("Shooter Tuning Angle",0);
 
 
     public static RobotState getInstance() {
