@@ -24,13 +24,9 @@ public class IntakeJoint extends SubsystemBase {
   @Getter
   public enum State {
     STOW(0.0),
-    INTAKE(-90.0);
+    INTAKE(-0.27);
 
     private final double output;
-
-    private double getStateOutput() {
-      return Units.degreesToRotations(output);
-    }
   }
 
   @Getter
@@ -38,7 +34,7 @@ public class IntakeJoint extends SubsystemBase {
   private State state = State.STOW;
 
   TalonFX m_motor = new TalonFX(IntakeJointConstants.ID_Motor);
-  private final MotionMagicVoltage m_position = new MotionMagicVoltage(state.getStateOutput());
+  private final MotionMagicVoltage m_position = new MotionMagicVoltage(state.getOutput());
   private final NeutralOut m_neutral = new NeutralOut();
 
   private double goalAngle;
@@ -52,7 +48,7 @@ public class IntakeJoint extends SubsystemBase {
 
   @Override
   public void periodic() {
-    goalAngle = MathUtil.clamp(state.getStateOutput(), IntakeJointConstants.lowerLimit, IntakeJointConstants.upperLimit);
+    goalAngle = MathUtil.clamp(state.getOutput(), IntakeJointConstants.lowerLimit, IntakeJointConstants.upperLimit);
 
     if (state == State.STOW && atGoal()) {
       m_motor.setControl(m_neutral);
@@ -64,7 +60,7 @@ public class IntakeJoint extends SubsystemBase {
   }
 
   public boolean atGoal() {
-    return Math.abs(state.getStateOutput() - m_motor.getPosition().getValueAsDouble()) < IntakeJointConstants.tolerance;
+    return Math.abs(state.getOutput() - m_motor.getPosition().getValueAsDouble()) < IntakeJointConstants.tolerance;
   }
 
   public Command setStateCommand(State state) {
@@ -74,7 +70,7 @@ public class IntakeJoint extends SubsystemBase {
   private void displayInfo(boolean debug) {
     if (debug) {
       SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());
-      SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint ", state.getStateOutput());
+      SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint ", state.getOutput());
       SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", Units.rotationsToDegrees(m_motor.getPosition().getValueAsDouble()));
       SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw", m_motor.getSupplyCurrent().getValueAsDouble());
       SmartDashboard.putBoolean(this.getClass().getSimpleName() + " atGoal", atGoal());

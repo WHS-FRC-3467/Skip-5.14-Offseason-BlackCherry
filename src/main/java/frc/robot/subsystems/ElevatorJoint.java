@@ -27,13 +27,9 @@ public class ElevatorJoint extends SubsystemBase {
   public enum State {
     STOW(0.0),
     HOMING(0.0),
-    SCORE(90.0);
+    SCORE(30.0);
 
     private final double output;
-
-    private double getStateOutput() {
-      return Units.degreesToRadians(output);
-    }
   }
 
   @Getter
@@ -43,11 +39,12 @@ public class ElevatorJoint extends SubsystemBase {
   TalonFX m_motor = new TalonFX(ElevatorJointConstants.ID_LEADER);
   TalonFX m_follower = new TalonFX(ElevatorJointConstants.ID_LEADER);
 
-  private final MotionMagicVoltage m_magic = new MotionMagicVoltage(state.getStateOutput());
+  private final MotionMagicVoltage m_magic = new MotionMagicVoltage(state.getOutput());
   private final DutyCycleOut m_duty = new DutyCycleOut(0.0);
   private final NeutralOut m_neutral = new NeutralOut();
 
   private double goalAngle;
+  private boolean hasHomed = false;
 
 
   /** Creates a new ComplexSubsystem. */
@@ -55,11 +52,12 @@ public class ElevatorJoint extends SubsystemBase {
     m_motor.getConfigurator().apply(ElevatorJointConstants.motorConfig());
     m_follower.getConfigurator().apply(ElevatorJointConstants.motorConfig());
     m_follower.setControl(new Follower(ElevatorJointConstants.ID_LEADER, false));
+    m_motor.setPosition(0.0);
   }
 
   @Override
   public void periodic() {
-    goalAngle = MathUtil.clamp(state.getStateOutput(), ElevatorJointConstants.lowerLimit, ElevatorJointConstants.upperLimit);
+    goalAngle = MathUtil.clamp(state.getOutput(), ElevatorJointConstants.lowerLimit, ElevatorJointConstants.upperLimit);
 
     if (state == State.STOW && atGoal()) {
     
@@ -67,10 +65,11 @@ public class ElevatorJoint extends SubsystemBase {
 
     } else if (state == State.HOMING) {
 
-      m_motor.setControl(m_duty.withOutput(-0.2));
+      m_motor.setControl(m_duty.withOutput(-0.05));
 
-      if (m_motor.getSupplyCurrent().getValueAsDouble() > 10.0) {
+      if (m_motor.getSupplyCurrent().getValueAsDouble() > 0.5) {
         m_motor.setPosition(0.0);
+        System.out.println("HOMED Elevator -----------------");
         this.state = State.STOW;
       }
 
@@ -82,7 +81,7 @@ public class ElevatorJoint extends SubsystemBase {
   }
 
   public boolean atGoal() {
-    return Math.abs(state.getStateOutput() - m_motor.getPosition().getValueAsDouble()) < ElevatorJointConstants.tolerance;
+    return Math.abs(state.getOutput() - m_motor.getPosition().getValueAsDouble()) < ElevatorJointConstants.tolerance;
   }
 
   public Command setStateCommand(State state) {
@@ -92,7 +91,7 @@ public class ElevatorJoint extends SubsystemBase {
   private void displayInfo(boolean debug) {
     if (debug) {
       SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());
-      SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint ", state.getStateOutput());
+      SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint ", state.getOutput());
       SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", m_motor.getPosition().getValueAsDouble());
       SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw", m_motor.getSupplyCurrent().getValueAsDouble());
       SmartDashboard.putBoolean(this.getClass().getSimpleName() + " atGoal", atGoal());

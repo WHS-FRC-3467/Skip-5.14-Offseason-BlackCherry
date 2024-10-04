@@ -28,10 +28,9 @@ public class ShooterJoint extends SubsystemBase {
   @RequiredArgsConstructor
   @Getter
   public enum State {
-    STOW(() -> 0.0),
-    PODIUM(() -> 30.0),
-    SUBWOOFER(() -> 20.0),
-    CLIMBCLEARANCE(() -> 20.0),
+    STOW(() -> 20.0),
+    SUBWOOFER(() -> 44.0),
+    CLIMBCLEARANCE(() -> 40.0),
     DYNAMIC(() -> RobotState.getInstance().getShotAngle()),
     TUNING(() -> RobotState.getInstance().getShooterTuningAngle().get());
 
@@ -65,9 +64,7 @@ public class ShooterJoint extends SubsystemBase {
   public void periodic() {
     goalAngle = MathUtil.clamp(state.getStateOutput(), ShooterPivotConstants.lowerLimit, ShooterPivotConstants.upperLimit);
 
-    if (state == State.STOW && atGoal()) {
-      m_motor.setControl(m_neutral);
-    } else if (state == State.DYNAMIC) {
+    if (state == State.DYNAMIC) {
       m_motor.setControl(m_position.withPosition(goalAngle).withSlot(0));
     } else {
       m_motor.setControl(m_magic.withPosition(goalAngle).withSlot(1));

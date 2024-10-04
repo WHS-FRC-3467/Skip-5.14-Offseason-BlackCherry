@@ -35,9 +35,9 @@ public class Constants {
         public static final int ID_LEADER = 25;
         public static final int ID_FOLLOWER = 26;
 
-        public static final double upperLimit = Units.degreesToRadians(120);
-        public static final double lowerLimit = Units.degreesToRadians(0);
-        public static final double tolerance = Units.degreesToRadians(3);
+        public static final double upperLimit = 77.6;
+        public static final double lowerLimit = 0;
+        public static final double tolerance = Units.degreesToRotations(3);
 
         public static TalonFXConfiguration motorConfig() {
             TalonFXConfiguration m_configuration = new TalonFXConfiguration();
@@ -58,13 +58,13 @@ public class Constants {
             m_configuration.Slot1.kS = 0; // output to overcome static friction (output)
             m_configuration.Slot1.kV = 0; // output per unit of requested velocity (output/rps)
             m_configuration.Slot1.kA = 0; // unused, as there is no target acceleration
-            m_configuration.Slot1.kP = 0; // output per unit of error in position (output/rotation)
+            m_configuration.Slot1.kP = 1; // output per unit of error in position (output/rotation)
             m_configuration.Slot1.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
             m_configuration.Slot1.kD = 0; // output per unit of error derivative in position (output/rps)
 
-            m_configuration.MotionMagic.MotionMagicCruiseVelocity = 10;
-            m_configuration.MotionMagic.MotionMagicAcceleration = 10;
-            m_configuration.MotionMagic.MotionMagicJerk = 10;
+            m_configuration.MotionMagic.MotionMagicCruiseVelocity = 500;
+            m_configuration.MotionMagic.MotionMagicAcceleration = 50;
+            m_configuration.MotionMagic.MotionMagicJerk = 0;
 
             m_configuration.CurrentLimits.SupplyCurrentLimit = 20;
             m_configuration.CurrentLimits.SupplyCurrentThreshold = 40;
@@ -105,9 +105,9 @@ public class Constants {
         public static final int ID_ENCODER = 19;
 
         //RPS
-        public static final double upperLimit = Units.degreesToRadians(75);
-        public static final double lowerLimit = Units.degreesToRadians(0);
-        public static final double tolerance = Units.degreesToRadians(.5);
+        public static final double upperLimit = Units.degreesToRotations(46);
+        public static final double lowerLimit = Units.degreesToRotations(0);
+        public static final double tolerance = Units.degreesToRotations(2);
 
         public static TalonFXConfiguration motorConfig() {
             TalonFXConfiguration m_configuration = new TalonFXConfiguration();
@@ -119,23 +119,24 @@ public class Constants {
 
             m_configuration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
             m_configuration.Feedback.FeedbackRemoteSensorID = ID_ENCODER;
-            m_configuration.Feedback.SensorToMechanismRatio = 5168.0/95.0;
+            m_configuration.Feedback.RotorToSensorRatio = 54.4/7.04;
+            m_configuration.Feedback.SensorToMechanismRatio = 7.04;
 
             m_configuration.Slot0.kP = 1; // output per unit of error in position (output/rotation)
             m_configuration.Slot0.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
             m_configuration.Slot0.kD = 0; // output per unit of error derivative in position (output/rps)
 
-            m_configuration.Slot1.kG = 0; // output to overcome gravity (output)
+            m_configuration.Slot1.kG = 0.1; // output to overcome gravity (output)
             m_configuration.Slot1.kS = 0; // output to overcome static friction (output)
             m_configuration.Slot1.kV = 0; // output per unit of requested velocity (output/rps)
             m_configuration.Slot1.kA = 0; // unused, as there is no target acceleration
-            m_configuration.Slot1.kP = 1; // output per unit of error in position (output/rotation)
+            m_configuration.Slot1.kP = 50; // output per unit of error in position (output/rotation)
             m_configuration.Slot1.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
             m_configuration.Slot1.kD = 0; // output per unit of error derivative in position (output/rps)
 
-            m_configuration.MotionMagic.MotionMagicCruiseVelocity = 10;
-            m_configuration.MotionMagic.MotionMagicAcceleration = 10;
-            m_configuration.MotionMagic.MotionMagicJerk = 10;
+            m_configuration.MotionMagic.MotionMagicCruiseVelocity = 500;
+            m_configuration.MotionMagic.MotionMagicAcceleration = 5;
+            m_configuration.MotionMagic.MotionMagicJerk = 0;
 
             m_configuration.CurrentLimits.SupplyCurrentLimit = 20;
             m_configuration.CurrentLimits.SupplyCurrentThreshold = 40;
@@ -153,7 +154,7 @@ public class Constants {
         public static final int ID_FOLLOWER = 21;
 
         //RPS
-        public static final double upperLimit = 200.0;
+        public static final double upperLimit = 50.0;
         public static final double lowerLimit = -upperLimit;
         public static final double tolerance = 10;
 
@@ -176,7 +177,7 @@ public class Constants {
             m_configuration.Slot1.kS = 0; // output to overcome static friction (output)
             m_configuration.Slot1.kV = 0.13; // output per unit of requested velocity (output/rps)
             m_configuration.Slot1.kA = 0; // unused, as there is no target acceleration
-            m_configuration.Slot1.kP = 0.03; // output per unit of error in position (output/rotation)
+            m_configuration.Slot1.kP = 1; // output per unit of error in position (output/rotation)
             m_configuration.Slot1.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
             m_configuration.Slot1.kD = 0; // output per unit of error derivative in position (output/rps)
 
@@ -288,9 +289,9 @@ public class Constants {
         public static final int ID_LEADER = 22;
         public static final int ID_FOLLOWER = 23;
 
-        public static final double upperLimit = 1000;
+        public static final double upperLimit = 34;
         public static final double lowerLimit = 0;
-        public static final double tolerance = Units.degreesToRotations(10);
+        public static final double tolerance = .5;
         public static final double homingCurrent = 10.0;
 
         public static TalonFXConfiguration motorConfig() {
@@ -308,17 +309,17 @@ public class Constants {
             m_configuration.Slot0.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
             m_configuration.Slot0.kD = 0; // output per unit of error derivative in position (output/rps)
 
-            m_configuration.Slot1.kG = 0; // output to overcome gravity (output)
+            m_configuration.Slot1.kG = 0.1; // output to overcome gravity (output)
             m_configuration.Slot1.kS = 0; // output to overcome static friction (output)
             m_configuration.Slot1.kV = 0; // output per unit of requested velocity (output/rps)
             m_configuration.Slot1.kA = 0; // unused, as there is no target acceleration
-            m_configuration.Slot1.kP = 0; // output per unit of error in position (output/rotation)
+            m_configuration.Slot1.kP = 2; // output per unit of error in position (output/rotation)
             m_configuration.Slot1.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
             m_configuration.Slot1.kD = 0; // output per unit of error derivative in position (output/rps)
 
-            m_configuration.MotionMagic.MotionMagicCruiseVelocity = 10;
-            m_configuration.MotionMagic.MotionMagicAcceleration = 10;
-            m_configuration.MotionMagic.MotionMagicJerk = 10;
+            m_configuration.MotionMagic.MotionMagicCruiseVelocity = 1000;
+            m_configuration.MotionMagic.MotionMagicAcceleration = 1000;
+            m_configuration.MotionMagic.MotionMagicJerk = 0.0;
 
             m_configuration.CurrentLimits.SupplyCurrentLimit = 20;
             m_configuration.CurrentLimits.SupplyCurrentThreshold = 40;

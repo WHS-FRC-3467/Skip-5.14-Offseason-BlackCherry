@@ -7,6 +7,8 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,13 +38,14 @@ public class RobotContainer {
 
   private final LaserCanSensor lc1 = new LaserCanSensor(SensorConstants.ID_LC1);
   private final LaserCanSensor lc2 = new LaserCanSensor(SensorConstants.ID_LC2);
+
+  private final Debouncer ampDebouncer = new Debouncer(.25,DebounceType.kBoth);
   private final DigitalInput bb1 = new DigitalInput(SensorConstants.PORT_BB1);
 
-
-   private final Trigger LC1 = new Trigger(() -> lc1.isClose());
+  private final Trigger LC1 = new Trigger(() -> lc1.isClose());
   private final Trigger LC2 = new Trigger(() -> lc2.isClose());
   private final Trigger noteStored = new Trigger(() -> (lc1.isClose() || lc2.isClose()));
-  private final Trigger noteAmp = new Trigger(() -> !bb1.get());
+  private final Trigger noteAmp = new Trigger(() -> ampDebouncer.calculate(!bb1.get()));
 
   private final Trigger readyToShoot = new Trigger(() -> (shooterRollers.getState() != ShooterRollers.State.OFF) && shooterRollers.atGoal() && shooterJoint.atGoal());
   private final Trigger readyToAmp = new Trigger(() -> (elevatorJoint.getState() != ElevatorJoint.State.STOW) && elevatorJoint.atGoal());
@@ -121,7 +124,7 @@ public class RobotContainer {
                             Commands.waitUntil(noteAmp.negate()),
                             elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE),
                             Commands.waitUntil(readyToAmp)
-                                    .andThen(ySplitRollers.setStateCommand(YSplitRollers.State.AMP))),
+                                    .andThen(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE))),
                     Commands.deadline(
                             Commands.waitUntil(noteStored.negate()),
                             Commands.waitUntil(readyToShoot)
@@ -138,11 +141,15 @@ public class RobotContainer {
         SmartDashboard.putData("YSplit Eject Shooter",Commands.parallel(ySplitRollers.setStateCommand(YSplitRollers.State.REVSHOOTER)));
         SmartDashboard.putData("YSplit Eject Amp",Commands.parallel(ySplitRollers.setStateCommand(YSplitRollers.State.REVAMP)));
         SmartDashboard.putData("Intake Eject",Commands.parallel(intakeRollers.setStateCommand(IntakeRollers.State.EJECT)));
+        SmartDashboard.putData("Intake Deploy",Commands.parallel(intakeJoint.setStateCommand(IntakeJoint.State.INTAKE)));
         SmartDashboard.putData("Shooter Eject",Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.REVERSE)));
         SmartDashboard.putData("Elevator Stow",Commands.parallel(elevatorJoint.setStateCommand(ElevatorJoint.State.STOW)));
         SmartDashboard.putData("Elevator Score",Commands.parallel(elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE)));
+        SmartDashboard.putData("Elevator Homing",Commands.parallel(elevatorJoint.setStateCommand(ElevatorJoint.State.HOMING)));
         SmartDashboard.putData("Shooter Tuning Angle",Commands.parallel(shooterJoint.setStateCommand(ShooterJoint.State.TUNING)));
+        SmartDashboard.putData("Shooter Climber Clearance",Commands.parallel(shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE)));
         SmartDashboard.putData("Shooter Roller Speaker",Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER)));
+        SmartDashboard.putBoolean("BB1", noteAmp.getAsBoolean());
 
 
   }
