@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.SensorConstants;
-import frc.robot.Util.TunableNumber;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
 
@@ -48,7 +47,8 @@ public class RobotContainer {
   private final Trigger noteAmp = new Trigger(() -> ampDebouncer.calculate(!bb1.get()));
 
   private final Trigger readyToShoot = new Trigger(() -> (shooterRollers.getState() != ShooterRollers.State.OFF) && shooterRollers.atGoal() && shooterJoint.atGoal());
-  private final Trigger readyToAmp = new Trigger(() -> (elevatorJoint.getState() != ElevatorJoint.State.STOW) && elevatorJoint.atGoal());
+  private final Trigger readyToAmp = new Trigger(() -> (elevatorJoint.getState() == ElevatorJoint.State.SCORE) && elevatorJoint.atGoal());
+  private final Trigger readyToClimb = new Trigger(() -> (shooterJoint.getState() == ShooterJoint.State.CLIMBCLEARANCE) && shooterJoint.atGoal()).and(readyToAmp);
 
   private SendableChooser<Command> autoChooser;
 
@@ -63,7 +63,8 @@ public class RobotContainer {
     //joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
 
      //Intake
-     joystick.leftTrigger().whileTrue(Commands.parallel(
+     joystick.leftTrigger()
+            .whileTrue(Commands.parallel(
              robotState.setTargetCommand(RobotState.TARGET.NOTE),
              intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
              Commands.waitUntil(intakeJoint::atGoal)
@@ -73,7 +74,10 @@ public class RobotContainer {
                              ySplitRollers.setStateCommand(YSplitRollers.State.INTAKE)))
                      .andThen(Commands.deadline(
                              Commands.waitUntil(LC2),
-                             ySplitRollers.setStateCommand(YSplitRollers.State.SLOWINTAKE)))));
+                             ySplitRollers.setStateCommand(YSplitRollers.State.SLOWINTAKE)))
+                     .andThen(Commands.deadline(
+                             Commands.waitUntil(LC2.negate()), 
+                             ySplitRollers.setStateCommand(YSplitRollers.State.SHUFFLE)))));
 
     //Subwoofer
     joystick.a()
@@ -114,22 +118,28 @@ public class RobotContainer {
     joystick.start()
             .whileTrue(Commands.parallel(
                     shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
-                    Commands.waitUntil(shooterJoint::atGoal)
+                    elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE),
+                    Commands.waitUntil(readyToClimb)
                             .andThen(climberJoint.setStateCommand(ClimberJoint.State.CLIMB))));
 
     // Score
     joystick.rightTrigger()
             .whileTrue(Commands.either(
-                    Commands.deadline(
-                            Commands.waitUntil(noteAmp.negate()),
-                            elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE),
-                            Commands.waitUntil(readyToAmp)
-                                    .andThen(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE))),
-                    Commands.deadline(
-                            Commands.waitUntil(noteStored.negate()),
-                            Commands.waitUntil(readyToShoot)
-                                    .andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER))),
-                    noteAmp));
+                        Commands.either(
+                                Commands.deadline(
+                                        Commands.waitUntil(noteAmp.negate()),
+                                        elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE),
+                                        Commands.waitUntil(readyToAmp)
+                                                .andThen(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE))),
+                                Commands.deadline(
+                                        Commands.waitUntil(noteStored.negate()),
+                                        Commands.waitUntil(readyToShoot)
+                                                .andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER))),
+                                noteAmp),
+                        Commands.deadline(
+                                Commands.waitUntil(noteAmp.negate()), 
+                                elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE)),
+                        () -> climberJoint.getState() == ClimberJoint.State.CLIMB));
 
   }
 

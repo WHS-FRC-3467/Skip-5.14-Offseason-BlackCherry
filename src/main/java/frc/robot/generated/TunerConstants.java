@@ -56,9 +56,6 @@ public class TunerConstants {
     private static final String kCANbusName = "Drivetrain";
     private static final int kPigeonId = 13;
 
-   
-
-
     // These are only used for simulation
     private static final double kSteerInertia = 0.00001;
     private static final double kDriveInertia = 0.001;
@@ -113,8 +110,8 @@ public class TunerConstants {
     private static final int kBackLeftEncoderId = 11;
     private static final double kBackLeftEncoderOffset = 0.42700195312;
 
-    private static final double kBackLeftXPosInches = -10.25;
-    private static final double kBackLeftYPosInches = 10.25;
+    private static final double kBackLeftXPosInches = -10.375;
+    private static final double kBackLeftYPosInches = 10.375;
 
     // Back Right
     private static final int kBackRightDriveMotorId = 7;
@@ -122,8 +119,8 @@ public class TunerConstants {
     private static final int kBackRightEncoderId = 12;
     private static final double kBackRightEncoderOffset = -0.463378906255;
 
-    private static final double kBackRightXPosInches = -10.25;
-    private static final double kBackRightYPosInches = -10.25;
+    private static final double kBackRightXPosInches = -10.375;
+    private static final double kBackRightYPosInches = -10.375;
 
 
     private static final SwerveModuleConstants FrontLeft = ConstantCreator.createModuleConstants(

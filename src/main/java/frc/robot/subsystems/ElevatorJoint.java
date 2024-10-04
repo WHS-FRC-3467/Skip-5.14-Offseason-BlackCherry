@@ -10,8 +10,6 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -43,7 +41,6 @@ public class ElevatorJoint extends SubsystemBase {
   private final DutyCycleOut m_duty = new DutyCycleOut(0.0);
   private final NeutralOut m_neutral = new NeutralOut();
 
-  private double goalAngle;
   private boolean hasHomed = false;
 
 
@@ -57,24 +54,21 @@ public class ElevatorJoint extends SubsystemBase {
 
   @Override
   public void periodic() {
-    goalAngle = MathUtil.clamp(state.getOutput(), ElevatorJointConstants.lowerLimit, ElevatorJointConstants.upperLimit);
-
     if (state == State.STOW && atGoal()) {
-    
       m_motor.setControl(m_neutral);
 
     } else if (state == State.HOMING) {
-
       m_motor.setControl(m_duty.withOutput(-0.05));
 
-      if (m_motor.getSupplyCurrent().getValueAsDouble() > 0.5) {
+      if (m_motor.getSupplyCurrent().getValueAsDouble() > ElevatorJointConstants.homingCurrent) {
         m_motor.setPosition(0.0);
-        System.out.println("HOMED Elevator -----------------");
+        System.out.println("HOMED Elevator");
+        this.hasHomed = true;
         this.state = State.STOW;
       }
 
     } else {
-      m_motor.setControl(m_magic.withPosition(goalAngle).withSlot(1));
+      m_motor.setControl(m_magic.withPosition(state.getOutput()).withSlot(1));
     }
 
     displayInfo(true);
@@ -95,6 +89,7 @@ public class ElevatorJoint extends SubsystemBase {
       SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", m_motor.getPosition().getValueAsDouble());
       SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw", m_motor.getSupplyCurrent().getValueAsDouble());
       SmartDashboard.putBoolean(this.getClass().getSimpleName() + " atGoal", atGoal());
+      SmartDashboard.putBoolean(this.getClass().getSimpleName() + " has homed", hasHomed);
     }
 
   }

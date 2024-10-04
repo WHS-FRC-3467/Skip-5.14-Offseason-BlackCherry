@@ -4,10 +4,13 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -31,19 +34,19 @@ public class Constants {
         public static final double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
     }
 
-    public static final class ClimberConstants {
+    public static final class ClimberJointConstants {
         public static final int ID_LEADER = 25;
         public static final int ID_FOLLOWER = 26;
 
-        public static final double upperLimit = 77.6;
-        public static final double lowerLimit = 0;
-        public static final double tolerance = Units.degreesToRotations(3);
+        public static final double tolerance = .25;
 
         public static TalonFXConfiguration motorConfig() {
             TalonFXConfiguration m_configuration = new TalonFXConfiguration();
 
             m_configuration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
             m_configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+            m_configuration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+            m_configuration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 77.6;
             m_configuration.Voltage.PeakForwardVoltage = 12.0;
             m_configuration.Voltage.PeakReverseVoltage = -12.0;
 
@@ -100,13 +103,10 @@ public class Constants {
         }
     }
 
-    public static final class ShooterPivotConstants {
+    public static final class ShooterJointConstants {
         public static final int ID_MOTOR = 18;
         public static final int ID_ENCODER = 19;
 
-        //RPS
-        public static final double upperLimit = Units.degreesToRotations(46);
-        public static final double lowerLimit = Units.degreesToRotations(0);
         public static final double tolerance = Units.degreesToRotations(2);
 
         public static TalonFXConfiguration motorConfig() {
@@ -114,6 +114,8 @@ public class Constants {
 
             m_configuration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
             m_configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+            m_configuration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+            m_configuration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Units.degreesToRotations(46);
             m_configuration.Voltage.PeakForwardVoltage = 12.0;
             m_configuration.Voltage.PeakReverseVoltage = -12.0;
 
@@ -144,6 +146,15 @@ public class Constants {
             m_configuration.CurrentLimits.SupplyCurrentLimitEnable = true;
             m_configuration.CurrentLimits.StatorCurrentLimit = 70;
             m_configuration.CurrentLimits.StatorCurrentLimitEnable = true;
+
+            return m_configuration;
+        }
+
+        public static CANcoderConfiguration encoderConfig() {
+            CANcoderConfiguration m_configuration = new CANcoderConfiguration();
+            m_configuration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
+            //m_configuration.MagnetSensor.MagnetOffset = //TODO: Copy setting from phoenix tuner
+            //m_configuration.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
 
             return m_configuration;
         }
@@ -289,16 +300,16 @@ public class Constants {
         public static final int ID_LEADER = 22;
         public static final int ID_FOLLOWER = 23;
 
-        public static final double upperLimit = 34;
-        public static final double lowerLimit = 0;
         public static final double tolerance = .5;
-        public static final double homingCurrent = 10.0;
+        public static final double homingCurrent = 0.5;
 
         public static TalonFXConfiguration motorConfig() {
             TalonFXConfiguration m_configuration = new TalonFXConfiguration();
 
             m_configuration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
             m_configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+            m_configuration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+            m_configuration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 34;
             m_configuration.Voltage.PeakForwardVoltage = 12.0;
             m_configuration.Voltage.PeakReverseVoltage = -12.0;
 
