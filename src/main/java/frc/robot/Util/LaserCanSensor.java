@@ -2,16 +2,16 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.Util;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.LaserCan.Measurement;
 
 /** Add your docs here. */
-public class LaserCanSensor {   
+public class LaserCanSensor {
     private LaserCan lc;
-    private double closeCut = 180; // TODO: Measure actual value
+    private double closeCut = 180;
 
     public LaserCanSensor(int ID) {
         lc = new LaserCan(ID);
@@ -31,6 +31,6 @@ public class LaserCanSensor {
         } else {
             return false;
         }
-       
+
     }
 }

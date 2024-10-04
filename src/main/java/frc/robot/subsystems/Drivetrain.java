@@ -65,14 +65,15 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     private final SwerveRequest.ApplyChassisSpeeds AutoRequest = new SwerveRequest.ApplyChassisSpeeds();
 
     private SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
-            .withDeadband(DriveConstants.MaxSpeed * 0.1).withRotationalDeadband(DriveConstants.MaxAngularRate * 0.1) 
+            .withDeadband(DriveConstants.MaxSpeed * 0.1).withRotationalDeadband(DriveConstants.MaxAngularRate * 0.1)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     private SwerveRequest.FieldCentricFacingAngle fieldCentricFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
-            .withDeadband(DriveConstants.MaxSpeed * 0.1).withRotationalDeadband(DriveConstants.MaxAngularRate * 0.1) 
+            .withDeadband(DriveConstants.MaxSpeed * 0.1).withRotationalDeadband(DriveConstants.MaxAngularRate * 0.1)
             .withDriveRequestType(DriveRequestType.Velocity);
 
-    //private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+    // private final SwerveRequest.SwerveDriveBrake brake = new
+    // SwerveRequest.SwerveDriveBrake();
 
     public Drivetrain(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
         super(driveTrainConstants, modules);
@@ -94,13 +95,16 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
                 () -> this.getState().Pose, // Supplier of current robot pose
                 this::seedFieldRelative, // Consumer for seeding pose against auto
                 this::getCurrentRobotChassisSpeeds,
-                (speeds) -> this.setControl(AutoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the robot
+                (speeds) -> this.setControl(AutoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the
+                                                                             // robot
                 new HolonomicPathFollowerConfig(new PIDConstants(5, 0, 0.08),
                         new PIDConstants(5, 0, 0),
                         TunerConstants.kSpeedAt12VoltsMps,
                         driveBaseRadius,
                         new ReplanningConfig()),
-                () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, // Assume the path needs to be flipped for Red vs Blue, this is normally the case
+                () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, // Assume the path needs to be
+                                                                                         // flipped for Red vs Blue,
+                                                                                         // this is normally the case
                 this); // Subsystem for requirements
     }
 
@@ -139,15 +143,15 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
     @Override
     public void periodic() {
-        
+
         if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
             controllerX = -controllerX;
             controllerY = -controllerY;
         }
 
-        RobotState.getInstance().setRobotPose(getState().Pose); //Tell RobotState current pose
-        RobotState.getInstance().setRobotSpeeds(getCurrentRobotChassisSpeeds()); //Tell RobotState current speeds
-        
+        RobotState.getInstance().setRobotPose(getState().Pose); // Tell RobotState current pose
+        RobotState.getInstance().setRobotSpeeds(getCurrentRobotChassisSpeeds()); // Tell RobotState current speeds
+
         target = RobotState.getInstance().getTarget();
 
         switch (target) {
@@ -168,27 +172,28 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
                 break;
         }
 
-         switch (state) {
+        switch (state) {
             case TELEOP -> {
                 this.setControl(fieldCentric
-                .withVelocityX(controllerX * DriveConstants.MaxSpeed)
-                .withVelocityY(controllerY * DriveConstants.MaxSpeed)
-                .withRotationalRate(controllerOmega * DriveConstants.MaxAngularRate));
+                        .withVelocityX(controllerX * DriveConstants.MaxSpeed)
+                        .withVelocityY(controllerY * DriveConstants.MaxSpeed)
+                        .withRotationalRate(controllerOmega * DriveConstants.MaxAngularRate));
             }
             case HEADING -> {
                 this.setControl(fieldCentricFacingAngle
-                .withVelocityX(controllerX * DriveConstants.MaxSpeed)
-                .withVelocityY(controllerY * DriveConstants.MaxSpeed)
-                .withTargetDirection(RobotState.getInstance().getAngleToTarget()));
+                        .withVelocityX(controllerX * DriveConstants.MaxSpeed)
+                        .withVelocityY(controllerY * DriveConstants.MaxSpeed)
+                        .withTargetDirection(RobotState.getInstance().getAngleToTarget()));
             }
             case CARDINAL -> {
                 this.setControl(fieldCentricFacingAngle
-                .withVelocityX(controllerX * DriveConstants.MaxSpeed)
-                .withVelocityY(controllerY * DriveConstants.MaxSpeed)
-                .withTargetDirection(RobotState.getInstance().getAngleOfTarget()));
+                        .withVelocityX(controllerX * DriveConstants.MaxSpeed)
+                        .withVelocityY(controllerY * DriveConstants.MaxSpeed)
+                        .withTargetDirection(RobotState.getInstance().getAngleOfTarget()));
             }
-            default -> {}
-        } 
+            default -> {
+            }
+        }
 
     }
 
@@ -199,7 +204,8 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
             fieldCentricFacingAngle.HeadingController.setPID(5, 0, 0);
         }
         fieldCentricFacingAngle.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
-        fieldCentricFacingAngle.HeadingController.setTolerance(Units.degreesToRadians(.5)); //TODO: confirm this tolerance
+        fieldCentricFacingAngle.HeadingController.setTolerance(Units.degreesToRadians(.5)); // TODO: confirm this
+                                                                                            // tolerance
     }
 
     public void setControllerInput(double controllerX, double controllerY, double controllerOmega) {

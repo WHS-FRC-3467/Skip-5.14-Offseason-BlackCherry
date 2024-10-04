@@ -10,6 +10,8 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.util.Units;
 import frc.robot.RobotState;
@@ -23,68 +25,68 @@ import lombok.Setter;
 
 public class ShooterJoint extends SubsystemBase {
 
-  @RequiredArgsConstructor
-  @Getter
-  public enum State {
-    STOW(() -> 20.0),
-    SUBWOOFER(() -> 44.0),
-    CLIMBCLEARANCE(() -> 40.0),
-    DYNAMIC(() -> RobotState.getInstance().getShotAngle()),
-    TUNING(() -> RobotState.getInstance().getShooterTuningAngle().get());
+    @RequiredArgsConstructor
+    @Getter
+    public enum State {
+        STOW(() -> 20.0),
+        SUBWOOFER(() -> 44.0),
+        CLIMBCLEARANCE(() -> 40.0),
+        DYNAMIC(() -> RobotState.getInstance().getShotAngle()),
+        TUNING(() -> RobotState.getInstance().getShooterTuningAngle().get());
 
-    private final DoubleSupplier outputSupplier;
+        private final DoubleSupplier outputSupplier;
 
-    private double getStateOutput() {
-      return Units.degreesToRotations(outputSupplier.getAsDouble());
-    }
-  }
-
-  @Getter
-  @Setter
-  private State state = State.STOW;
-
-  private Debouncer m_debounce = new Debouncer(.1);
-
-  TalonFX m_motor = new TalonFX(ShooterJointConstants.ID_MOTOR);
-  CANcoder m_encoder = new CANcoder(ShooterJointConstants.ID_ENCODER);
-
-  private final static MotionMagicVoltage m_magic = new MotionMagicVoltage(0);
-  private final static PositionVoltage m_position = new PositionVoltage(0);
-  //private final NeutralOut m_neutral = new NeutralOut();
-
-  public ShooterJoint() {
-    m_encoder.getConfigurator().apply(ShooterJointConstants.encoderConfig());
-    m_motor.getConfigurator().apply(ShooterJointConstants.motorConfig());
-  }
-
-  @Override
-  public void periodic() {
-    if (state == State.DYNAMIC) {
-      m_motor.setControl(m_position.withPosition(state.getStateOutput()).withSlot(0));
-    } else {
-      m_motor.setControl(m_magic.withPosition(state.getStateOutput()).withSlot(1));
+        private double getStateOutput() {
+            return Units.degreesToRotations(outputSupplier.getAsDouble());
+        }
     }
 
-    displayInfo(true);
-  }
+    @Getter
+    @Setter
+    private State state = State.STOW;
 
-  public boolean atGoal() {
-    return m_debounce.calculate(Math.abs(state.getStateOutput() - m_motor.getPosition().getValueAsDouble()) < ShooterJointConstants.tolerance);
-  }
+    private Debouncer m_debounce = new Debouncer(.1);
 
-  public Command setStateCommand(State state) {
-    return startEnd(() -> this.state = state, () -> this.state = State.STOW);
-  }
+    TalonFX m_motor = new TalonFX(ShooterJointConstants.ID_MOTOR);
+    CANcoder m_encoder = new CANcoder(ShooterJointConstants.ID_ENCODER);
 
-  private void displayInfo(boolean debug) {
-    if (debug) {
-      SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());
-      SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint ", state.getStateOutput());
-      SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", m_motor.getPosition().getValueAsDouble());
-      SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output deg ", Units.rotationsToDegrees(m_motor.getPosition().getValueAsDouble()));
-      SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw", m_motor.getSupplyCurrent().getValueAsDouble());
-      SmartDashboard.putBoolean(this.getClass().getSimpleName() + " atGoal", atGoal());
+    private final static MotionMagicVoltage m_magic = new MotionMagicVoltage(0);
+    private final static PositionVoltage m_position = new PositionVoltage(0);
+    // private final NeutralOut m_neutral = new NeutralOut();
+
+    public ShooterJoint() {
+        m_encoder.getConfigurator().apply(ShooterJointConstants.encoderConfig());
+        m_motor.getConfigurator().apply(ShooterJointConstants.motorConfig());
     }
 
-  }
+    @Override
+    public void periodic() {
+        if (state == State.DYNAMIC) {
+            m_motor.setControl(m_position.withPosition(state.getStateOutput()).withSlot(0));
+        } else {
+            m_motor.setControl(m_magic.withPosition(state.getStateOutput()).withSlot(1));
+        }
+
+        displayInfo(true);
+    }
+
+    public boolean atGoal() {
+        return m_debounce.calculate(MathUtil.isNear(state.getStateOutput(), m_motor.getPosition().getValueAsDouble(), ShooterJointConstants.tolerance));
+    }
+
+    public Command setStateCommand(State state) {
+        return startEnd(() -> this.state = state, () -> this.state = State.STOW);
+    }
+
+    private void displayInfo(boolean debug) {
+        if (debug) {
+            SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint ", state.getStateOutput());
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", m_motor.getPosition().getValueAsDouble());
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output deg ", Units.rotationsToDegrees(m_motor.getPosition().getValueAsDouble()));
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw", m_motor.getSupplyCurrent().getValueAsDouble());
+            SmartDashboard.putBoolean(this.getClass().getSimpleName() + " atGoal", atGoal());
+        }
+
+    }
 }

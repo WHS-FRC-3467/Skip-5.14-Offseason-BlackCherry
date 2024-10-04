@@ -25,5 +25,7 @@
       }
     },
   ],
-  "java.test.defaultConfig": "WPIlibUnitTests"
+  "java.test.defaultConfig": "WPIlibUnitTests",
+  "editor.wordWrapColumn": 160,
+  "editor.wordWrap": "bounded"
 }
