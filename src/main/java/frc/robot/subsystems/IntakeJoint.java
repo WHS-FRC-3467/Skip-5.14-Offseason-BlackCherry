@@ -32,7 +32,7 @@ public class IntakeJoint extends SubsystemBase {
     public enum State {
         STOW(0.0),
         HOMING(0.0),
-        INTAKE(-0.27);
+        INTAKE(-0.28);
 
         private final double output;
     }
@@ -48,7 +48,7 @@ public class IntakeJoint extends SubsystemBase {
     private final DutyCycleOut m_duty = new DutyCycleOut(0.0);
     private final NeutralOut m_neutral = new NeutralOut();
 
-    private boolean hasHomed = false;
+    public boolean hasHomed = false;
 
     /** Creates a new ComplexSubsystem. */
     public IntakeJoint() {
@@ -65,9 +65,10 @@ public class IntakeJoint extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (state == State.STOW && atGoal()) {
+/*         if (state == State.STOW && atGoal()) {
             m_motor.setControl(m_neutral);
-        } else if (state == State.HOMING) {
+        } else  */
+        if (state == State.HOMING) {
             m_motor.setControl(m_duty.withOutput(0.05));
 
             if (m_motor.getSupplyCurrent().getValueAsDouble() > IntakeJointConstants.homingCurrent) {

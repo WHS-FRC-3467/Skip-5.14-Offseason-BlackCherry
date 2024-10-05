@@ -38,7 +38,7 @@ public class Constants {
         public static final int ID_LEADER = 25;
         public static final int ID_FOLLOWER = 26;
 
-        public static final double tolerance = .25;
+        public static final double tolerance = 1;
 
         public static TalonFXConfiguration motorConfig() {
             TalonFXConfiguration m_configuration = new TalonFXConfiguration();
@@ -93,10 +93,10 @@ public class Constants {
             m_configuration.Voltage.PeakReverseVoltage = -12.0;
 
             m_configuration.CurrentLimits.SupplyCurrentLimit = 20;
-            m_configuration.CurrentLimits.SupplyCurrentThreshold = 40;
+            m_configuration.CurrentLimits.SupplyCurrentThreshold = 60;
             m_configuration.CurrentLimits.SupplyTimeThreshold = 0.1;
             m_configuration.CurrentLimits.SupplyCurrentLimitEnable = true;
-            m_configuration.CurrentLimits.StatorCurrentLimit = 70;
+            m_configuration.CurrentLimits.StatorCurrentLimit = 140;
             m_configuration.CurrentLimits.StatorCurrentLimitEnable = true;
 
             return m_configuration;
@@ -153,8 +153,8 @@ public class Constants {
         public static CANcoderConfiguration encoderConfig() {
             CANcoderConfiguration m_configuration = new CANcoderConfiguration();
             m_configuration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
-            //m_configuration.MagnetSensor.MagnetOffset = //TODO: Copy setting from phoenix tuner
-            //m_configuration.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+            m_configuration.MagnetSensor.MagnetOffset = -0.145751953125 - 1;
+            m_configuration.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
 
             return m_configuration;
         }
@@ -241,7 +241,7 @@ public class Constants {
             m_configuration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
             m_configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
             m_configuration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-            m_configuration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Units.degreesToRotations(-100);
+            m_configuration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.3;
             m_configuration.Voltage.PeakForwardVoltage = 12.0;
             m_configuration.Voltage.PeakReverseVoltage = -12.0;
 
@@ -256,12 +256,12 @@ public class Constants {
             m_configuration.Slot1.kS = 0; // output to overcome static friction (output)
             m_configuration.Slot1.kV = 0; // output per unit of requested velocity (output/rps)
             m_configuration.Slot1.kA = 0; // unused, as there is no target acceleration
-            m_configuration.Slot1.kP = 20; // output per unit of error in position (output/rotation)
+            m_configuration.Slot1.kP = 100; // output per unit of error in position (output/rotation)
             m_configuration.Slot1.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
             m_configuration.Slot1.kD = 0; // output per unit of error derivative in position (output/rps)
 
-            m_configuration.MotionMagic.MotionMagicCruiseVelocity = 5;
-            m_configuration.MotionMagic.MotionMagicAcceleration = 50;
+            m_configuration.MotionMagic.MotionMagicCruiseVelocity = 50;
+            m_configuration.MotionMagic.MotionMagicAcceleration = 500;
             m_configuration.MotionMagic.MotionMagicJerk = 0;
 
             m_configuration.CurrentLimits.SupplyCurrentLimit = 20;
@@ -310,7 +310,7 @@ public class Constants {
             m_configuration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
             m_configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
             m_configuration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-            m_configuration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 34;
+            m_configuration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 33.5;
             m_configuration.Voltage.PeakForwardVoltage = 12.0;
             m_configuration.Voltage.PeakReverseVoltage = -12.0;
 

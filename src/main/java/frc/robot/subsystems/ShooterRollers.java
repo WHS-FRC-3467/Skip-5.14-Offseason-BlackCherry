@@ -27,7 +27,7 @@ public class ShooterRollers extends SubsystemBase {
     public enum State { // RPS
         OFF(() -> 0.0),
         PASSTHROUGH(() -> 10.0), // Poop & Scoot
-        SUBWOOFER(() -> 40.0),
+        SUBWOOFER(() -> 35.0),
         SPEAKER(() -> 45.0), // Default
         FEED(() -> 28.0),
         REVERSE(() -> -20.0); // Hopefully never have to use this irl
