@@ -55,6 +55,8 @@ public class RobotContainer {
 	private final Trigger readyToClimb = new Trigger(
 			() -> (shooterJoint.getState() == ShooterJoint.State.CLIMBCLEARANCE) && shooterJoint.atGoal())
 			.and(readyToAmp);
+	private final Trigger atClimb = new Trigger(
+	        () -> (climberJoint.getState() == ClimberJoint.State.CLIMB) && climberJoint.atGoal());
 
 	private SendableChooser<Command> autoChooser;
 
@@ -133,7 +135,11 @@ public class RobotContainer {
 						elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE),
 						Commands.waitUntil(readyToClimb)
 								.andThen(climberJoint.setStateCommand(
-										ClimberJoint.State.CLIMB))));
+										ClimberJoint.State.CLIMB)),
+						Commands.waitUntil(atClimb)
+								.andThen(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE))));
+
+									
 
 		// Score
 		joystick.rightTrigger().whileTrue(
