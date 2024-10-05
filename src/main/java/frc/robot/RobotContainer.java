@@ -176,7 +176,13 @@ public class RobotContainer {
 		SmartDashboard.putData("Shooter Tuning Angle",Commands.parallel(shooterJoint.setStateCommand(ShooterJoint.State.TUNING)));
 		SmartDashboard.putData("Shooter Climber Clearance",Commands.parallel(shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE)));
 		SmartDashboard.putData("Shooter Roller Speaker",Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER)));
-		SmartDashboard.putBoolean("BB1", noteAmp.getAsBoolean());
+		SmartDashboard.putBoolean("Beam Break 1", noteAmp.getAsBoolean());
+		SmartDashboard.putBoolean("Lasercan 1", LC1.getAsBoolean());
+		SmartDashboard.putBoolean("Lasercan 2", LC2.getAsBoolean());
+		SmartDashboard.putBoolean("readyToScore",readyToShoot.getAsBoolean());
+		SmartDashboard.putBoolean("readyToAmp",readyToAmp.getAsBoolean());
+		SmartDashboard.putBoolean("readyToClimb",readyToClimb.getAsBoolean());
+
 
 	}
 
