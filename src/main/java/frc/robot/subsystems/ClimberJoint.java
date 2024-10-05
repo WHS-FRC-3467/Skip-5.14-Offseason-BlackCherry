@@ -49,6 +49,8 @@ public class ClimberJoint extends SubsystemBase {
 
     @Override
     public void periodic() {
+
+
         if (state == State.STOW && atGoal()) {
             m_motor.setControl(m_neutral);
 
