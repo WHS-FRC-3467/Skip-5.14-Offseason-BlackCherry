@@ -38,6 +38,8 @@ public class RobotContainer {
 	private final LaserCanSensor lc1 = new LaserCanSensor(SensorConstants.ID_LC1);
 	private final LaserCanSensor lc2 = new LaserCanSensor(SensorConstants.ID_LC2);
 
+	private boolean climbRequested = false;
+
 	private final Debouncer ampDebouncer = new Debouncer(.25, DebounceType.kBoth);
 	private final DigitalInput bb1 = new DigitalInput(SensorConstants.PORT_BB1);
 
@@ -55,6 +57,10 @@ public class RobotContainer {
 			.and(readyToAmp);
 	private final Trigger atClimb = new Trigger(
 	        () -> (climberJoint.getState() == ClimberJoint.State.CLIMB) && climberJoint.atGoal());
+	private final Trigger climbRequest = new Trigger(
+			() -> (climbRequested));
+	private final Trigger nextStep = new Trigger(
+			joystick.rightBumper());
 
 	private SendableChooser<Command> autoChooser;
 
@@ -127,7 +133,8 @@ public class RobotContainer {
 						shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
 
 		// Climb
-		joystick.start().whileTrue(
+		Commands.waitUntil(nextStep);
+		climbRequest.whileTrue(
 				Commands.parallel(
 						shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
 						elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE),
