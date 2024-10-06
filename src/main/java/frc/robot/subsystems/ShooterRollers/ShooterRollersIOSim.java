@@ -31,13 +31,7 @@ public class ShooterRollersIOSim implements ShooterRollersIO {
         public void updateInputs(ShooterRollersIOInputs inputs) {
             topSim.update(0.02);
             bottomSim.update(0.02);
-            // Control to setpoint
-            if (bottomSetpointRpm != null && topSetpointRpm != null) {
-                runVolts(
-                    bottomController.calculate(bottomSim.getAngularVelocityRPM(), bottomSetpointRpm)
-                        + bottomFeedForward,
-                    topController.calculate(topSim.getAngularVelocityRPM(), topSetpointRpm)
-                        + topFeedforward);
-              }
+
+            
         }
 }
