@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.ShooterRollers;
 
 import java.util.function.DoubleSupplier;
 
@@ -44,8 +44,8 @@ public class ShooterRollers extends SubsystemBase {
     private State state = State.OFF;
 
     // Initialize motor controllers
-    TalonFX m_motor = new TalonFX(ShooterRollersConstants.ID_LEADER);
-    TalonFX m_follower = new TalonFX(ShooterRollersConstants.ID_FOLLOWER); 
+    TalonFX m_motor = new TalonFX(ShooterRollersConstants.ID_LEADER);   // Can we change this to be Bottom Motor? MJW
+    TalonFX m_follower = new TalonFX(ShooterRollersConstants.ID_FOLLOWER); // Can we change this to be Top Motor? MJW
     
     private final VelocityVoltage m_velocity = new VelocityVoltage(0).withSlot(1);
     private final NeutralOut m_neutral = new NeutralOut();
