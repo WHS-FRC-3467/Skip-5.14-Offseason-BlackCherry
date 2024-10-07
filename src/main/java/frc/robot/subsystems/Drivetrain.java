@@ -99,13 +99,13 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
             () -> this.getState().Pose, // Supplier
             this::seedFieldRelative, // Reset Pose
             this::getCurrentRobotChassisSpeeds, //Robot Relative Speed Supplier
-            (speeds) -> this.setControl(AutoRequest.withSpeeds(speeds)),
-            new PPHolonomicDriveController(new PIDConstants(5, 0, 0.08),
-                new PIDConstants(5, 0, 0)), // Controller
+            (speeds) -> this.setControl(AutoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the robot
+            new PPHolonomicDriveController(new PIDConstants(5, 0, 0.08), // Translation PID
+                new PIDConstants(5, 0, 0)), // Rotational PID
             null, //Robot Config
             () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, //Alliance Flip
-            this
-        );
+            this);  // Subsystem for requirements
+
         // AutoBuilder.configure(
         //         () -> this.getState().Pose, // Supplier of current robot pose
         //         this::seedFieldRelative, // Consumer for seeding pose against auto
