@@ -40,7 +40,7 @@ public class ClimberJoint extends SubsystemBase {
     private final DutyCycleOut m_duty = new DutyCycleOut(0.0);
     private final NeutralOut m_neutral = new NeutralOut();
 
-    private boolean hasHomed = false;
+    public boolean hasHomed = false;
     private final SendableChooser<State> stateChooser = new SendableChooser<>();
 
     public ClimberJoint() {

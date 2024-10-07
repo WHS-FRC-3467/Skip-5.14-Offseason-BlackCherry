@@ -95,22 +95,22 @@ public class RobotContainer {
 						shooterJoint.setStateCommand(ShooterJoint.State.SUBWOOFER)));
 
 		// Amp
-        joystick.b().whileTrue(
-                Commands.parallel(
-                        robotState.setTargetCommand(RobotState.TARGET.AMP),
-                        elevatorJoint.setStateCommand(ElevatorJoint.State.STOW),
-                        Commands.waitUntil(elevatorJoint::atGoal)
-                                .andThen(Commands.deadline(
-                                        Commands.waitUntil(LC2.negate()),
-                                        intakeRollers.setStateCommand(IntakeRollers.State.EJECT),
-                                        ySplitRollers.setStateCommand(YSplitRollers.State.SHUFFLE)))
-                                .andThen(Commands.deadline(
-                                        Commands.waitUntil(noteAmp),
-                                        ySplitRollers.setStateCommand(YSplitRollers.State.AMP),
-                                        intakeRollers.setStateCommand(IntakeRollers.State.INTAKE),
-                                        elevatorRollers.setStateCommand(
-                                                ElevatorRollers.State.INTAKE))))
-                        .withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+		joystick.b().whileTrue(
+				Commands.parallel(
+						robotState.setTargetCommand(RobotState.TARGET.AMP),
+						elevatorJoint.setStateCommand(ElevatorJoint.State.STOW),
+						Commands.waitUntil(elevatorJoint::atGoal)
+								.andThen(Commands.deadline(
+										Commands.waitUntil(LC2.negate()),
+										intakeRollers.setStateCommand(IntakeRollers.State.EJECT),
+										ySplitRollers.setStateCommand(YSplitRollers.State.SHUFFLE)))
+								.andThen(Commands.deadline(
+										Commands.waitUntil(noteAmp),
+										ySplitRollers.setStateCommand(YSplitRollers.State.AMP),
+										intakeRollers.setStateCommand(IntakeRollers.State.INTAKE),
+										elevatorRollers.setStateCommand(
+												ElevatorRollers.State.INTAKE))))
+						.withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
 		// Feed
 		joystick.y().whileTrue(
@@ -139,30 +139,37 @@ public class RobotContainer {
 						Commands.waitUntil(atClimb)
 								.andThen(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE))));
 
-									
-
 		// Score
 		joystick.rightTrigger().whileTrue(
-				//Commands.either(
-						Commands.either(
-								Commands.deadline(
-										Commands.waitUntil(noteAmp.negate()),
-										elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE),
-										Commands.waitUntil(readyToAmp)
-												.andThen(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE))),
-								Commands.deadline(
-										Commands.waitUntil(noteStored.negate()),
-										Commands.waitUntil(readyToShoot)
-												.andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER))),
-								noteAmp)//,
-        );
-/* 						Commands.deadline(
+				// Commands.either(
+				Commands.either(
+						Commands.deadline(
 								Commands.waitUntil(noteAmp.negate()),
-								elevatorRollers.setStateCommand(
-										ElevatorRollers.State.SCORE)),
-						() -> climberJoint.getState() == ClimberJoint.State.CLIMB)); */
+								elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE),
+								Commands.waitUntil(readyToAmp)
+										.andThen(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE))),
+						Commands.deadline(
+								Commands.waitUntil(noteStored.negate()),
+								Commands.waitUntil(readyToShoot)
+										.andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER))),
+						noteAmp));
 
-        //joystick.povLeft().whileTrue(Commands.deadline(Commands.waitUntil(() -> intakeJoint.hasHomed), null));
+
+		joystick.povLeft().whileTrue(
+				Commands.parallel(
+						intakeJoint.setStateCommand(IntakeJoint.State.HOMING).until(() -> intakeJoint.hasHomed),
+						elevatorJoint.setStateCommand(ElevatorJoint.State.HOMING).until(() -> elevatorJoint.hasHomed),
+						Commands.deadline(
+								Commands.waitUntil(() -> climberJoint.hasHomed),
+								shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
+								Commands.waitUntil(() -> shooterJoint.getState() == ShooterJoint.State.CLIMBCLEARANCE && shooterJoint.atGoal())
+										.andThen(climberJoint.setStateCommand(ClimberJoint.State.HOMING)))));
+
+		joystick.povRight().whileTrue(
+				Commands.parallel(
+						ySplitRollers.setStateCommand(YSplitRollers.State.REVSHOOTER),
+						intakeRollers.setStateCommand(IntakeRollers.State.EJECT)));
+
 
 	}
 
@@ -196,7 +203,6 @@ public class RobotContainer {
 		SmartDashboard.putBoolean("readyToClimb",readyToClimb.getAsBoolean());
         SmartDashboard.putBoolean("Note in YSplit", noteStored.getAsBoolean());
         SmartDashboard.putBoolean("Note in Amp", noteAmp.getAsBoolean());
-        
     }
 
 	public RobotContainer() {
