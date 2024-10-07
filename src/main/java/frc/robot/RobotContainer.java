@@ -166,8 +166,25 @@ public class RobotContainer {
 
 	}
 
+	// Register Named Commands for use in pathplanner
 	private void registerNamedCommands() {
 		NamedCommands.registerCommand("ShootSpeaker", null);
+		// Intake
+		NamedCommands.registerCommand("Intake",
+			Commands.parallel(
+					robotState.setTargetCommand(RobotState.TARGET.NOTE),
+					intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
+					Commands.waitUntil(intakeJoint::atGoal)
+						.andThen(Commands.deadline(
+							Commands.waitUntil(LC1),
+							intakeRollers.setStateCommand(
+								IntakeRollers.State.INTAKE),
+							ySplitRollers.setStateCommand(
+								YSplitRollers.State.INTAKE)))
+						.andThen(Commands.deadline(
+							Commands.waitUntil(LC2),
+							ySplitRollers.setStateCommand(
+								YSplitRollers.State.SLOWINTAKE)))));
 	}
 
 	private void configureDebugCommands() {
