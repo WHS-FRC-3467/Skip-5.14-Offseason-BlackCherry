@@ -32,7 +32,7 @@ public class IntakeJoint extends SubsystemBase {
     public enum State {
         STOW(0.0),
         HOMING(0.0),
-        INTAKE(-0.3);
+        INTAKE(-0.31);
 
         private final double output;
     }
