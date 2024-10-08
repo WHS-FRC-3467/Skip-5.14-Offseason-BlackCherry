@@ -42,17 +42,31 @@ public class RobotContainer {
 	private final Debouncer ampDebouncer = new Debouncer(.25, DebounceType.kBoth);
 	private final DigitalInput bb1 = new DigitalInput(SensorConstants.PORT_BB1);
 
-	private final Trigger LC1 = new Trigger(() -> lc1.isClose());
-	private final Trigger LC2 = new Trigger(() -> lc2.isClose());
-    private final Trigger BB1 = new Trigger(() -> !bb1.get());
-	private final Trigger noteStored = new Trigger(() -> (lc1.isClose() || lc2.isClose()));
-	private final Trigger noteAmp = new Trigger(() -> ampDebouncer.calculate(!bb1.get()));
+	private Trigger LC1 = new Trigger(() -> lc1.isClose());
+	private Trigger LC2 = new Trigger(() -> lc2.isClose());
+    private Trigger BB1 = new Trigger(() -> !bb1.get());
+	private Trigger noteStored = new Trigger(() -> (lc1.isClose() || lc2.isClose()));
+	private Trigger noteAmp = new Trigger(() -> ampDebouncer.calculate(!bb1.get()));
 
-	private final Trigger readyToShoot = new Trigger(() -> (shooterRollers.getState() != ShooterRollers.State.OFF) && shooterRollers.atGoal() && shooterJoint.atGoal());
-	private final Trigger readyToAmp = new Trigger(() -> (elevatorJoint.getState() == ElevatorJoint.State.SCORE) && elevatorJoint.atGoal());
-	private final Trigger readyToClimb = new Trigger(() -> (shooterJoint.getState() == ShooterJoint.State.CLIMBCLEARANCE) && shooterJoint.atGoal())
-	.and(readyToAmp);
+	private Trigger readyToShoot = new Trigger(
+			() -> (shooterRollers.getState() != ShooterRollers.State.OFF) && shooterRollers.atGoal() &&
+					(shooterJoint.getState() != ShooterJoint.State.STOW) && shooterJoint.atGoal());
 
+  	private Trigger readyToAmp = new Trigger(
+			() -> (elevatorJoint.getState() == ElevatorJoint.State.SCORE) && elevatorJoint.atGoal()); 
+
+	private Trigger readyToClimb = new Trigger(
+			() -> (shooterJoint.getState() == ShooterJoint.State.CLIMBCLEARANCE) && shooterJoint.atGoal())
+			.and(readyToAmp);
+			
+	private Trigger readyToTrap = new Trigger(
+			() -> (elevatorJoint.getState() == ElevatorJoint.State.TRAP) && elevatorJoint.atGoal() &&
+					(climberJoint.getState() == ClimberJoint.State.STOW) && climberJoint.atGoal());
+
+	private Trigger scoreRequested = joystick.rightTrigger();
+	private Trigger nextStep = joystick.rightBumper();
+	private boolean climbRequested = false;
+	private Trigger climbRequest = new Trigger(() -> climbRequested);
 
 
 	private SendableChooser<Command> autoChooser;
@@ -125,31 +139,38 @@ public class RobotContainer {
 						shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
 						shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
 
-		// Climb
-		joystick.leftBumper().whileTrue(
+		// Climb Request (toggle)
+		joystick.back().onTrue(Commands.runOnce(() -> climbRequested = !climbRequested));
+
+		//Climb Request is true, prep elevator and shooter
+		climbRequest.whileTrue(
 				Commands.parallel(
 						shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
-						elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE)));
+						elevatorJoint.setStateCommand(ElevatorJoint.State.TRAP),
+						Commands.waitUntil(nextStep)));
 
-		joystick.rightBumper().whileTrue(Commands.parallel(climberJoint.setStateCommand(ClimberJoint.State.CLIMB)));
+		joystick.start().whileTrue(Commands.parallel(climberJoint.setStateCommand(ClimberJoint.State.CLIMB)));
 
-		joystick.start().whileTrue(Commands.parallel(ySplitRollers.setStateCommand(YSplitRollers.State.AMP)));
+		//Score Shooter
+		scoreRequested.and(noteAmp.negate()).whileTrue(
+				Commands.deadline(
+						Commands.waitUntil(noteStored.negate()),
+						Commands.waitUntil(readyToShoot)
+								.andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER))));
+		//Score Amp
+		scoreRequested.and(noteAmp).and(readyToTrap.negate()).whileTrue(
+				Commands.deadline(
+						Commands.waitUntil(noteAmp.negate()),
+						elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE),
+						Commands.waitUntil(readyToAmp)
+								.andThen(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE))));
+		
+		//Score Trap
+		scoreRequested.and(noteAmp).and(readyToTrap).whileTrue(
+			elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE));
+		
 
-		// Score
-		joystick.rightTrigger().whileTrue(
-				Commands.either(
-						Commands.deadline(
-								Commands.waitUntil(noteAmp.negate()),
-								elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE),
-								Commands.waitUntil(readyToAmp)
-										.andThen(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE))),
-						Commands.deadline(
-								Commands.waitUntil(noteStored.negate()),
-								Commands.waitUntil(readyToShoot)
-										.andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER))),
-						noteAmp));
-
-
+		//Home Mechanisms
 		joystick.povLeft().whileTrue(
 				Commands.parallel(
 						intakeJoint.setStateCommand(IntakeJoint.State.HOMING).until(() -> intakeJoint.hasHomed),
@@ -159,11 +180,18 @@ public class RobotContainer {
 								shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
 								Commands.waitUntil(() -> shooterJoint.getState() == ShooterJoint.State.CLIMBCLEARANCE && shooterJoint.atGoal())
 										.andThen(climberJoint.setStateCommand(ClimberJoint.State.HOMING)))));
-
+		//Eject
 		joystick.povRight().whileTrue(
 				Commands.parallel(
 						ySplitRollers.setStateCommand(YSplitRollers.State.REVSHOOTER),
 						intakeRollers.setStateCommand(IntakeRollers.State.EJECT)));
+
+		//Un-amp
+		joystick.povDown().whileTrue(
+				Commands.deadline(
+						Commands.waitUntil(LC1),
+						ySplitRollers.setStateCommand(YSplitRollers.State.REVAMP),
+						elevatorRollers.setStateCommand(ElevatorRollers.State.EJECT)));
 
 
 	}
@@ -198,6 +226,7 @@ public class RobotContainer {
 		SmartDashboard.putBoolean("readyToClimb",readyToClimb.getAsBoolean());
         SmartDashboard.putBoolean("Note in YSplit", noteStored.getAsBoolean());
         SmartDashboard.putBoolean("Note in Amp", noteAmp.getAsBoolean());
+		SmartDashboard.putBoolean("TEST TRIGGER", scoreRequested.getAsBoolean());
     }
 
 	public RobotContainer() {
