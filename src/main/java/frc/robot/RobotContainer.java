@@ -141,7 +141,6 @@ public class RobotContainer {
 
 		// Score
 		joystick.rightTrigger().whileTrue(
-				// Commands.either(
 				Commands.either(
 						Commands.deadline(
 								Commands.waitUntil(noteAmp.negate()),
