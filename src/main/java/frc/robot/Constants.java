@@ -153,7 +153,7 @@ public class Constants {
         public static CANcoderConfiguration encoderConfig() {
             CANcoderConfiguration m_configuration = new CANcoderConfiguration();
             m_configuration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
-            m_configuration.MagnetSensor.MagnetOffset = -0.145751953125 - 1;
+            m_configuration.MagnetSensor.MagnetOffset = -0.145751953125;
             m_configuration.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
 
             return m_configuration;
@@ -241,7 +241,7 @@ public class Constants {
             m_configuration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
             m_configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
             m_configuration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-            m_configuration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.3;
+            m_configuration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.35;
             m_configuration.Voltage.PeakForwardVoltage = 12.0;
             m_configuration.Voltage.PeakReverseVoltage = -12.0;
 
