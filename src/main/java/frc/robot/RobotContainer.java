@@ -39,8 +39,6 @@ public class RobotContainer {
 	private final LaserCanSensor lc1 = new LaserCanSensor(SensorConstants.ID_LC1);
 	private final LaserCanSensor lc2 = new LaserCanSensor(SensorConstants.ID_LC2);
 
-	private boolean climbRequested = false;
-
 	private final Debouncer ampDebouncer = new Debouncer(.25, DebounceType.kBoth);
 	private final DigitalInput bb1 = new DigitalInput(SensorConstants.PORT_BB1);
 
@@ -50,19 +48,12 @@ public class RobotContainer {
 	private final Trigger noteStored = new Trigger(() -> (lc1.isClose() || lc2.isClose()));
 	private final Trigger noteAmp = new Trigger(() -> ampDebouncer.calculate(!bb1.get()));
 
-	private final Trigger readyToShoot = new Trigger(() -> (shooterRollers.getState() != ShooterRollers.State.OFF)
-			&& shooterRollers.atGoal() && shooterJoint.atGoal());
-	private final Trigger readyToAmp = new Trigger(
-			() -> (elevatorJoint.getState() == ElevatorJoint.State.SCORE) && elevatorJoint.atGoal());
-	private final Trigger readyToClimb = new Trigger(
-			() -> (shooterJoint.getState() == ShooterJoint.State.CLIMBCLEARANCE) && shooterJoint.atGoal())
-			.and(readyToAmp);
-	private final Trigger atClimb = new Trigger(
-	        () -> (climberJoint.getState() == ClimberJoint.State.CLIMB) && climberJoint.atGoal());
-	private final Trigger climbRequest = new Trigger(
-			() -> (climbRequested));
-	private final Trigger nextStep = new Trigger(
-			joystick.rightBumper());
+	private final Trigger readyToShoot = new Trigger(() -> (shooterRollers.getState() != ShooterRollers.State.OFF) && shooterRollers.atGoal() && shooterJoint.atGoal());
+	private final Trigger readyToAmp = new Trigger(() -> (elevatorJoint.getState() == ElevatorJoint.State.SCORE) && elevatorJoint.atGoal());
+	private final Trigger readyToClimb = new Trigger(() -> (shooterJoint.getState() == ShooterJoint.State.CLIMBCLEARANCE) && shooterJoint.atGoal())
+	.and(readyToAmp);
+
+
 
 	private SendableChooser<Command> autoChooser;
 
@@ -135,16 +126,14 @@ public class RobotContainer {
 						shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
 
 		// Climb
-		Commands.waitUntil(nextStep);
-		climbRequest.whileTrue(
+		joystick.leftBumper().whileTrue(
 				Commands.parallel(
 						shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
-						elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE),
-						Commands.waitUntil(readyToClimb)
-								.andThen(climberJoint.setStateCommand(
-										ClimberJoint.State.CLIMB)),
-						Commands.waitUntil(atClimb)
-								.andThen(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE))));
+						elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE)));
+
+		joystick.rightBumper().whileTrue(Commands.parallel(climberJoint.setStateCommand(ClimberJoint.State.CLIMB)));
+
+		joystick.start().whileTrue(Commands.parallel(ySplitRollers.setStateCommand(YSplitRollers.State.AMP)));
 
 		// Score
 		joystick.rightTrigger().whileTrue(

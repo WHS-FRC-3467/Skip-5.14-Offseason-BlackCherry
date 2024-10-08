@@ -26,7 +26,8 @@ public class ElevatorJoint extends SubsystemBase {
     public enum State {
         STOW(0.0),
         HOMING(0.0),
-        SCORE(30.0);
+        SCORE(30.0),
+        TRAP(30.0);
 
         private final double output;
     }
