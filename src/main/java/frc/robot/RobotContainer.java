@@ -191,10 +191,12 @@ public class RobotContainer {
 
 		//Un-amp
 		joystick.povDown().whileTrue(
+			elevatorJoint.setStateCommand(ElevatorJoint.State.STOW)
+				.andThen(
 				Commands.deadline(
 						Commands.waitUntil(LC1),
 						ySplitRollers.setStateCommand(YSplitRollers.State.REVAMP),
-						elevatorRollers.setStateCommand(ElevatorRollers.State.EJECT)));
+						elevatorRollers.setStateCommand(ElevatorRollers.State.EJECT))));
 
 
 
