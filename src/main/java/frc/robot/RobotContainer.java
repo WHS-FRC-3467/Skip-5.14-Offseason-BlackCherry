@@ -198,9 +198,12 @@ public class RobotContainer {
 						ySplitRollers.setStateCommand(YSplitRollers.State.REVAMP),
 						elevatorRollers.setStateCommand(ElevatorRollers.State.EJECT))));
 
-
-
-
+		//Just Eject from shooter
+		joystick.povLeft().whileTrue(
+			Commands.deadline(
+					Commands.waitUntil(LC2.negate()),
+					shooterRollers.setStateCommand(ShooterRollers.State.REVERSE)
+		));
 	}
 
 	private void registerNamedCommands() {
