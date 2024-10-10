@@ -181,9 +181,13 @@ public class RobotContainer {
 										.andThen(climberJoint.setStateCommand(ClimberJoint.State.HOMING)))));
 		//Eject
 		joystick.povRight().whileTrue(
+			Commands.deadline(
+					Commands.waitUntil(LC2.negate()),
+					shooterRollers.setStateCommand(ShooterRollers.State.REVERSE)
+					.andThen(
 				Commands.parallel(
 						ySplitRollers.setStateCommand(YSplitRollers.State.REVSHOOTER),
-						intakeRollers.setStateCommand(IntakeRollers.State.EJECT)));
+						intakeRollers.setStateCommand(IntakeRollers.State.EJECT)))));
 
 		//Un-amp
 		joystick.povDown().whileTrue(
@@ -191,6 +195,8 @@ public class RobotContainer {
 						Commands.waitUntil(LC1),
 						ySplitRollers.setStateCommand(YSplitRollers.State.REVAMP),
 						elevatorRollers.setStateCommand(ElevatorRollers.State.EJECT)));
+
+
 
 
 	}
