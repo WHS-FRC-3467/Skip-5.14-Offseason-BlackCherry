@@ -28,7 +28,7 @@ public class ShooterJoint extends SubsystemBase {
     @RequiredArgsConstructor
     @Getter
     public enum State {
-        STOW(() -> 20.0),
+        STOW(() -> 35.0),
         SUBWOOFER(() -> 42.0),
         CLIMBCLEARANCE(() -> 40.0),
         DYNAMIC(() -> RobotState.getInstance().getShotAngle()),

@@ -61,20 +61,20 @@ public class Constants {
             m_configuration.Slot1.kS = 0; // output to overcome static friction (output)
             m_configuration.Slot1.kV = 0; // output per unit of requested velocity (output/rps)
             m_configuration.Slot1.kA = 0; // unused, as there is no target acceleration
-            m_configuration.Slot1.kP = 1; // output per unit of error in position (output/rotation)
+            m_configuration.Slot1.kP = 5; // output per unit of error in position (output/rotation)
             m_configuration.Slot1.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
             m_configuration.Slot1.kD = 0; // output per unit of error derivative in position (output/rps)
 
-            m_configuration.MotionMagic.MotionMagicCruiseVelocity = 500;
-            m_configuration.MotionMagic.MotionMagicAcceleration = 50;
+            m_configuration.MotionMagic.MotionMagicCruiseVelocity = 600;
+            m_configuration.MotionMagic.MotionMagicAcceleration = 200;
             m_configuration.MotionMagic.MotionMagicJerk = 0;
 
             m_configuration.CurrentLimits.SupplyCurrentLimit = 20;
             m_configuration.CurrentLimits.SupplyCurrentThreshold = 40;
             m_configuration.CurrentLimits.SupplyTimeThreshold = 0.1;
-            m_configuration.CurrentLimits.SupplyCurrentLimitEnable = true;
+            m_configuration.CurrentLimits.SupplyCurrentLimitEnable = false;
             m_configuration.CurrentLimits.StatorCurrentLimit = 70;
-            m_configuration.CurrentLimits.StatorCurrentLimitEnable = true;
+            m_configuration.CurrentLimits.StatorCurrentLimitEnable = false;
 
             return m_configuration;
         }
@@ -289,9 +289,9 @@ public class Constants {
             m_configuration.CurrentLimits.SupplyCurrentLimit = 20;
             m_configuration.CurrentLimits.SupplyCurrentThreshold = 40;
             m_configuration.CurrentLimits.SupplyTimeThreshold = 0.1;
-            m_configuration.CurrentLimits.SupplyCurrentLimitEnable = true;
+            m_configuration.CurrentLimits.SupplyCurrentLimitEnable = false;
             m_configuration.CurrentLimits.StatorCurrentLimit = 70;
-            m_configuration.CurrentLimits.StatorCurrentLimitEnable = true;
+            m_configuration.CurrentLimits.StatorCurrentLimitEnable = false;
 
             return m_configuration;
         }
@@ -336,9 +336,9 @@ public class Constants {
             m_configuration.CurrentLimits.SupplyCurrentLimit = 20;
             m_configuration.CurrentLimits.SupplyCurrentThreshold = 40;
             m_configuration.CurrentLimits.SupplyTimeThreshold = 0.1;
-            m_configuration.CurrentLimits.SupplyCurrentLimitEnable = true;
+            m_configuration.CurrentLimits.SupplyCurrentLimitEnable = false;
             m_configuration.CurrentLimits.StatorCurrentLimit = 70;
-            m_configuration.CurrentLimits.StatorCurrentLimitEnable = true;
+            m_configuration.CurrentLimits.StatorCurrentLimitEnable = false;
 
             return m_configuration;
         }

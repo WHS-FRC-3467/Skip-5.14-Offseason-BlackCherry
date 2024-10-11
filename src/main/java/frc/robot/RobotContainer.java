@@ -63,9 +63,17 @@ public class RobotContainer {
 					(climberJoint.getState() == ClimberJoint.State.STOW) && climberJoint.atGoal());
 
 	private Trigger scoreRequested = joystick.rightTrigger();
-	private Trigger nextStep = joystick.rightBumper();
+	
 	private boolean climbRequested = false;
 	private Trigger climbRequest = new Trigger(() -> climbRequested);
+
+
+	// Temp MJW 10/10/2024
+	private int climbStep = 0;
+	private Trigger climbStep0 = new Trigger(() -> climbStep == 0);
+	private Trigger climbStep1 = new Trigger(() -> climbStep == 1);
+	private Trigger climbStep2 = new Trigger(() -> climbStep == 2);
+	private Trigger climbStep3 = new Trigger(() -> climbStep >= 3);
 
 
 	private SendableChooser<Command> autoChooser;
@@ -141,23 +149,41 @@ public class RobotContainer {
 		// Climb Request (toggle)
 		joystick.back().onTrue(Commands.runOnce(() -> climbRequested = !climbRequested));
 
-		//Climb Request is true, prep elevator and shooter
-		climbRequest.whileTrue(
+		joystick.start().onTrue(Commands.runOnce(() -> climbStep += 1));
+
+		climbRequest.and(climbStep0).whileTrue(
 				Commands.parallel(
 						shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
-						elevatorJoint.setStateCommand(ElevatorJoint.State.TRAP),
-						Commands.waitUntil(nextStep)));
+						Commands.waitUntil(() -> shooterJoint.atGoal())
+								.andThen(climberJoint.setStateCommand(ClimberJoint.State.PREP))));
 
-		joystick.start().whileTrue(Commands.parallel(climberJoint.setStateCommand(ClimberJoint.State.CLIMB)));
+		climbRequest.and(climbStep1).whileTrue(
+				Commands.parallel(
+						shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
+						climberJoint.setStateCommand(ClimberJoint.State.CLIMB)));
+
+		climbRequest.and(climbStep2).whileTrue(
+				Commands.parallel(
+						climberJoint.setStateCommand(ClimberJoint.State.CLIMB),
+						shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
+						elevatorJoint.setStateCommand(ElevatorJoint.State.TRAP)));
+		
+		climbRequest.and(climbStep3).whileTrue(
+			Commands.parallel(
+					shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
+					elevatorJoint.setStateCommand(ElevatorJoint.State.TRAP),
+					climberJoint.setStateCommand(ClimberJoint.State.STOW)));
+
+		
 
 		//Score Shooter
-		scoreRequested.and(noteAmp.negate()).whileTrue(
+		scoreRequested.and(noteAmp.negate()).and(climbRequest.negate()).whileTrue(
 				Commands.deadline(
 						Commands.waitUntil(noteStored.negate()),
 						Commands.waitUntil(readyToShoot)
 								.andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER))));
 		//Score Amp
-		scoreRequested.and(noteAmp).and(readyToTrap.negate()).whileTrue(
+		scoreRequested.and(noteAmp).and(climbRequest.negate()).whileTrue(
 				Commands.deadline(
 						Commands.waitUntil(noteAmp.negate()),
 						elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE),
@@ -165,11 +191,16 @@ public class RobotContainer {
 								.andThen(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE))));
 		
 		//Score Trap
-		scoreRequested.and(noteAmp).and(readyToTrap).whileTrue(
+		scoreRequested.and(climbRequest).whileTrue(
 			elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE));
 		
+		// Home Mechanisms
+		joystick.povLeft().onTrue(Commands.runOnce(() -> {
+			climberJoint.hasHomed = false;
+			elevatorJoint.hasHomed = false;
+			intakeJoint.hasHomed = false;
+		})); //TODO: NEEDS TESTING
 
-		//Home Mechanisms
 		joystick.povLeft().whileTrue(
 				Commands.parallel(
 						intakeJoint.setStateCommand(IntakeJoint.State.HOMING).until(() -> intakeJoint.hasHomed),
@@ -214,6 +245,8 @@ public class RobotContainer {
 		SmartDashboard.putData("Shooter Climber Clearance",Commands.parallel(shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE)));
 		SmartDashboard.putData("Shooter Roller Speaker",Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER)));
         SmartDashboard.putData("Shooter Roller Sub",Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.SUBWOOFER)));
+
+		SmartDashboard.putData("Reset Climber Index",Commands.runOnce(() -> climbStep = 0));
 	}
 
     public void displaySystemInfo() {

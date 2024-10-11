@@ -27,7 +27,7 @@ public class IntakeJoint extends SubsystemBase {
     @RequiredArgsConstructor
     @Getter
     public enum State {
-        STOW(0.0),
+        STOW(-0.05),
         HOMING(0.0),
         INTAKE(-0.31);
 
@@ -50,7 +50,7 @@ public class IntakeJoint extends SubsystemBase {
     /** Creates a new ComplexSubsystem. */
     public IntakeJoint() {
         m_motor.getConfigurator().apply(IntakeJointConstants.motorConfig());
-        m_motor.setPosition(0.0);
+        m_motor.setPosition(State.STOW.getOutput());
         for (State states : State.values()) {
                 stateChooser.addOption(states.toString(), states);  
         }
