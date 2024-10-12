@@ -15,7 +15,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-public class IntakeRollers extends SubsystemBase {
+public class IntakeRollers extends StateMachineSubsystem {
+    
 
     @RequiredArgsConstructor
     @Getter
@@ -27,6 +28,7 @@ public class IntakeRollers extends SubsystemBase {
         private final double output;
     }
 
+    private RequestType temp = RequestType.DUTY;
     @Getter
     @Setter
     private State state = State.OFF;
@@ -39,6 +41,7 @@ public class IntakeRollers extends SubsystemBase {
 
     /** Creates a new SimpleSubsystem. */
     public IntakeRollers() {
+        super(IntakeRollersConstants.ID_Motor);
         m_motor.getConfigurator().apply(IntakeRollersConstants.motorConfig());
 
     }
@@ -55,9 +58,9 @@ public class IntakeRollers extends SubsystemBase {
         displayInfo(debug);
     }
 
-    public Command setStateCommand(State state) {
+/*     public Command setStateCommand(State state) {
         return startEnd(() -> this.state = state, () -> this.state = State.OFF);
-    }
+    } */
 
     private void displayInfo(boolean debug) {
         if (debug) {
