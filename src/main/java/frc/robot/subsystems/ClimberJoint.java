@@ -64,7 +64,8 @@ public class ClimberJoint extends SubsystemBase {
         if (state == State.STOW && atGoal()) {
             m_motor.setControl(m_neutral);
 
-        } else if (state == State.HOMING) {
+        } else 
+        if (state == State.HOMING) {
             m_motor.setControl(m_duty.withOutput(-0.1));
 
             if (m_motor.getSupplyCurrent().getValueAsDouble() > 2) {

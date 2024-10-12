@@ -85,21 +85,27 @@ public class RobotState {
                 .getAngle().unaryMinus(); // TODO: Test if unaryMinus fixed it
     }
 
-    private double getDistanceToTarget() {
-        return getFuturePose().getDistance(
+    public double getDistanceToTarget() {
+        if (target != TARGET.NONE && target != TARGET.NOTE) {
+            return getFuturePose().getDistance(
                 (DriverStation.getAlliance().get() == Alliance.Blue) ? target.blueTargetPose.getTranslation() : target.redTargetPose.getTranslation());
+
+        } else {
+            return -1;
+        }
+        
     }
 
     private static final InterpolatingDoubleTreeMap speakerAngleMap = new InterpolatingDoubleTreeMap();
     static {
-        speakerAngleMap.put(1.5, 0.00);
-        speakerAngleMap.put(2.0, 0.00);
-        speakerAngleMap.put(2.5, 0.89);
-        speakerAngleMap.put(3.0, 0.00);
-        speakerAngleMap.put(3.5, 0.00);
-        speakerAngleMap.put(4.0, 0.00);
-        speakerAngleMap.put(4.5, 0.00);
-        speakerAngleMap.put(5.0, 0.00);
+        speakerAngleMap.put(1.01, 42.00);
+        speakerAngleMap.put(2.15, 26.00);
+        speakerAngleMap.put(2.56, 22.00);
+        speakerAngleMap.put(3.0, 20.00);
+        speakerAngleMap.put(3.5, 16.00);
+        speakerAngleMap.put(4.02, 14.00);
+        //speakerAngleMap.put(4.5, 0.00);
+        //speakerAngleMap.put(5.0, 0.00);
     }
 
     private static final InterpolatingDoubleTreeMap feedAngleMap = new InterpolatingDoubleTreeMap();

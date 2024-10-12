@@ -17,7 +17,7 @@ public class LaserCanSensor {
         lc = new LaserCan(ID);
         try {
             lc.setRangingMode(LaserCan.RangingMode.SHORT);
-            lc.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
+            lc.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 6, 6));
             lc.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
         } catch (ConfigurationFailedException e) {
             System.out.println("Configuration failed! " + e);

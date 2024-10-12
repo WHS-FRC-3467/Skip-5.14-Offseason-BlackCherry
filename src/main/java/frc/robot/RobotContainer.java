@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.SensorConstants;
+import frc.robot.RobotState.TARGET;
 import frc.robot.Util.LaserCanSensor;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
@@ -40,6 +41,10 @@ public class RobotContainer {
 
 	private final Debouncer ampDebouncer = new Debouncer(.25, DebounceType.kBoth);
 	private final DigitalInput bb1 = new DigitalInput(SensorConstants.PORT_BB1);
+
+	PhotonVision front_left_pv = new PhotonVision(drivetrain, 0);
+	PhotonVision front_right_pv = new PhotonVision(drivetrain, 1);
+	PhotonVision back_right_pv = new PhotonVision(drivetrain, 2);
 
 	private Trigger LC1 = new Trigger(() -> lc1.isClose());
 	private Trigger LC2 = new Trigger(() -> lc2.isClose());
@@ -199,7 +204,7 @@ public class RobotContainer {
 			climberJoint.hasHomed = false;
 			elevatorJoint.hasHomed = false;
 			intakeJoint.hasHomed = false;
-		})); //TODO: NEEDS TESTING
+		}));
 
 		joystick.povLeft().whileTrue(
 				Commands.parallel(
@@ -227,7 +232,36 @@ public class RobotContainer {
 	}
 
 	private void registerNamedCommands() {
-		NamedCommands.registerCommand("ShootSpeaker", null);
+		NamedCommands.registerCommand("Note Collect",
+				Commands.deadline(Commands.waitUntil(LC2),
+						robotState.setTargetCommand(RobotState.TARGET.NOTE),
+						intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
+						Commands.waitUntil(intakeJoint::atGoal)
+								.andThen(Commands.deadline(
+										Commands.waitUntil(LC1),
+										intakeRollers.setStateCommand(
+												IntakeRollers.State.INTAKE),
+										ySplitRollers.setStateCommand(
+												YSplitRollers.State.INTAKE)))
+								.andThen(ySplitRollers.setStateCommand(
+												YSplitRollers.State.SLOWINTAKE))));
+
+		NamedCommands.registerCommand("Subwoofer",
+				Commands.parallel(
+						shooterJoint.setStateCommand(ShooterJoint.State.SUBWOOFER),
+						shooterRollers.setStateCommand(ShooterRollers.State.SUBWOOFER)));
+
+		NamedCommands.registerCommand("Speaker", 
+				Commands.parallel(
+						robotState.setTargetCommand(RobotState.TARGET.SPEAKER),
+						// drivetrain.setStateCommand(Drivetrain.State.HEADING),
+						shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
+						shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
+
+		NamedCommands.registerCommand("Shooting Command",
+				Commands.waitUntil(readyToShoot)
+						.andThen(Commands.deadline(Commands.waitUntil(LC2.negate()),
+								ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER))));
 	}
 
 	private void configureDebugCommands() {
@@ -243,7 +277,8 @@ public class RobotContainer {
         SmartDashboard.putData("Climber Homing",Commands.parallel(climberJoint.setStateCommand(ClimberJoint.State.HOMING)));
 		SmartDashboard.putData("Shooter Tuning Angle",Commands.parallel(shooterJoint.setStateCommand(ShooterJoint.State.TUNING)));
 		SmartDashboard.putData("Shooter Climber Clearance",Commands.parallel(shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE)));
-		SmartDashboard.putData("Shooter Roller Speaker",Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER)));
+		SmartDashboard.putData("Shooter Roller Speaker",Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
+		robotState.setTargetCommand(TARGET.SPEAKER)));
         SmartDashboard.putData("Shooter Roller Sub",Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.SUBWOOFER)));
 
 		SmartDashboard.putData("Reset Climber Index",Commands.runOnce(() -> climbStep = 0));

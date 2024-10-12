@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotState;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -52,6 +54,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         return state;
     }
 
+    public Field2d fieldMap = new Field2d();
     private RobotState.TARGET target = RobotState.TARGET.NONE;
 
     private static final double kSimLoopPeriod = 0.005; // 5 ms
@@ -151,11 +154,15 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
         RobotState.getInstance().setRobotPose(getState().Pose); // Tell RobotState current pose
         RobotState.getInstance().setRobotSpeeds(getCurrentRobotChassisSpeeds()); // Tell RobotState current speeds
+        
+        fieldMap.setRobotPose(getState().Pose);
+        SmartDashboard.putData("Robot Pose Field Map",fieldMap);
+        SmartDashboard.putNumber("Distance To Target", RobotState.getInstance().getDistanceToTarget());
 
         target = RobotState.getInstance().getTarget();
 
         switch (target) {
-            case NONE:
+/*             case NONE:
                 setState(State.TELEOP);
                 break;
             case SPEAKER:
@@ -166,8 +173,8 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
                 break;
             case AMP:
                 setState(State.CARDINAL);
-                break;
-            default:
+                break; */
+            default: 
                 setState(State.TELEOP);
                 break;
         }
