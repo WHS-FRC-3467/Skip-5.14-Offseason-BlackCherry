@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Commands.autoNoteCollect;
+import frc.robot.Commands.intakeNote;
 import frc.robot.Constants.SensorConstants;
 import frc.robot.Util.LaserCanSensor;
 import frc.robot.generated.TunerConstants;
@@ -192,11 +194,39 @@ public class RobotContainer {
 						ySplitRollers.setStateCommand(YSplitRollers.State.REVAMP),
 						elevatorRollers.setStateCommand(ElevatorRollers.State.EJECT)));
 
-
 	}
 
 	private void registerNamedCommands() {
-		NamedCommands.registerCommand("ShootSpeaker", null);
+		NamedCommands.registerCommand("Note Collect",
+				Commands.deadline(Commands.waitUntil(LC2),
+						robotState.setTargetCommand(RobotState.TARGET.NOTE),
+						intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
+						Commands.waitUntil(intakeJoint::atGoal)
+								.andThen(Commands.deadline(
+										Commands.waitUntil(LC1),
+										intakeRollers.setStateCommand(
+												IntakeRollers.State.INTAKE),
+										ySplitRollers.setStateCommand(
+												YSplitRollers.State.INTAKE)))
+								.andThen(ySplitRollers.setStateCommand(
+												YSplitRollers.State.SLOWINTAKE))));
+
+		NamedCommands.registerCommand("Subwoofer",
+				Commands.parallel(
+						shooterJoint.setStateCommand(ShooterJoint.State.SUBWOOFER),
+						shooterRollers.setStateCommand(ShooterRollers.State.SUBWOOFER)));
+
+		NamedCommands.registerCommand("Speaker", 
+				Commands.parallel(
+						robotState.setTargetCommand(RobotState.TARGET.SPEAKER),
+						// drivetrain.setStateCommand(Drivetrain.State.HEADING),
+						shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
+						shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
+
+		NamedCommands.registerCommand("Shooting Command",
+				Commands.waitUntil(readyToShoot)
+						.andThen(Commands.deadline(Commands.waitUntil(LC2.negate()),
+								ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER))));
 	}
 
 	private void configureDebugCommands() {

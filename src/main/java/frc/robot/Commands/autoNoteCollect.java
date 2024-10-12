@@ -16,9 +16,7 @@ public class autoNoteCollect extends ParallelRaceGroup{
     IntakeRollers m_intakeRollers;
     YSplitRollers m_ySplitRollers;
     //Limelight m_limelight;
-    private void registerNamedCommands() {
-		NamedCommands.registerCommand("Collect Note", null);
-	}
+    
 
     SwerveRequest.FieldCentricFacingAngle m_head;
 
@@ -28,10 +26,9 @@ public class autoNoteCollect extends ParallelRaceGroup{
         m_intakeRollers = intakeRollers;
         m_ySplitRollers = ySplitRollers;
         m_head = head;
-        registerNamedCommands();
 
        addCommands(new driveToNote(m_drivetrain, m_head));
-       addCommands(new intakeNote(m_intakeJoint, m_intakeRollers));
+       addCommands(new intakeNote(m_intakeJoint, m_intakeRollers, m_ySplitRollers));
     }
 
     private void addCommands(intakeNote intakeNote) {
