@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.143463182789417,
+        "y": 6.5463576290918635
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.534046194138464,
+        "y": 7.166257748313664
+      },
+      "isLocked": false,
+      "linkedName": "WL [Amp Side]"
+    },
+    {
+      "anchor": {
+        "x": 5.295704057884577,
+        "y": 7.4598028796628215
+      },
+      "prevControl": {
+        "x": 5.205579676022876,
+        "y": 7.1958276119844164
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -101.68936917543908
+  },
+  "reversed": false,
+  "folder": "Amp Side Rush",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -167.47119229084853
+  },
+  "useDefaultConstraints": true
+}

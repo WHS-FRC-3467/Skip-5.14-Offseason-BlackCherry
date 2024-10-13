@@ -31,6 +31,7 @@ public class ShooterJoint extends SubsystemBase {
         STOW(() -> 35.0),
         SUBWOOFER(() -> 42.0),
         CLIMBCLEARANCE(() -> 40.0),
+        POOP(() -> 35.0),
         DYNAMIC(() -> RobotState.getInstance().getShotAngle()),
         TUNING(() -> RobotState.getInstance().getShooterTuningAngle().get());
 

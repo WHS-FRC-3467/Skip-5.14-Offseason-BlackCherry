@@ -1,0 +1,165 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "NL-M1"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "parallel",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Pooping Command"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Shoot While Moving"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Note Collect"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "M1-WL"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Speaker"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shooting Command"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "WL-M2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Note Collect"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "M2-WL"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Speaker"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shooting Command"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "WL-Wall"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Note Collect"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Speaker"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shooting Command"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

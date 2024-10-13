@@ -76,6 +76,8 @@ public class RobotContainer {
 	private Trigger climbStep2 = new Trigger(() -> climbStep == 2);
 	private Trigger climbStep3 = new Trigger(() -> climbStep >= 3);
 
+	private Trigger robotStill = new Trigger(
+		() -> (Math.hypot(robotState.getRobotSpeeds().vxMetersPerSecond, robotState.getRobotSpeeds().vyMetersPerSecond) < .25));
 
 	private SendableChooser<Command> autoChooser;
 
@@ -249,9 +251,19 @@ public class RobotContainer {
 						shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
 
 		NamedCommands.registerCommand("Shooting Command",
+				Commands.waitUntil(readyToShoot.and(robotStill))
+						.andThen(Commands.deadline(Commands.waitUntil(LC2.negate()),
+								ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER))));
+		
+		NamedCommands.registerCommand("Shoot While Moving",
 				Commands.waitUntil(readyToShoot)
 						.andThen(Commands.deadline(Commands.waitUntil(LC2.negate()),
 								ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER))));
+
+		NamedCommands.registerCommand("Pooping Command", 
+						Commands.parallel(
+						shooterJoint.setStateCommand(ShooterJoint.State.POOP),
+						shooterRollers.setStateCommand(ShooterRollers.State.PASSTHROUGH)));
 	}
 
 	private void configureDebugCommands() {

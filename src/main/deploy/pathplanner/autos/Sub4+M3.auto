@@ -1,0 +1,208 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Subwoofer"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shooting Command"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SW-R2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Note Collect"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "R2-SW"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Subwoofer"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shooting Command"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SW-M3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Note Collect"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "M3-SW"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Subwoofer"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shooting Command"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SW-R1"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Note Collect"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "R1-SW"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Subwoofer"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shooting Command"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SW-R3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Note Collect"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "R3-SW"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Subwoofer"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shooting Command"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
