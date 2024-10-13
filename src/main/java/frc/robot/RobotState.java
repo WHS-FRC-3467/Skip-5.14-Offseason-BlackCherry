@@ -116,11 +116,11 @@ public class RobotState {
         speakerAngleMap.put(6.08,7.00);
     }
 
-    private static final InterpolatingDoubleTreeMap feedAngleMap = new InterpolatingDoubleTreeMap();
-    static {
-        feedAngleMap.put(5.0, 0.0);
-        feedAngleMap.put(6.0, 0.0);
-        feedAngleMap.put(7.0, 0.0);
+    private static final InterpolatingDoubleTreeMap feedOverAngleMap = new InterpolatingDoubleTreeMap();
+    static { //TODO: Tune angles for feeding over stage
+        feedOverAngleMap.put(6.0, 0.0);
+        feedOverAngleMap.put(7.0, 0.0);
+        feedOverAngleMap.put(8.0, 0.0);
     }
 
     public double getShotAngle() {
@@ -128,7 +128,11 @@ public class RobotState {
             case SPEAKER:
                 return speakerAngleMap.get(getDistanceToTarget());
             case FEED:
-                return feedAngleMap.get(getDistanceToTarget());
+                if (getDistanceToTarget() < 6) { //TODO: Check this distance
+                    return 10.0; //TODO: Check this angle
+                } else {
+                    return feedOverAngleMap.get(getDistanceToTarget()); 
+                }
             default:
                 return 0.0;
         }

@@ -189,12 +189,11 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         switch (state) {
             case TELEOP -> {
                 this.setControl(fieldCentric
-                        .withVelocityX(controllerX * DriveConstants.MaxSpeed)
-                        .withVelocityY(controllerY * DriveConstants.MaxSpeed)
+                        .withVelocityX(controllerX * DriveConstants.MaxSpeed *0.6)
+                        .withVelocityY(controllerY * DriveConstants.MaxSpeed *0.6)
                         .withRotationalRate(controllerOmega * DriveConstants.MaxAngularRate));
                         break;
             }
-            
             
             case HEADING -> {
                 this.setControl(fieldCentricFacingAngle
@@ -210,7 +209,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
                         .withTargetDirection(RobotState.getInstance().getAngleOfTarget()));
                         break;
             }
-            case RELATIVE -> { //TODO: Make this less specific
+            case RELATIVE -> { //TODO: Make this less specific, fix for auto vs teleop
                 if (RobotState.getInstance().getAngleToNote().isPresent()) {
                     this.setControl(robotCentric
                         .withVelocityX(-DriveConstants.MaxSpeed * (1 - Math.abs(RobotState.getInstance().getAngleToNote().getAsDouble()) / 32) * .25)

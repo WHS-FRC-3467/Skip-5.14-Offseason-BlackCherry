@@ -10,6 +10,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -29,7 +30,6 @@ public class RobotContainer {
 	//TODO: test auto intake
 	//TODO: test drivetrain state machine interaction with Pathplanner 
 
-	private final CommandXboxController joystick = new CommandXboxController(0);
 	public final Drivetrain drivetrain = TunerConstants.DriveTrain;
 	public final RobotState robotState = RobotState.getInstance();
 	public final ClimberJoint climberJoint = new ClimberJoint();
@@ -40,6 +40,9 @@ public class RobotContainer {
 	public final ShooterJoint shooterJoint = new ShooterJoint();
 	public final ShooterRollers shooterRollers = new ShooterRollers();
 	public final YSplitRollers ySplitRollers = new YSplitRollers();
+
+	private final CommandXboxController joystick = new CommandXboxController(0);
+	private final GenericHID rumble = joystick.getHID();
 
 	private final LaserCanSensor lc1 = new LaserCanSensor(SensorConstants.ID_LC1);
 	private final LaserCanSensor lc2 = new LaserCanSensor(SensorConstants.ID_LC2);
@@ -92,7 +95,8 @@ public class RobotContainer {
 
 		//Intake
 		joystick.leftTrigger().whileTrue(Commands.parallel(
-				//robotState.setTargetCommand(RobotState.TARGET.NOTE),
+				//robotState.setTargetCommand(RobotState.TARGET.NOTE),[]\
+
 				intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
 				Commands.waitUntil(intakeJoint::atGoal)
 						.andThen(Commands.deadline(
@@ -105,6 +109,8 @@ public class RobotContainer {
 								Commands.waitUntil(LC2),
 								ySplitRollers.setStateCommand(
 										YSplitRollers.State.SLOWINTAKE)))));
+
+		joystick.leftTrigger().and(LC2).whileTrue(Commands.startEnd(() -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 1), () -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 0)));
 
 		//Subwoofer
 		joystick.a().whileTrue(
@@ -284,6 +290,7 @@ public class RobotContainer {
         SmartDashboard.putBoolean("Note in YSplit", noteStored.getAsBoolean());
         SmartDashboard.putBoolean("Note in Amp", noteAmp.getAsBoolean());
 		SmartDashboard.putBoolean("CLIMB REQUESTED", climbRequest.getAsBoolean());
+		SmartDashboard.putNumber("Climb Step", climbStep);
     }
 
 	public RobotContainer() {
