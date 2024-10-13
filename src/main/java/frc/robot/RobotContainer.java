@@ -92,7 +92,7 @@ public class RobotContainer {
 
 		//Intake
 		joystick.leftTrigger().whileTrue(Commands.parallel(
-				robotState.setTargetCommand(RobotState.TARGET.NOTE),
+				//robotState.setTargetCommand(RobotState.TARGET.NOTE),
 				intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
 				Commands.waitUntil(intakeJoint::atGoal)
 						.andThen(Commands.deadline(
@@ -283,6 +283,7 @@ public class RobotContainer {
 		SmartDashboard.putBoolean("readyToAmp",readyToAmp.getAsBoolean());
         SmartDashboard.putBoolean("Note in YSplit", noteStored.getAsBoolean());
         SmartDashboard.putBoolean("Note in Amp", noteAmp.getAsBoolean());
+		SmartDashboard.putBoolean("CLIMB REQUESTED", climbRequest.getAsBoolean());
     }
 
 	public RobotContainer() {

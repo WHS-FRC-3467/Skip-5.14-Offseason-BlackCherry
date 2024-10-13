@@ -11,9 +11,12 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -63,6 +66,10 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     private double controllerY = 0.0;
     private double controllerOmega = 0.0;
 
+    private final ModuleConfig moduleConfig = new ModuleConfig(Units.inchesToMeters(2), 5.1, 1, DCMotor.getKrakenX60(1).withReduction(6.122), 120, 1);
+    private final RobotConfig robotConfig = new RobotConfig(54.4, 6, moduleConfig, Units.inchesToMeters(10.375*2), Units.inchesToMeters(10.375*2));
+
+
     private final SwerveRequest.ApplyChassisSpeeds AutoRequest = new SwerveRequest.ApplyChassisSpeeds();
 
     private SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
@@ -71,7 +78,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
     private SwerveRequest.FieldCentricFacingAngle fieldCentricFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
             .withDeadband(DriveConstants.MaxSpeed * 0.1).withRotationalDeadband(DriveConstants.MaxAngularRate * 0.1)
-            .withDriveRequestType(DriveRequestType.Velocity);
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     private SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric()
             .withDeadband(DriveConstants.MaxSpeed * 0.1).withRotationalDeadband(DriveConstants.MaxAngularRate * 0.1)
@@ -103,7 +110,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
             (speeds) -> this.setControl(AutoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the robot
             new PPHolonomicDriveController(new PIDConstants(5, 0, 0.08), // Translation PID
                 new PIDConstants(5, 0, 0)), // Rotational PID
-            null, //Robot Config
+            robotConfig, //Robot Config
             () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, //Alliance Flip
             this);  // Subsystem for requirements
     }
@@ -185,18 +192,23 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
                         .withVelocityX(controllerX * DriveConstants.MaxSpeed)
                         .withVelocityY(controllerY * DriveConstants.MaxSpeed)
                         .withRotationalRate(controllerOmega * DriveConstants.MaxAngularRate));
+                        break;
             }
+            
+            
             case HEADING -> {
                 this.setControl(fieldCentricFacingAngle
                         .withVelocityX(controllerX * DriveConstants.MaxSpeed)
                         .withVelocityY(controllerY * DriveConstants.MaxSpeed)
                         .withTargetDirection(RobotState.getInstance().getAngleToTarget()));
+                        break;
             }
             case CARDINAL -> {
                 this.setControl(fieldCentricFacingAngle
                         .withVelocityX(controllerX * DriveConstants.MaxSpeed)
                         .withVelocityY(controllerY * DriveConstants.MaxSpeed)
                         .withTargetDirection(RobotState.getInstance().getAngleOfTarget()));
+                        break;
             }
             case RELATIVE -> { //TODO: Make this less specific
                 if (RobotState.getInstance().getAngleToNote().isPresent()) {
@@ -211,24 +223,32 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
                     	.withVelocityY(0)
                     	.withRotationalRate(0));
                 }
+                break;
                 
             }
             default -> {
+                break;
                 
             }
         }
+
+        SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());
+        SmartDashboard.putString(this.getClass().getSimpleName() + " Target ", target.toString());
+        SmartDashboard.putNumber("Drivetrain Heading (deg)",fieldCentricFacingAngle.HeadingController.getSetpoint());
+        SmartDashboard.putBoolean("Drivetrain at Heading", fieldCentricFacingAngle.HeadingController.atSetpoint());
 
     }
 
     private void setHeadingPID() {
         if (Robot.isReal()) {
-            fieldCentricFacingAngle.HeadingController.setPID(25, 10, 2);
+            fieldCentricFacingAngle.HeadingController.setPID(10, 0, 0);
         } else {
             fieldCentricFacingAngle.HeadingController.setPID(5, 0, 0);
         }
         fieldCentricFacingAngle.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
         fieldCentricFacingAngle.HeadingController.setTolerance(Units.degreesToRadians(.5)); // TODO: confirm this
                                                                                             // tolerance
+        SmartDashboard.putData("Angle PID",fieldCentricFacingAngle.HeadingController);
     }
 
     public void setControllerInput(double controllerX, double controllerY, double controllerOmega) {
