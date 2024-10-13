@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.OptionalDouble;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -11,6 +13,7 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Util.TunableNumber;
@@ -49,11 +52,15 @@ public class RobotState {
     @Setter
     private TARGET target = TARGET.NONE;
 
+    @Getter
+    @Setter
+    private OptionalDouble angleToNote = OptionalDouble.empty();
+
     private double deltaT = .15; 
 
     @Getter
-    @Setter
-    TunableNumber shooterTuningAngle = new TunableNumber("Shooter Tuning Angle",0);
+    TunableNumber shooterTuningAngle = new TunableNumber("Shooter Tuning Angle (deg)",20);
+    TunableNumber autoAimOffset = new TunableNumber("Auto Aim Rotatational Offset (deg)",0);
 
 
     public static RobotState getInstance() {
@@ -78,11 +85,12 @@ public class RobotState {
         return (DriverStation.getAlliance().get() == Alliance.Blue) ? target.blueTargetPose.getRotation() : target.redTargetPose.getRotation();
     }
 
-    // TODO: need to invert
     public Rotation2d getAngleToTarget() {
-        return getFuturePose()
-                .minus((DriverStation.getAlliance().get() == Alliance.Blue) ? target.blueTargetPose.getTranslation() : target.redTargetPose.getTranslation())
-                .getAngle().unaryMinus(); // TODO: Test if unaryMinus fixed it
+        return ((DriverStation.getAlliance().get() == Alliance.Blue) ? target.blueTargetPose.getTranslation() : target.redTargetPose.getTranslation())
+                .minus(getFuturePose())
+                .getAngle()
+                .plus(Rotation2d.fromDegrees(autoAimOffset.get()));
+
     }
 
     public double getDistanceToTarget() {

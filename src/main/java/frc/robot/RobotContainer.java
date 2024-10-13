@@ -24,6 +24,10 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
 public class RobotContainer {
 
+	//TODO: test new shooterjoint positional pid
+	//TODO: change shooter rollers to MMVelocity
+	//TODO: test auto intake
+
 	private final CommandXboxController joystick = new CommandXboxController(0);
 	public final Drivetrain drivetrain = TunerConstants.DriveTrain;
 	public final RobotState robotState = RobotState.getInstance();
@@ -45,6 +49,7 @@ public class RobotContainer {
 	PhotonVision front_left_pv = new PhotonVision(drivetrain, 0);
 	PhotonVision front_right_pv = new PhotonVision(drivetrain, 1);
 	PhotonVision back_right_pv = new PhotonVision(drivetrain, 2);
+	Limelight limelight = new Limelight();
 
 	private Trigger LC1 = new Trigger(() -> lc1.isClose());
 	private Trigger LC2 = new Trigger(() -> lc2.isClose());
@@ -57,23 +62,13 @@ public class RobotContainer {
 					(shooterJoint.getState() != ShooterJoint.State.STOW) && shooterJoint.atGoal());
 
   	private Trigger readyToAmp = new Trigger(
-			() -> (elevatorJoint.getState() == ElevatorJoint.State.SCORE) && elevatorJoint.atGoal()); 
-
-	private Trigger readyToClimb = new Trigger(
-			() -> (shooterJoint.getState() == ShooterJoint.State.CLIMBCLEARANCE) && shooterJoint.atGoal())
-			.and(readyToAmp);
-			
-	private Trigger readyToTrap = new Trigger(
-			() -> (elevatorJoint.getState() == ElevatorJoint.State.TRAP) && elevatorJoint.atGoal() &&
-					(climberJoint.getState() == ClimberJoint.State.STOW) && climberJoint.atGoal());
+			() -> (elevatorJoint.getState() == ElevatorJoint.State.SCORE) && elevatorJoint.atGoal()); 			
 
 	private Trigger scoreRequested = joystick.rightTrigger();
 	
 	private boolean climbRequested = false;
 	private Trigger climbRequest = new Trigger(() -> climbRequested);
 
-
-	// Temp MJW 10/10/2024
 	private int climbStep = 0;
 	private Trigger climbStep0 = new Trigger(() -> climbStep == 0);
 	private Trigger climbStep1 = new Trigger(() -> climbStep == 1);
@@ -94,7 +89,7 @@ public class RobotContainer {
 		// joystick.povUp().onTrue(drivetrain.runOnce(() ->
 		// drivetrain.seedFieldRelative()));
 
-		// Intake
+		//Intake
 		joystick.leftTrigger().whileTrue(Commands.parallel(
 				robotState.setTargetCommand(RobotState.TARGET.NOTE),
 				intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
@@ -110,14 +105,14 @@ public class RobotContainer {
 								ySplitRollers.setStateCommand(
 										YSplitRollers.State.SLOWINTAKE)))));
 
-		// Subwoofer
+		//Subwoofer
 		joystick.a().whileTrue(
 				Commands.parallel(
 						robotState.setTargetCommand(RobotState.TARGET.SUBWOOFER),
 						shooterRollers.setStateCommand(ShooterRollers.State.SUBWOOFER),
 						shooterJoint.setStateCommand(ShooterJoint.State.SUBWOOFER)));
 
-		// Amp
+		//Amp
 		joystick.b().whileTrue(
 				Commands.parallel(
 						robotState.setTargetCommand(RobotState.TARGET.AMP),
@@ -135,23 +130,21 @@ public class RobotContainer {
 												ElevatorRollers.State.INTAKE))))
 						.withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
-		// Feed
+		//Feed
 		joystick.y().whileTrue(
 				Commands.parallel(
 						robotState.setTargetCommand(RobotState.TARGET.FEED),
-						// drivetrain.setStateCommand(Drivetrain.State.HEADING),
 						shooterRollers.setStateCommand(ShooterRollers.State.FEED),
 						shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
 
-		// Speaker
+		//Speaker
 		joystick.x().whileTrue(
 				Commands.parallel(
 						robotState.setTargetCommand(RobotState.TARGET.SPEAKER),
-						// drivetrain.setStateCommand(Drivetrain.State.HEADING),
 						shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
 						shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
 
-		// Climb Request (toggle)
+		//Climb Request (toggle)
 		joystick.back().onTrue(Commands.runOnce(() -> climbRequested = !climbRequested));
 
 		joystick.start().onTrue(Commands.runOnce(() -> climbStep += 1));
@@ -178,8 +171,6 @@ public class RobotContainer {
 					shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
 					elevatorJoint.setStateCommand(ElevatorJoint.State.TRAP),
 					climberJoint.setStateCommand(ClimberJoint.State.STOW)));
-
-		
 
 		//Score Shooter
 		scoreRequested.and(noteAmp.negate()).and(climbRequest.negate()).whileTrue(
@@ -228,7 +219,6 @@ public class RobotContainer {
 						ySplitRollers.setStateCommand(YSplitRollers.State.REVAMP),
 						elevatorRollers.setStateCommand(ElevatorRollers.State.EJECT)));
 
-
 	}
 
 	private void registerNamedCommands() {
@@ -254,7 +244,6 @@ public class RobotContainer {
 		NamedCommands.registerCommand("Speaker", 
 				Commands.parallel(
 						robotState.setTargetCommand(RobotState.TARGET.SPEAKER),
-						// drivetrain.setStateCommand(Drivetrain.State.HEADING),
 						shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
 						shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
 
@@ -277,8 +266,9 @@ public class RobotContainer {
         SmartDashboard.putData("Climber Homing",Commands.parallel(climberJoint.setStateCommand(ClimberJoint.State.HOMING)));
 		SmartDashboard.putData("Shooter Tuning Angle",Commands.parallel(shooterJoint.setStateCommand(ShooterJoint.State.TUNING)));
 		SmartDashboard.putData("Shooter Climber Clearance",Commands.parallel(shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE)));
-		SmartDashboard.putData("Shooter Roller Speaker",Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
-		robotState.setTargetCommand(TARGET.SPEAKER)));
+		SmartDashboard.putData("Shooter Roller Speaker",
+				Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
+						robotState.setTargetCommand(TARGET.SPEAKER)));
         SmartDashboard.putData("Shooter Roller Sub",Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.SUBWOOFER)));
 
 		SmartDashboard.putData("Reset Climber Index",Commands.runOnce(() -> climbStep = 0));
@@ -290,10 +280,8 @@ public class RobotContainer {
 		SmartDashboard.putBoolean("Lasercan 2", LC2.getAsBoolean());
 		SmartDashboard.putBoolean("readyToScore",readyToShoot.getAsBoolean());
 		SmartDashboard.putBoolean("readyToAmp",readyToAmp.getAsBoolean());
-		SmartDashboard.putBoolean("readyToClimb",readyToClimb.getAsBoolean());
         SmartDashboard.putBoolean("Note in YSplit", noteStored.getAsBoolean());
         SmartDashboard.putBoolean("Note in Amp", noteAmp.getAsBoolean());
-		SmartDashboard.putBoolean("TEST TRIGGER", scoreRequested.getAsBoolean());
     }
 
 	public RobotContainer() {

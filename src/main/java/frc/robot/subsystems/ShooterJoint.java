@@ -62,8 +62,8 @@ public class ShooterJoint extends SubsystemBase {
     @Override
     public void periodic() {
         if (state == State.DYNAMIC) {
-            //m_motor.setControl(m_position.withPosition(state.getStateOutput()).withSlot(0));
-            m_motor.setControl(m_magic.withPosition(state.getStateOutput()).withSlot(1));
+            m_motor.setControl(m_position.withPosition(state.getStateOutput()).withSlot(0));
+            //m_motor.setControl(m_magic.withPosition(state.getStateOutput()).withSlot(1));
         } else {
             m_motor.setControl(m_magic.withPosition(state.getStateOutput()).withSlot(1));
         }

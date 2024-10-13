@@ -10,17 +10,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
+import frc.robot.RobotState;
+
 import static frc.robot.Constants.LimelightConstants.*;
 
+import java.util.OptionalDouble;
+
 public class Limelight extends SubsystemBase {
-    Drivetrain m_drivetrain;
     Alliance alliance;
     private String ll = kCameraName;
     private Boolean hasTarget = false;
 
     /** Creates a new Limelight. */
-    public Limelight(Drivetrain drivetrain) {
-        m_drivetrain = drivetrain;
+    public Limelight() {
 
     }
 
@@ -30,8 +32,10 @@ public class Limelight extends SubsystemBase {
             LimelightHelpers.Results result = LimelightHelpers.getLatestResults(ll).targetingResults;
             if (result.valid && LimelightHelpers.getTA(kCameraName) > .25) {
                 hasTarget = true;
+                RobotState.getInstance().setAngleToNote(OptionalDouble.of(LimelightHelpers.getTX(kCameraName)));
             } else {
                 hasTarget = false;
+                RobotState.getInstance().setAngleToNote(OptionalDouble.empty());
             }
             if (RobotConstants.kIsTuningMode) {
                 SmartDashboard.putBoolean("Limelight has note detected", hasTarget);

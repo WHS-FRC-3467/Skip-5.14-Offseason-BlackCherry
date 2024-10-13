@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotState;
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -44,7 +45,8 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     public enum State {
         TELEOP,
         HEADING,
-        CARDINAL;
+        CARDINAL,
+        RELATIVE;
     }
 
     @Setter
@@ -72,6 +74,10 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     private SwerveRequest.FieldCentricFacingAngle fieldCentricFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
+            .withDeadband(DriveConstants.MaxSpeed * 0.1).withRotationalDeadband(DriveConstants.MaxAngularRate * 0.1)
+            .withDriveRequestType(DriveRequestType.Velocity);
+
+    private SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric()
             .withDeadband(DriveConstants.MaxSpeed * 0.1).withRotationalDeadband(DriveConstants.MaxAngularRate * 0.1)
             .withDriveRequestType(DriveRequestType.Velocity);
 
@@ -162,7 +168,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         target = RobotState.getInstance().getTarget();
 
         switch (target) {
-/*             case NONE:
+            case NONE:
                 setState(State.TELEOP);
                 break;
             case SPEAKER:
@@ -173,7 +179,10 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
                 break;
             case AMP:
                 setState(State.CARDINAL);
-                break; */
+                break;
+            case NOTE:
+                setState(State.RELATIVE);
+                break;
             default: 
                 setState(State.TELEOP);
                 break;
@@ -198,7 +207,23 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
                         .withVelocityY(controllerY * DriveConstants.MaxSpeed)
                         .withTargetDirection(RobotState.getInstance().getAngleOfTarget()));
             }
+            case RELATIVE -> { //TODO: Make this less specific
+                if (RobotState.getInstance().getAngleToNote().isPresent()) {
+                    this.setControl(robotCentric
+                        .withVelocityX(-DriveConstants.MaxSpeed * (1 - Math.abs(RobotState.getInstance().getAngleToNote().getAsDouble()) / 32) * .25)
+                        .withVelocityY(0)
+                        //.withVelocityY(-DriveConstants.MaxSpeed * (1 - Math.abs(RobotState.getInstance().getAngleToNote()) / 32) * .1)
+                        .withRotationalRate(RobotState.getInstance().getAngleToNote().getAsDouble()/10)); //TODO: TUNE THIS VALUE
+                } else {
+                    this.setControl(robotCentric
+                    	.withVelocityX(0)
+                    	.withVelocityY(0)
+                    	.withRotationalRate(0));
+                }
+                
+            }
             default -> {
+                
             }
         }
 
@@ -230,9 +255,9 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
     }
 
-    public Command setStateCommand(State state) {
+/*     public Command setStateCommand(State state) {
         return startEnd(() -> setState(state), () -> setState(State.TELEOP));
-    }
+    } */
 
     public void setSwerveDriveCustomCurrentLimits() {
         // Create a current configuration to use for the drive motor of each swerve
