@@ -27,6 +27,7 @@ public class RobotContainer {
 	//TODO: test new shooterjoint positional pid
 	//TODO: change shooter rollers to MMVelocity
 	//TODO: test auto intake
+	//TODO: test drivetrain state machine interaction with Pathplanner 
 
 	private final CommandXboxController joystick = new CommandXboxController(0);
 	public final Drivetrain drivetrain = TunerConstants.DriveTrain;
