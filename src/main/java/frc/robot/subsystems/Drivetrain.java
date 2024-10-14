@@ -66,7 +66,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     private double controllerY = 0.0;
     private double controllerOmega = 0.0;
 
-    private final ModuleConfig moduleConfig = new ModuleConfig(Units.inchesToMeters(2), 5.1, 1, DCMotor.getKrakenX60(1).withReduction(6.122), 120, 1);
+    private final ModuleConfig moduleConfig = new ModuleConfig(Units.inchesToMeters(2), 5.1, 1.2, DCMotor.getKrakenX60(1).withReduction(6.122), 120, 1);
     private final RobotConfig robotConfig = new RobotConfig(54.4, 6, moduleConfig, Units.inchesToMeters(10.375*2), Units.inchesToMeters(10.375*2));
 
 
@@ -285,12 +285,12 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
             // Set all of the parameters related to the supply current. The values should
             // come from Constants.
-            customCurrentLimitConfigs.SupplyCurrentLimit = 30;
+            customCurrentLimitConfigs.SupplyCurrentLimit = 90;
             customCurrentLimitConfigs.SupplyCurrentThreshold = 90;
-            customCurrentLimitConfigs.SupplyTimeThreshold = .01;
+            customCurrentLimitConfigs.SupplyTimeThreshold = .5;
             customCurrentLimitConfigs.SupplyCurrentLimitEnable = true;
 
-            customCurrentLimitConfigs.StatorCurrentLimit = 80;
+            customCurrentLimitConfigs.StatorCurrentLimit = 100;
             customCurrentLimitConfigs.StatorCurrentLimitEnable = true;
 
             // Apply the new current limit configuration.

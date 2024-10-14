@@ -90,9 +90,6 @@ public class RobotContainer {
 
 		drivetrain.registerTelemetry(logger::telemeterize);
 
-		// joystick.povUp().onTrue(drivetrain.runOnce(() ->
-		// drivetrain.seedFieldRelative()));
-
 		//Intake
 		joystick.leftTrigger().whileTrue(Commands.parallel(
 				//robotState.setTargetCommand(RobotState.TARGET.NOTE),[]\
