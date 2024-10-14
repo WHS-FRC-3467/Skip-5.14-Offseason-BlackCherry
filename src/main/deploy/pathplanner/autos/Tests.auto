@@ -5,15 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "SimplePath"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": null
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SimplePath"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Note Collect"
+                }
+              }
+            ]
           }
         }
       ]
