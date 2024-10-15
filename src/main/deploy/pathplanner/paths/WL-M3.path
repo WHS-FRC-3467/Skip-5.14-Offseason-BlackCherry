@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.143463182789417,
-        "y": 6.5463576290918635
+        "x": 5.190306528972544,
+        "y": 1.7683363184130072
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.534046194138464,
-        "y": 7.166257748313664
+        "x": 7.4156633646600625,
+        "y": 1.4673552902661353
       },
       "isLocked": false,
-      "linkedName": "WL [Amp Side]"
+      "linkedName": "WL [Source Side]"
     },
     {
       "anchor": {
-        "x": 5.295704057884577,
-        "y": 7.4598028796628215
+        "x": 7.907220607593853,
+        "y": 4.075371117931965
       },
       "prevControl": {
-        "x": 5.205579676022876,
-        "y": 7.1958276119844164
+        "x": 6.855123754691953,
+        "y": 3.8014054694776056
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "M3"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -101.68936917543908
+    "rotation": -171.09598406731965
   },
   "reversed": false,
-  "folder": "Amp Side Rush",
+  "folder": "Source Side",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -167.47119229084853
+    "rotation": 142.24266665482773
   },
   "useDefaultConstraints": true
 }
