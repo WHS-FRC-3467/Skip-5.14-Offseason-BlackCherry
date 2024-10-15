@@ -36,7 +36,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SimplePath"
+                  "pathName": "Sub - R2"
                 }
               }
             ]
@@ -49,13 +49,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Speaker"
+                  "name": "Shooting Command"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Shooting Command"
+                  "name": "Speaker"
                 }
               }
             ]
@@ -80,13 +80,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Speaker"
+                  "name": "Shooting Command"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Shooting Command"
+                  "name": "Speaker"
                 }
               }
             ]
@@ -96,17 +96,17 @@
           "type": "deadline",
           "data": {
             "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Note Collect"
+                }
+              },
               {
                 "type": "path",
                 "data": {
                   "pathName": "BL - R3"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Note Collect"
-                }
               }
             ]
           }
@@ -115,17 +115,17 @@
           "type": "deadline",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Speaker"
-                }
-              },
               {
                 "type": "named",
                 "data": {
                   "name": "Shooting Command"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Speaker"
+                }
               }
             ]
           }
@@ -134,17 +134,17 @@
           "type": "deadline",
           "data": {
             "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Note Collect"
+                }
+              },
               {
                 "type": "path",
                 "data": {
                   "pathName": "R3 - R1"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Note Collect"
-                }
               }
             ]
           }
@@ -156,13 +156,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Speaker"
+                  "name": "Shooting Command"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Shooting Command"
+                  "name": "Speaker"
                 }
               }
             ]

@@ -61,7 +61,7 @@
     "rotation": 152.10272896905235
   },
   "reversed": false,
-  "folder": "Quick M3",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

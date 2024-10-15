@@ -3,6 +3,7 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/Pose": "Field2d",
+      "/SmartDashboard/Angle PID": "PIDController",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Climber Homing": "Command",
       "/SmartDashboard/ClimberJoint Override Command": "Command",

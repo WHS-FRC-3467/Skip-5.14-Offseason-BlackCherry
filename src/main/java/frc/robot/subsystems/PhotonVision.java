@@ -32,6 +32,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
@@ -186,8 +187,14 @@ public class PhotonVision extends SubsystemBase {
                     // Change our trust in the measurement based on the tags we can see
                     var estStdDevs = getEstimationStdDevs(estPose);
                     // System.out.println("Adding to vision");
-                    drivetrain.addVisionMeasurement(
+                    //if (Math.abs(estPose.getTranslation().getX() - 8.3) > 2.25) {
+                    if (!DriverStation.isAutonomous()) {
+                        drivetrain.addVisionMeasurement(
                             est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
+                    } else {
+                        //System.out.println("REJECTING BASED ON DISTANCE");
+                    }
+                    
                 });
 
         hasTarget = getLatestResult().hasTargets();
