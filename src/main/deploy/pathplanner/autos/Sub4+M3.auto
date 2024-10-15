@@ -47,9 +47,47 @@
           "data": {
             "commands": [
               {
+                "type": "named",
+                "data": {
+                  "name": "Subwoofer"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shooting Command"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Note Collect"
+                }
+              },
+              {
                 "type": "path",
                 "data": {
-                  "pathName": "R2-SW"
+                  "pathName": "R2-M3"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "M3-NL"
                 }
               },
               {
@@ -74,7 +112,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SW-M3"
+                  "pathName": "NL-R1"
                 }
               },
               {
@@ -90,12 +128,6 @@
           "type": "parallel",
           "data": {
             "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "M3-SW"
-                }
-              },
               {
                 "type": "named",
                 "data": {
@@ -118,7 +150,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SW-R1"
+                  "pathName": "R1-R3"
                 }
               },
               {
@@ -134,56 +166,6 @@
           "type": "parallel",
           "data": {
             "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "R1-SW"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Subwoofer"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Shooting Command"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "SW-R3"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Note Collect"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "R3-SW"
-                }
-              },
               {
                 "type": "named",
                 "data": {

@@ -3,45 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.907220607593853,
-        "y": 4.075371117931965
+        "x": 2.824717546724679,
+        "y": 5.562647359246215
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.1271734526350645,
-        "y": 3.9231302428368044
-      },
-      "isLocked": false,
-      "linkedName": "M3"
-    },
-    {
-      "anchor": {
-        "x": 4.745294740232846,
-        "y": 4.614069599037914
-      },
-      "prevControl": {
-        "x": 5.382071477409715,
-        "y": 4.015353080634835
-      },
-      "nextControl": {
-        "x": 4.242101968795116,
-        "y": 5.087186480688562
+        "x": 2.180621536706696,
+        "y": 6.077924167260601
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.3374413054104268,
-        "y": 5.527514849608872
+        "x": 2.719320017812645,
+        "y": 6.768863523461712
       },
       "prevControl": {
-        "x": 3.304861845101721,
-        "y": 5.937394128711226
+        "x": 2.286019065618729,
+        "y": 6.347273407813577
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "SW Middle"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -58,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -127.47617956136135
   },
   "reversed": false,
   "folder": "Sub4 + M3",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 178.89829388479367
   },
   "useDefaultConstraints": true
 }
