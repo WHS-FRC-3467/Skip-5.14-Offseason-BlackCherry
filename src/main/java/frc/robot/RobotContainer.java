@@ -240,7 +240,7 @@ public class RobotContainer {
 		if (Robot.isReal()) {
 			NamedCommands.registerCommand("Note Collect",
 			Commands.deadline(Commands.waitUntil(LC2),
-					robotState.setTargetCommand(RobotState.TARGET.NOTE),
+					//robotState.setTargetCommand(RobotState.TARGET.NOTE),
 					intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
 					Commands.waitUntil(intakeJoint::atGoal)
 							.andThen(Commands.deadline(
@@ -266,7 +266,7 @@ public class RobotContainer {
 
 			NamedCommands.registerCommand("Note Collect",
 					Commands.deadline(Commands.waitSeconds(3),
-							robotState.setTargetCommand(RobotState.TARGET.NOTE),
+							//robotState.setTargetCommand(RobotState.TARGET.NOTE),
 							intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
 							Commands.waitSeconds(1.5)
 									.andThen(Commands.deadline(

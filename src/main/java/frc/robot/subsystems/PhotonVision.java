@@ -187,8 +187,8 @@ public class PhotonVision extends SubsystemBase {
                     // Change our trust in the measurement based on the tags we can see
                     var estStdDevs = getEstimationStdDevs(estPose);
                     // System.out.println("Adding to vision");
-                    //if (Math.abs(estPose.getTranslation().getX() - 8.3) > 2.25) {
-                    if (!DriverStation.isAutonomous()) {
+                    if (Math.abs(estPose.getTranslation().getX() - 8.3) > 2.25) {
+                    //if (!DriverStation.isAutonomous()) {
                         drivetrain.addVisionMeasurement(
                             est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
                     } else {
