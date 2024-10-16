@@ -25,7 +25,7 @@ public class ClimberJoint extends SubsystemBase {
         STOW(0.0),
         HOMING(0.0),
         PREP(50.0),
-        CLIMB(65.0);
+        CLIMB(68.0);
 
         private final double output;
     }

@@ -52,7 +52,7 @@ public class RobotContainer {
 
 	PhotonVision front_left_pv = new PhotonVision(drivetrain, 0);
 	PhotonVision front_right_pv = new PhotonVision(drivetrain, 1);
-	PhotonVision back_right_pv = new PhotonVision(drivetrain, 2);
+	//PhotonVision back_right_pv = new PhotonVision(drivetrain, 2);
 	Limelight limelight = new Limelight();
 
 	private Trigger LC1 = new Trigger(() -> lc1.isClose());
@@ -90,22 +90,20 @@ public class RobotContainer {
 
 		drivetrain.registerTelemetry(logger::telemeterize);
 
-		//Intake
+		// Intake
 		joystick.leftTrigger().whileTrue(Commands.parallel(
-				//robotState.setTargetCommand(RobotState.TARGET.NOTE),[]\
-
-				intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
-				Commands.waitUntil(intakeJoint::atGoal)
-						.andThen(Commands.deadline(
-								Commands.waitUntil(LC1),
-								intakeRollers.setStateCommand(
-										IntakeRollers.State.INTAKE),
-								ySplitRollers.setStateCommand(
-										YSplitRollers.State.INTAKE)))
-						.andThen(Commands.deadline(
-								Commands.waitUntil(LC2),
-								ySplitRollers.setStateCommand(
-										YSplitRollers.State.SLOWINTAKE)))));
+				// robotState.setTargetCommand(RobotState.TARGET.NOTE),
+				Commands.deadline(
+						Commands.waitUntil(LC2),
+						ySplitRollers.setStateCommand(YSplitRollers.State.INTAKE)
+								.until(LC1)
+								.andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SLOWINTAKE)),
+						Commands.parallel(
+								intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
+								Commands.waitUntil(intakeJoint::atGoal)
+										.andThen(Commands.deadline(
+												Commands.waitUntil(LC1).andThen(Commands.waitSeconds(0.25)),
+												intakeRollers.setStateCommand(IntakeRollers.State.INTAKE)))))));
 
 		joystick.leftTrigger().and(LC2).whileTrue(Commands.startEnd(() -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 1), () -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 0)));
 
@@ -226,19 +224,7 @@ public class RobotContainer {
 	}
 
 	private void registerNamedCommands() {
-		NamedCommands.registerCommand("Note Collect",
-				Commands.deadline(Commands.waitUntil(LC2),
-						robotState.setTargetCommand(RobotState.TARGET.NOTE),
-						intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
-						Commands.waitUntil(intakeJoint::atGoal)
-								.andThen(Commands.deadline(
-										Commands.waitUntil(LC1),
-										intakeRollers.setStateCommand(
-												IntakeRollers.State.INTAKE),
-										ySplitRollers.setStateCommand(
-												YSplitRollers.State.INTAKE)))
-								.andThen(ySplitRollers.setStateCommand(
-												YSplitRollers.State.SLOWINTAKE))));
+
 
 		NamedCommands.registerCommand("Subwoofer",
 				Commands.parallel(
@@ -251,10 +237,48 @@ public class RobotContainer {
 						shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
 						shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
 
-		NamedCommands.registerCommand("Shooting Command",
+		if (Robot.isReal()) {
+			NamedCommands.registerCommand("Note Collect",
+			Commands.deadline(Commands.waitUntil(LC2),
+					//robotState.setTargetCommand(RobotState.TARGET.NOTE),
+					intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
+					Commands.waitUntil(intakeJoint::atGoal)
+							.andThen(Commands.deadline(
+									Commands.waitUntil(LC1),
+									intakeRollers.setStateCommand(
+											IntakeRollers.State.INTAKE),
+									ySplitRollers.setStateCommand(
+											YSplitRollers.State.INTAKE)))
+							.andThen(ySplitRollers.setStateCommand(
+											YSplitRollers.State.SLOWINTAKE))));
+
+			NamedCommands.registerCommand("Shooting Command",
 				Commands.waitUntil(readyToShoot)
-						.andThen(Commands.deadline(Commands.waitUntil(LC2.negate()),
-								ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER))));
+						.andThen(Commands.deadline(
+							Commands.waitUntil(LC2.negate()),
+							ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER))));
+
+		} else {
+			NamedCommands.registerCommand("Shooting Command",
+					Commands.deadline(
+							Commands.waitSeconds(3),
+							ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER)));
+
+			NamedCommands.registerCommand("Note Collect",
+					Commands.deadline(Commands.waitSeconds(3),
+							//robotState.setTargetCommand(RobotState.TARGET.NOTE),
+							intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
+							Commands.waitSeconds(1.5)
+									.andThen(Commands.deadline(
+											Commands.waitSeconds(.5),
+											intakeRollers.setStateCommand(
+													IntakeRollers.State.INTAKE),
+											ySplitRollers.setStateCommand(
+													YSplitRollers.State.INTAKE)))
+									.andThen(ySplitRollers.setStateCommand(
+											YSplitRollers.State.SLOWINTAKE))));
+		}
+		
 	}
 
 	private void configureDebugCommands() {
