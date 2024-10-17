@@ -28,7 +28,6 @@ public class RobotContainer {
 	//TODO: test new shooterjoint positional pid
 	//TODO: change shooter rollers to MMVelocity
 	//TODO: test auto intake
-	//TODO: test drivetrain state machine interaction with Pathplanner 
 
 	public final Drivetrain drivetrain = TunerConstants.DriveTrain;
 	public final RobotState robotState = RobotState.getInstance();
@@ -44,36 +43,47 @@ public class RobotContainer {
 	private final CommandXboxController joystick = new CommandXboxController(0);
 	private final GenericHID rumble = joystick.getHID();
 
+	//Lasercan sensors in YSplitRollers to determine note location 
 	private final LaserCanSensor lc1 = new LaserCanSensor(SensorConstants.ID_LC1);
 	private final LaserCanSensor lc2 = new LaserCanSensor(SensorConstants.ID_LC2);
+	private Trigger LC1 = new Trigger(() -> lc1.isClose());
+	private Trigger LC2 = new Trigger(() -> lc2.isClose());
 
-	private final Debouncer ampDebouncer = new Debouncer(.25, DebounceType.kBoth);
+
+	//Beam Break sensor in the ElevatorRollers to determine note location
 	private final DigitalInput bb1 = new DigitalInput(SensorConstants.PORT_BB1);
+	private final Debouncer ampDebouncer = new Debouncer(.25, DebounceType.kBoth);
+	private Trigger BB1 = new Trigger(() -> !bb1.get());
 
-	PhotonVision front_left_pv = new PhotonVision(drivetrain, 0);
-	PhotonVision front_right_pv = new PhotonVision(drivetrain, 1);
+	//Photonvision and Limelight cams
+	//PhotonVision front_left_pv = new PhotonVision(drivetrain, 0);
+	//PhotonVision front_right_pv = new PhotonVision(drivetrain, 1);
+	PhotonVisionManager photonVision = new PhotonVisionManager(drivetrain);
+
 	//PhotonVision back_right_pv = new PhotonVision(drivetrain, 2);
 	Limelight limelight = new Limelight();
 
-	private Trigger LC1 = new Trigger(() -> lc1.isClose());
-	private Trigger LC2 = new Trigger(() -> lc2.isClose());
-    private Trigger BB1 = new Trigger(() -> !bb1.get());
-	private Trigger noteStored = new Trigger(() -> (lc1.isClose() || lc2.isClose()));
-	private Trigger noteAmp = new Trigger(() -> ampDebouncer.calculate(!bb1.get()));
+
+    
+	private Trigger noteStored = new Trigger(() -> (lc1.isClose() || lc2.isClose())); //Note in YSplitRollers trigger
+	private Trigger noteAmp = new Trigger(() -> ampDebouncer.calculate(!bb1.get())); //Note in ElevatorRollers
 
 	private Trigger readyToShoot = new Trigger(
 			() -> (shooterRollers.getState() != ShooterRollers.State.OFF) && shooterRollers.atGoal() &&
-					(shooterJoint.getState() != ShooterJoint.State.STOW) && shooterJoint.atGoal());
+					(shooterJoint.getState() != ShooterJoint.State.STOW) && shooterJoint.atGoal() &&
+					drivetrain.atGoal());
 
   	private Trigger readyToAmp = new Trigger(
 			() -> (elevatorJoint.getState() == ElevatorJoint.State.SCORE) && elevatorJoint.atGoal()); 			
 
-	private Trigger scoreRequested = joystick.rightTrigger();
+	private Trigger scoreRequested = joystick.rightTrigger(); //Binding right trigger to request scoring
 	
-	private boolean climbRequested = false;
-	private Trigger climbRequest = new Trigger(() -> climbRequested);
+	//Climbing Triggers
+	private boolean climbRequested = false; //Whether or not a climb request is active
+	private Trigger climbRequest = new Trigger(() -> climbRequested); //Trigger for climb request
+	private int climbStep = 0; //Tracking what step in the climb sequence we are on
 
-	private int climbStep = 0;
+	//Triggers for each step of the climb sequence
 	private Trigger climbStep0 = new Trigger(() -> climbStep == 0);
 	private Trigger climbStep1 = new Trigger(() -> climbStep == 1);
 	private Trigger climbStep2 = new Trigger(() -> climbStep == 2);
