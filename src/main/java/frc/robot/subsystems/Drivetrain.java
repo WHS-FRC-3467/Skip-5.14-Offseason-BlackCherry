@@ -56,6 +56,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     }
 
     public Field2d fieldMap = new Field2d();
+    
     private RobotState.TARGET target = RobotState.TARGET.NONE;
 
     private static final double kSimLoopPeriod = 0.005; // 5 ms
@@ -68,7 +69,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
     private final ModuleConfig moduleConfig = new ModuleConfig(Units.inchesToMeters(3.82/2), 5.1, 1.2, DCMotor.getKrakenX60(1).withReduction(6.122), 90, 1);
     
-    private final RobotConfig robotConfig = new RobotConfig(54.4, 6, moduleConfig, Units.inchesToMeters(10.375*2), Units.inchesToMeters(10.375*2));
+    private final RobotConfig robotConfig = new RobotConfig(Units.lbsToKilograms(129), 4.785, moduleConfig, Units.inchesToMeters(10.375*2), Units.inchesToMeters(10.375*2));
 
 
     private final SwerveRequest.ApplyChassisSpeeds AutoRequest = new SwerveRequest.ApplyChassisSpeeds();
@@ -93,6 +94,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         configurePathPlanner();
         setHeadingPID();
         setSwerveDriveCustomCurrentLimits();
+        SmartDashboard.putData("Robot Pose Field Map",fieldMap);
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -161,7 +163,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         RobotState.getInstance().setRobotSpeeds(getCurrentRobotChassisSpeeds()); // Tell RobotState current speeds
         
         fieldMap.setRobotPose(getState().Pose);
-        SmartDashboard.putData("Robot Pose Field Map",fieldMap);
+        
         SmartDashboard.putNumber("Distance To Target", RobotState.getInstance().getDistanceToTarget());
 
         target = RobotState.getInstance().getTarget();
@@ -246,7 +248,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
             fieldCentricFacingAngle.HeadingController.setPID(5, 0, 0);
         }
         fieldCentricFacingAngle.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
-        fieldCentricFacingAngle.HeadingController.setTolerance(Units.degreesToRadians(.5)); // TODO: confirm this
+        fieldCentricFacingAngle.HeadingController.setTolerance(Units.degreesToRadians(1)); // TODO: confirm this
                                                                                             // tolerance
         SmartDashboard.putData("Angle PID",fieldCentricFacingAngle.HeadingController);
     }
