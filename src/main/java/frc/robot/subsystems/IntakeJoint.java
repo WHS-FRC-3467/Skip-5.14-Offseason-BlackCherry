@@ -50,7 +50,7 @@ public class IntakeJoint extends SubsystemBase {
     /** Creates a new ComplexSubsystem. */
     public IntakeJoint() {
         m_motor.getConfigurator().apply(IntakeJointConstants.motorConfig());
-        m_motor.setPosition(State.STOW.getOutput());
+        m_motor.setPosition(-0.0234);
         for (State states : State.values()) {
                 stateChooser.addOption(states.toString(), states);  
         }
@@ -95,7 +95,7 @@ public class IntakeJoint extends SubsystemBase {
         if (debug) {
             SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());
             SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint ", state.getOutput());
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", Units.rotationsToDegrees(m_motor.getPosition().getValueAsDouble()));
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", (m_motor.getPosition().getValueAsDouble()));
             SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw", m_motor.getSupplyCurrent().getValueAsDouble());
             SmartDashboard.putBoolean(this.getClass().getSimpleName() + " atGoal", atGoal());
             SmartDashboard.putBoolean(this.getClass().getSimpleName() + " has homed", hasHomed);

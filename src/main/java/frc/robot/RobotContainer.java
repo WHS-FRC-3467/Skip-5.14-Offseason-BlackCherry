@@ -112,7 +112,7 @@ public class RobotContainer {
 								intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
 								Commands.waitUntil(intakeJoint::atGoal)
 										.andThen(Commands.deadline(
-												Commands.waitUntil(LC1).andThen(Commands.waitSeconds(0.25)),
+												Commands.waitUntil(LC2),
 												intakeRollers.setStateCommand(IntakeRollers.State.INTAKE)))))));
 
 		joystick.leftTrigger().and(LC2).whileTrue(Commands.startEnd(() -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 1), () -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 0)));
@@ -125,7 +125,7 @@ public class RobotContainer {
 						shooterJoint.setStateCommand(ShooterJoint.State.SUBWOOFER)));
 
 		//Amp
-		joystick.b().whileTrue(
+		joystick.rightBumper().whileTrue(
 				Commands.parallel(
 						robotState.setTargetCommand(RobotState.TARGET.AMP),
 						elevatorJoint.setStateCommand(ElevatorJoint.State.STOW),
@@ -160,6 +160,9 @@ public class RobotContainer {
 		joystick.back().onTrue(Commands.runOnce(() -> climbRequested = !climbRequested));
 
 		joystick.start().onTrue(Commands.runOnce(() -> climbStep += 1));
+
+		climbRequest.whileTrue(drivetrain.run(() -> drivetrain.setControllerInput(-joystick.getLeftY()*0.25,
+		-joystick.getLeftX()*0.25, -joystick.getRightX()*0.25)));
 
 		climbRequest.and(climbStep0).whileTrue(
 				Commands.parallel(
@@ -308,6 +311,7 @@ public class RobotContainer {
 				Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
 						robotState.setTargetCommand(TARGET.SPEAKER)));
         SmartDashboard.putData("Shooter Roller Sub",Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.SUBWOOFER)));
+		SmartDashboard.putData("Shooter Roller Speed TUNING",Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.TUNING)));
 
 		SmartDashboard.putData("Reset Climber Index",Commands.runOnce(() -> climbStep = 0));
 	}

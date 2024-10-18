@@ -205,12 +205,12 @@ public class Constants {
             m_configuration.MotionMagic.MotionMagicAcceleration = 10;
             m_configuration.MotionMagic.MotionMagicJerk = 10;
 
-            m_configuration.CurrentLimits.SupplyCurrentLimit = 20;
-            m_configuration.CurrentLimits.SupplyCurrentThreshold = 40;
+            m_configuration.CurrentLimits.SupplyCurrentLimit = 40;
+            m_configuration.CurrentLimits.SupplyCurrentThreshold = 60;
             m_configuration.CurrentLimits.SupplyTimeThreshold = 0.1;
-            m_configuration.CurrentLimits.SupplyCurrentLimitEnable = false;
-            m_configuration.CurrentLimits.StatorCurrentLimit = 70;
-            m_configuration.CurrentLimits.StatorCurrentLimitEnable = false;
+            m_configuration.CurrentLimits.SupplyCurrentLimitEnable = true;
+            m_configuration.CurrentLimits.StatorCurrentLimit = 80;
+            m_configuration.CurrentLimits.StatorCurrentLimitEnable = true;
 
             return m_configuration;
         }
@@ -412,8 +412,8 @@ public class Constants {
 
         public static final Pose2d BLUE_SPEAKER = new Pose2d(Units.inchesToMeters(-1.5 + 12), Units.inchesToMeters(218.42), new Rotation2d(0));
         public static final Pose2d RED_SPEAKER = new Pose2d(Units.inchesToMeters(652.73 - 12), Units.inchesToMeters(218.42), new Rotation2d(Math.PI));
-        public static final Pose2d BLUE_FEED = new Pose2d(1.25, 6.62, new Rotation2d(0));
-        public static final Pose2d RED_FEED = new Pose2d(15.250, 6.62, new Rotation2d(0));
+        public static final Pose2d BLUE_FEED = new Pose2d(1.25, 6.0, new Rotation2d(0));
+        public static final Pose2d RED_FEED = new Pose2d(15.250, 6.0, new Rotation2d(0));
         public static final Pose2d BLUE_AMP = new Pose2d(Units.inchesToMeters(72.5),Units.inchesToMeters(323.00),new Rotation2d(-Math.PI/2));
         public static final Pose2d RED_AMP = new Pose2d(Units.inchesToMeters(578.77),Units.inchesToMeters(323.00),new Rotation2d(-Math.PI/2));
         public static final double BLUE_AUTO_PENALTY_LINE = 9; // X distance from origin to center of the robot almost fully crossing the midline

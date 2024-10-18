@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.306726040894856,
-        "y": 1.2092152453161589
+        "x": 7.296204103519319,
+        "y": 1.164112550447323
       },
       "isLocked": false,
       "linkedName": "M5"
     },
     {
       "anchor": {
-        "x": 1.8470239607145884,
-        "y": 3.6451895126012475
+        "x": 3.014049050320323,
+        "y": 2.92843394575678
       },
       "prevControl": {
-        "x": 2.674049614765896,
-        "y": 2.303570118251349
+        "x": 4.631343662687326,
+        "y": 2.1289758135071817
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "SourceNL"
+      "linkedName": "ShootM5"
     }
   ],
   "rotationTargets": [],
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 152.4879973761486
+    "rotation": 141.66665989090143
   },
   "reversed": false,
   "folder": null,

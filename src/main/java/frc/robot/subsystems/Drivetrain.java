@@ -67,7 +67,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     private double controllerY = 0.0;
     private double controllerOmega = 0.0;
 
-    private final ModuleConfig moduleConfig = new ModuleConfig(Units.inchesToMeters(3.82/2), 5.1, 1.2, DCMotor.getKrakenX60(1).withReduction(6.122), 90, 1);
+    private final ModuleConfig moduleConfig = new ModuleConfig(Units.inchesToMeters(3.95/2), 5.1, 1.2, DCMotor.getKrakenX60(1).withReduction(6.122), 90, 1);
     
     private final RobotConfig robotConfig = new RobotConfig(Units.lbsToKilograms(129), 4.785, moduleConfig, Units.inchesToMeters(10.375*2), Units.inchesToMeters(10.375*2));
 
@@ -192,16 +192,16 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         switch (state) {
             case TELEOP -> {
                 this.setControl(fieldCentric
-                        .withVelocityX(controllerX * DriveConstants.MaxSpeed *0.6)
-                        .withVelocityY(controllerY * DriveConstants.MaxSpeed *0.6)
+                        .withVelocityX(controllerX * DriveConstants.MaxSpeed)
+                        .withVelocityY(controllerY * DriveConstants.MaxSpeed)
                         .withRotationalRate(controllerOmega * DriveConstants.MaxAngularRate));
                         break;
             }
             
             case HEADING -> {
                 this.setControl(fieldCentricFacingAngle
-                        .withVelocityX(controllerX * DriveConstants.MaxSpeed)
-                        .withVelocityY(controllerY * DriveConstants.MaxSpeed)
+                        .withVelocityX(controllerX * DriveConstants.MaxSpeed * 0.6)
+                        .withVelocityY(controllerY * DriveConstants.MaxSpeed * 0.6)
                         .withTargetDirection(RobotState.getInstance().getAngleToTarget()));
                         break;
             }
@@ -248,7 +248,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
             fieldCentricFacingAngle.HeadingController.setPID(5, 0, 0);
         }
         fieldCentricFacingAngle.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
-        fieldCentricFacingAngle.HeadingController.setTolerance(Units.degreesToRadians(1)); // TODO: confirm this
+        fieldCentricFacingAngle.HeadingController.setTolerance(Units.degreesToRadians(3)); // TODO: confirm this
                                                                                             // tolerance
         SmartDashboard.putData("Angle PID",fieldCentricFacingAngle.HeadingController);
     }
@@ -288,12 +288,12 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
             // Set all of the parameters related to the supply current. The values should
             // come from Constants.
-            customCurrentLimitConfigs.SupplyCurrentLimit = 90;
+            customCurrentLimitConfigs.SupplyCurrentLimit = 60;
             customCurrentLimitConfigs.SupplyCurrentThreshold = 90;
             customCurrentLimitConfigs.SupplyTimeThreshold = .5;
             customCurrentLimitConfigs.SupplyCurrentLimitEnable = true;
 
-            customCurrentLimitConfigs.StatorCurrentLimit = 100;
+            customCurrentLimitConfigs.StatorCurrentLimit = 80;
             customCurrentLimitConfigs.StatorCurrentLimitEnable = true;
 
             // Apply the new current limit configuration.

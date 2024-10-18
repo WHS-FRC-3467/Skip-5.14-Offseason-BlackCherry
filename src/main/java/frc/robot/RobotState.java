@@ -60,6 +60,10 @@ public class RobotState {
 
     @Getter
     TunableNumber shooterTuningAngle = new TunableNumber("Shooter Tuning Angle (deg)",20);
+
+    @Getter
+    TunableNumber shooterTuningSpeed = new TunableNumber("Shooter Tuning Speed (rps)",25);
+
     TunableNumber autoAimOffset = new TunableNumber("Auto Aim Rotatational Offset (deg)",0);
 
 
@@ -118,9 +122,11 @@ public class RobotState {
 
     private static final InterpolatingDoubleTreeMap feedOverAngleMap = new InterpolatingDoubleTreeMap();
     static { //TODO: Tune angles for feeding over stage
-        feedOverAngleMap.put(6.0, 30.0);
-        feedOverAngleMap.put(7.0, 30.0);
-        feedOverAngleMap.put(8.0, 30.0);
+        
+        feedOverAngleMap.put(8.42, 28.0);
+        feedOverAngleMap.put(9.0, 26.0);
+        feedOverAngleMap.put(9.82, 24.0);
+        feedOverAngleMap.put(11.0, 24.0);
     }
 
     public double getShotAngle() {
@@ -128,8 +134,8 @@ public class RobotState {
             case SPEAKER:
                 return speakerAngleMap.get(getDistanceToTarget());
             case FEED:
-                if (getDistanceToTarget() < 6) { //TODO: Check this distance
-                    return 10.0; //TODO: Check this angle
+                if (getDistanceToTarget() < 8) { //TODO: Check this distance
+                    return 0.5; //TODO: Check this angle
                 } else {
                     return feedOverAngleMap.get(getDistanceToTarget()); 
                 }

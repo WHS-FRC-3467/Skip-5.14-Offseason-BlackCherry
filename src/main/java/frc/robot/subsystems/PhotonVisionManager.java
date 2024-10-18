@@ -37,8 +37,6 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.simulation.PhotonCameraSim;
-import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 //https://github.com/gladiatorsprogramming1591/Crescendo2024/blob/main/src/main/java/frc/robot/subsystems/DriveSubsystem.java#L794
@@ -54,7 +52,8 @@ public class PhotonVisionManager extends SubsystemBase {
 
     public PhotonVisionManager(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
-
+        
+        fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
         m_frontLeftCamera = new PhotonCamera(PhotonVisionConstants.front_left_cam.kCameraName);
         m_frontRightCamera = new PhotonCamera(PhotonVisionConstants.front_right_cam.kCameraName);
 

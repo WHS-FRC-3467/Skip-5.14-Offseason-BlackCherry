@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.8470239607145884,
-        "y": 3.6451895126012475
+        "x": 3.014049050320323,
+        "y": 2.92843394575678
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.6097253972285723,
-        "y": 3.3235684249146273
+        "x": 3.418372703412074,
+        "y": 2.6987045974091948
       },
       "isLocked": false,
       "linkedName": "SourceNL"
@@ -20,8 +20,8 @@
         "y": 1.7062738125476258
       },
       "prevControl": {
-        "x": 2.4810769621588227,
-        "y": 2.147354161379301
+        "x": 3.4091835294781703,
+        "y": 1.301950159455874
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 8.2833612274186
+    "rotation": 8.283361227418602
   },
   "reversed": false,
   "folder": null,
