@@ -7,10 +7,8 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -42,19 +40,12 @@ public class ClimberJoint extends SubsystemBase {
     private final NeutralOut m_neutral = new NeutralOut();
 
     public boolean hasHomed = false;
-    private final SendableChooser<State> stateChooser = new SendableChooser<>();
 
     public ClimberJoint() {
         m_motor.getConfigurator().apply(ClimberJointConstants.motorConfig());
         m_follower.getConfigurator().apply(ClimberJointConstants.motorConfig());
         m_follower.setControl(new Follower(ClimberJointConstants.ID_LEADER, false));
         m_motor.setPosition(0.0);
-                for (State states : State.values()) {
-                stateChooser.addOption(states.toString(), states);  
-        }
-        stateChooser.setDefaultOption(state.toString(), state);
-        SmartDashboard.putData("ClimberJoint State Chooser", stateChooser);
-        SmartDashboard.putData("ClimberJoint Override Command",Commands.runOnce(() -> setState(stateChooser.getSelected()), this));
     }
 
     @Override

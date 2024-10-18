@@ -55,18 +55,16 @@ public class RobotContainer {
 	private final Debouncer ampDebouncer = new Debouncer(.25, DebounceType.kBoth);
 	private Trigger BB1 = new Trigger(() -> !bb1.get());
 
-	//Photonvision and Limelight cams
-	//PhotonVision front_left_pv = new PhotonVision(drivetrain, 0);
-	//PhotonVision front_right_pv = new PhotonVision(drivetrain, 1);
-	PhotonVisionManager photonVision = new PhotonVisionManager(drivetrain);
-
-	//PhotonVision back_right_pv = new PhotonVision(drivetrain, 2);
+	//Photonvision and Limelight cameras
+	PhotonVision photonVision = new PhotonVision(drivetrain);
 	Limelight limelight = new Limelight();
 
 
     
 	private Trigger noteStored = new Trigger(() -> (lc1.isClose() || lc2.isClose())); //Note in YSplitRollers trigger
 	private Trigger noteAmp = new Trigger(() -> ampDebouncer.calculate(!bb1.get())); //Note in ElevatorRollers
+
+	private Trigger jointsHaveHomed = new Trigger(() -> (climberJoint.hasHomed && elevatorJoint.hasHomed && intakeJoint.hasHomed));
 
 	private Trigger readyToShoot = new Trigger(
 			() -> (shooterRollers.getState() != ShooterRollers.State.OFF) && shooterRollers.atGoal() &&
@@ -115,7 +113,7 @@ public class RobotContainer {
 												Commands.waitUntil(LC2),
 												intakeRollers.setStateCommand(IntakeRollers.State.INTAKE)))))));
 
-		joystick.leftTrigger().and(LC2).whileTrue(Commands.startEnd(() -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 1), () -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 0)));
+		joystick.leftTrigger().and(LC2).whileTrue(Commands.startEnd(() -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 0.5), () -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 0)));
 
 		//Subwoofer
 		joystick.a().whileTrue(
@@ -159,8 +157,10 @@ public class RobotContainer {
 		//Climb Request (toggle)
 		joystick.back().onTrue(Commands.runOnce(() -> climbRequested = !climbRequested));
 
+		//Climb sequence next step
 		joystick.start().onTrue(Commands.runOnce(() -> climbStep += 1));
 
+		//Slow drivetrain to 25% while climbing
 		climbRequest.whileTrue(drivetrain.run(() -> drivetrain.setControllerInput(-joystick.getLeftY()*0.25,
 		-joystick.getLeftX()*0.25, -joystick.getRightX()*0.25)));
 
@@ -205,7 +205,7 @@ public class RobotContainer {
 		scoreRequested.and(climbRequest).whileTrue(
 			elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE));
 		
-		// Home Mechanisms
+		//Home Mechanisms
 		joystick.povLeft().onTrue(Commands.runOnce(() -> {
 			climberJoint.hasHomed = false;
 			elevatorJoint.hasHomed = false;
@@ -324,8 +324,9 @@ public class RobotContainer {
 		SmartDashboard.putBoolean("readyToAmp",readyToAmp.getAsBoolean());
         SmartDashboard.putBoolean("Note in YSplit", noteStored.getAsBoolean());
         SmartDashboard.putBoolean("Note in Amp", noteAmp.getAsBoolean());
-		SmartDashboard.putBoolean("CLIMB REQUESTED", climbRequest.getAsBoolean());
+		SmartDashboard.putBoolean("Climb Requested", climbRequest.getAsBoolean());
 		SmartDashboard.putNumber("Climb Step", climbStep);
+		SmartDashboard.putBoolean("All Joints Homed", jointsHaveHomed.getAsBoolean());
     }
 
 	public RobotContainer() {

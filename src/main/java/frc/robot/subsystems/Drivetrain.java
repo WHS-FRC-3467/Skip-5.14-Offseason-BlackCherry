@@ -15,6 +15,8 @@ import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
@@ -28,7 +30,6 @@ import frc.robot.RobotState;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.Robot;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -63,9 +64,9 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
 
-    private double controllerX = 0.0;
-    private double controllerY = 0.0;
-    private double controllerOmega = 0.0;
+    private double xVelocity = 0.0;
+    private double yVelocity = 0.0;
+    private double omegaVelocity = 0.0;
 
     private final ModuleConfig moduleConfig = new ModuleConfig(Units.inchesToMeters(3.95/2), 5.1, 1.2, DCMotor.getKrakenX60(1).withReduction(6.122), 90, 1);
     
@@ -75,16 +76,16 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     private final SwerveRequest.ApplyChassisSpeeds AutoRequest = new SwerveRequest.ApplyChassisSpeeds();
 
     private SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
-            .withDeadband(DriveConstants.MaxSpeed * 0.1).withRotationalDeadband(DriveConstants.MaxAngularRate * 0.1)
+            .withDeadband(DriveConstants.MaxSpeed * 0.01).withRotationalDeadband(DriveConstants.MaxAngularRate * 0.01)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     private SwerveRequest.FieldCentricFacingAngle fieldCentricFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
-            .withDeadband(DriveConstants.MaxSpeed * 0.1).withRotationalDeadband(DriveConstants.MaxAngularRate * 0.1)
+            .withDeadband(DriveConstants.MaxSpeed * 0.01).withRotationalDeadband(DriveConstants.MaxAngularRate * 0.01)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-    private SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric()
+/*     private SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric()
             .withDeadband(DriveConstants.MaxSpeed * 0.1).withRotationalDeadband(DriveConstants.MaxAngularRate * 0.1)
-            .withDriveRequestType(DriveRequestType.Velocity);
+            .withDriveRequestType(DriveRequestType.Velocity); */
 
     // private final SwerveRequest.SwerveDriveBrake brake = new
     // SwerveRequest.SwerveDriveBrake();
@@ -155,8 +156,8 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     public void periodic() {
 
         if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-            controllerX = -controllerX;
-            controllerY = -controllerY;
+            xVelocity = -xVelocity;
+            yVelocity = -yVelocity;
         }
 
         RobotState.getInstance().setRobotPose(getState().Pose); // Tell RobotState current pose
@@ -192,28 +193,28 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         switch (state) {
             case TELEOP -> {
                 this.setControl(fieldCentric
-                        .withVelocityX(controllerX * DriveConstants.MaxSpeed)
-                        .withVelocityY(controllerY * DriveConstants.MaxSpeed)
-                        .withRotationalRate(controllerOmega * DriveConstants.MaxAngularRate));
+                        .withVelocityX(xVelocity)
+                        .withVelocityY(yVelocity)
+                        .withRotationalRate(omegaVelocity));
                         break;
             }
             
             case HEADING -> {
                 this.setControl(fieldCentricFacingAngle
-                        .withVelocityX(controllerX * DriveConstants.MaxSpeed * 0.6)
-                        .withVelocityY(controllerY * DriveConstants.MaxSpeed * 0.6)
+                        .withVelocityX(xVelocity * 0.6)
+                        .withVelocityY(yVelocity * 0.6)
                         .withTargetDirection(RobotState.getInstance().getAngleToTarget()));
                         break;
             }
             case CARDINAL -> {
                 this.setControl(fieldCentricFacingAngle
-                        .withVelocityX(controllerX * DriveConstants.MaxSpeed)
-                        .withVelocityY(controllerY * DriveConstants.MaxSpeed)
+                        .withVelocityX(xVelocity)
+                        .withVelocityY(yVelocity)
                         .withTargetDirection(RobotState.getInstance().getAngleOfTarget()));
                         break;
             }
             case RELATIVE -> { //TODO: Make this less specific, fix for auto vs teleop
-                if (RobotState.getInstance().getAngleToNote().isPresent()) {
+/*                 if (RobotState.getInstance().getAngleToNote().isPresent()) {
                     this.setControl(robotCentric
                         .withVelocityX(-DriveConstants.MaxSpeed * (1 - Math.abs(RobotState.getInstance().getAngleToNote().getAsDouble()) / 32) * .25)
                         .withVelocityY(0)
@@ -225,7 +226,12 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
                     	.withVelocityY(controllerY * DriveConstants.MaxSpeed)
                     	.withRotationalRate(0));
                 }
-                break;
+                break; */
+                this.setControl(fieldCentric
+                        .withVelocityX(xVelocity)
+                        .withVelocityY(yVelocity)
+                        .withRotationalRate(omegaVelocity));
+                        break;
                 
             }
             default -> {
@@ -242,21 +248,17 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     }
 
     private void setHeadingPID() {
-        if (Robot.isReal()) {
-            fieldCentricFacingAngle.HeadingController.setPID(10, 0, 0);
-        } else {
-            fieldCentricFacingAngle.HeadingController.setPID(5, 0, 0);
-        }
+        fieldCentricFacingAngle.HeadingController.setPID(10, 0, 0);
         fieldCentricFacingAngle.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
-        fieldCentricFacingAngle.HeadingController.setTolerance(Units.degreesToRadians(3)); // TODO: confirm this
-                                                                                            // tolerance
+        fieldCentricFacingAngle.HeadingController.setTolerance(Units.degreesToRadians(DriveConstants.headingAngleTolerance)); 
+
         SmartDashboard.putData("Angle PID",fieldCentricFacingAngle.HeadingController);
     }
 
     public void setControllerInput(double controllerX, double controllerY, double controllerOmega) {
-        this.controllerX = controllerX;
-        this.controllerY = controllerY;
-        this.controllerOmega = controllerOmega;
+        this.xVelocity = MathUtil.applyDeadband(controllerX, 0.1, DriveConstants.MaxSpeed);
+        this.yVelocity = MathUtil.applyDeadband(controllerY, 0.1, DriveConstants.MaxSpeed);
+        this.omegaVelocity = MathUtil.applyDeadband(controllerOmega, 0.1, DriveConstants.MaxAngularRate);;
     }
 
     public boolean atGoal() {
