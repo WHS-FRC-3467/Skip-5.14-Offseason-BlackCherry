@@ -9,6 +9,8 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -56,7 +58,7 @@ public class RobotContainer {
 	private Trigger BB1 = new Trigger(() -> !bb1.get());
 
 	//Photonvision and Limelight cameras
-	PhotonVision photonVision = new PhotonVision(drivetrain);
+	PhotonVision photonVision = new PhotonVision(drivetrain,0);
 	Limelight limelight = new Limelight();
 
 
@@ -65,6 +67,9 @@ public class RobotContainer {
 	private Trigger noteAmp = new Trigger(() -> ampDebouncer.calculate(!bb1.get())); //Note in ElevatorRollers
 
 	private Trigger jointsHaveHomed = new Trigger(() -> (climberJoint.hasHomed && elevatorJoint.hasHomed && intakeJoint.hasHomed));
+
+	private Debouncer notMovingDebouncer = new Debouncer(0.5,DebounceType.kRising);
+	private Trigger notMoving = new Trigger(() -> notMovingDebouncer.calculate(drivetrain.getCurrentRobotChassisSpeeds().vxMetersPerSecond < .1));
 
 	private Trigger readyToShoot = new Trigger(
 			() -> (shooterRollers.getState() != ShooterRollers.State.OFF) && shooterRollers.atGoal() &&
@@ -113,7 +118,7 @@ public class RobotContainer {
 												Commands.waitUntil(LC2),
 												intakeRollers.setStateCommand(IntakeRollers.State.INTAKE)))))));
 
-		joystick.leftTrigger().and(LC2).whileTrue(Commands.startEnd(() -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 0.5), () -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 0)));
+		joystick.leftTrigger().and(LC2).whileTrue(Commands.startEnd(() -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 1), () -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 0)));
 
 		//Subwoofer
 		joystick.a().whileTrue(
@@ -140,6 +145,8 @@ public class RobotContainer {
 												ElevatorRollers.State.INTAKE))))
 						.withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
+		joystick.rightBumper().and(noteAmp).whileTrue(Commands.startEnd(() -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 1), () -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 0)));
+
 		//Feed
 		joystick.y().whileTrue(
 				Commands.parallel(
@@ -162,7 +169,7 @@ public class RobotContainer {
 
 		//Slow drivetrain to 25% while climbing
 		climbRequest.whileTrue(drivetrain.run(() -> drivetrain.setControllerInput(-joystick.getLeftY()*0.25,
-		-joystick.getLeftX()*0.25, -joystick.getRightX()*0.25)));
+		-joystick.getLeftX()*0.25, -joystick.getRightX()*0.50)));
 
 		climbRequest.and(climbStep0).whileTrue(
 				Commands.parallel(
@@ -234,6 +241,8 @@ public class RobotContainer {
 						ySplitRollers.setStateCommand(YSplitRollers.State.REVAMP),
 						elevatorRollers.setStateCommand(ElevatorRollers.State.EJECT)));
 
+		joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative(new Pose2d(1.332, 5.529, new Rotation2d(Math.PI)))));
+
 	}
 
 	private void registerNamedCommands() {
@@ -250,47 +259,32 @@ public class RobotContainer {
 						shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
 						shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
 
-		if (Robot.isReal()) {
-			NamedCommands.registerCommand("Note Collect",
-			Commands.deadline(Commands.waitUntil(LC2),
-					//robotState.setTargetCommand(RobotState.TARGET.NOTE),
-					intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
-					Commands.waitUntil(intakeJoint::atGoal)
-							.andThen(Commands.deadline(
-									Commands.waitUntil(LC1),
-									intakeRollers.setStateCommand(
-											IntakeRollers.State.INTAKE),
-									ySplitRollers.setStateCommand(
-											YSplitRollers.State.INTAKE)))
-							.andThen(ySplitRollers.setStateCommand(
-											YSplitRollers.State.SLOWINTAKE))));
+		NamedCommands.registerCommand("Note Collect",
+				Commands.race(
+						Commands.waitSeconds(8),
+						Commands.deadline(
+								Commands.waitUntil(LC2),
+								ySplitRollers.setStateCommand(YSplitRollers.State.INTAKE)
+										.until(LC1)
+										.andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SLOWINTAKE)),
+								Commands.parallel(
+										intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
+										Commands.waitUntil(intakeJoint::atGoal)
+												.andThen(Commands.deadline(
+														Commands.waitUntil(LC2),
+														intakeRollers
+																.setStateCommand(IntakeRollers.State.INTAKE))))))
+																//;
+																);
 
-			NamedCommands.registerCommand("Shooting Command",
-				Commands.waitUntil(readyToShoot)
-						.andThen(Commands.deadline(
-							Commands.waitUntil(LC2.negate()),
-							ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER))));
+		NamedCommands.registerCommand("Shooting Command",
+				Commands.race(
+						Commands.waitSeconds(3),
+						Commands.waitUntil(readyToShoot)
+								.andThen(Commands.deadline(
+										Commands.waitUntil(LC2.negate()),
+										ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER)))));
 
-		} else {
-			NamedCommands.registerCommand("Shooting Command",
-					Commands.deadline(
-							Commands.waitSeconds(3),
-							ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER)));
-
-			NamedCommands.registerCommand("Note Collect",
-					Commands.deadline(Commands.waitSeconds(3),
-							//robotState.setTargetCommand(RobotState.TARGET.NOTE),
-							intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
-							Commands.waitSeconds(1.5)
-									.andThen(Commands.deadline(
-											Commands.waitSeconds(.5),
-											intakeRollers.setStateCommand(
-													IntakeRollers.State.INTAKE),
-											ySplitRollers.setStateCommand(
-													YSplitRollers.State.INTAKE)))
-									.andThen(ySplitRollers.setStateCommand(
-											YSplitRollers.State.SLOWINTAKE))));
-		}
 		
 	}
 
@@ -327,6 +321,7 @@ public class RobotContainer {
 		SmartDashboard.putBoolean("Climb Requested", climbRequest.getAsBoolean());
 		SmartDashboard.putNumber("Climb Step", climbStep);
 		SmartDashboard.putBoolean("All Joints Homed", jointsHaveHomed.getAsBoolean());
+		SmartDashboard.putBoolean("Not Moving Trigger", notMoving.getAsBoolean());
     }
 
 	public RobotContainer() {

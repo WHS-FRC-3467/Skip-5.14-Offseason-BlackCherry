@@ -56,7 +56,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "R2 - R3"
+                              "pathName": "R2 - R1"
                             }
                           }
                         ]
@@ -81,7 +81,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "R3 - R1"
+                              "pathName": "R1 - R3"
                             }
                           }
                         ]

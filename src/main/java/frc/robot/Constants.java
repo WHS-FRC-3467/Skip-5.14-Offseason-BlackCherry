@@ -14,11 +14,15 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import frc.robot.generated.TunerConstants;
 
@@ -162,7 +166,7 @@ public class Constants {
         public static CANcoderConfiguration encoderConfig() {
             CANcoderConfiguration m_configuration = new CANcoderConfiguration();
             m_configuration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
-            m_configuration.MagnetSensor.MagnetOffset = -0.145751953125;
+            m_configuration.MagnetSensor.MagnetOffset = -0.396240234375;
             m_configuration.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
 
             return m_configuration;
@@ -386,11 +390,14 @@ public class Constants {
        
         // The layout of the AprilTags on the field
         public static final AprilTagFieldLayout kTagLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
+        
+        public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+        public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
 
         public static final double VISION_XY_MARGIN = 0.5;
         public static final double VISION_Z_MARGIN = 0.75;
-        public static final double VISION_STD_XY_SCALE = 0.02;
-        public static final double VISION_STD_ROT_SCALE = 0.035;
+        public static final double VISION_STD_XY_SCALE = 0.02 * 10;
+        public static final double VISION_STD_ROT_SCALE = 0.035 * 10;
 
 
     }
@@ -403,8 +410,8 @@ public class Constants {
 
         public static final Pose2d BLUE_SPEAKER = new Pose2d(Units.inchesToMeters(-1.5 + 12), Units.inchesToMeters(218.42), new Rotation2d(0));
         public static final Pose2d RED_SPEAKER = new Pose2d(Units.inchesToMeters(652.73 - 12), Units.inchesToMeters(218.42), new Rotation2d(Math.PI));
-        public static final Pose2d BLUE_FEED = new Pose2d(1.25, 6.0, new Rotation2d(0));
-        public static final Pose2d RED_FEED = new Pose2d(15.250, 6.0, new Rotation2d(0));
+        public static final Pose2d BLUE_FEED = new Pose2d(1.25, 6.2, new Rotation2d(0));
+        public static final Pose2d RED_FEED = new Pose2d(15.250, 6.2, new Rotation2d(0));
         public static final Pose2d BLUE_AMP = new Pose2d(Units.inchesToMeters(72.5),Units.inchesToMeters(323.00),new Rotation2d(-Math.PI/2));
         public static final Pose2d RED_AMP = new Pose2d(Units.inchesToMeters(578.77),Units.inchesToMeters(323.00),new Rotation2d(-Math.PI/2));
         public static final double BLUE_AUTO_PENALTY_LINE = 9; // X distance from origin to center of the robot almost fully crossing the midline

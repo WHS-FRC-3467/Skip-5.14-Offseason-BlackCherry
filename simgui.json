@@ -25,6 +25,7 @@
       "/SmartDashboard/Shooter Climber Clearance": "Command",
       "/SmartDashboard/Shooter Eject": "Command",
       "/SmartDashboard/Shooter Roller Speaker": "Command",
+      "/SmartDashboard/Shooter Roller Speed TUNING": "Command",
       "/SmartDashboard/Shooter Roller Sub": "Command",
       "/SmartDashboard/Shooter Tuning Angle": "Command",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
