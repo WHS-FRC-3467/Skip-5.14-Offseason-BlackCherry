@@ -256,9 +256,12 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     }
 
     public void setControllerInput(double controllerX, double controllerY, double controllerOmega) {
-        this.xVelocity = MathUtil.applyDeadband(controllerX, 0.1, DriveConstants.MaxSpeed);
-        this.yVelocity = MathUtil.applyDeadband(controllerY, 0.1, DriveConstants.MaxSpeed);
-        this.omegaVelocity = MathUtil.applyDeadband(controllerOmega, 0.1, DriveConstants.MaxAngularRate);;
+         this.xVelocity = MathUtil.applyDeadband(controllerX, 0.1, 1) * DriveConstants.MaxSpeed;
+        this.yVelocity = MathUtil.applyDeadband(controllerY, 0.1,1) * DriveConstants.MaxSpeed;
+        this.omegaVelocity = MathUtil.applyDeadband(controllerOmega, 0.1,1) * DriveConstants.MaxAngularRate;
+        //this.xVelocity = controllerX * DriveConstants.MaxSpeed;
+        //this.yVelocity = controllerY * DriveConstants.MaxSpeed;
+        //this.omegaVelocity = controllerOmega * DriveConstants.MaxAngularRate;
     }
 
     public boolean atGoal() {
