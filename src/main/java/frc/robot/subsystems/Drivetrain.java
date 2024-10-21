@@ -256,9 +256,9 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     }
 
     public void setControllerInput(double controllerX, double controllerY, double controllerOmega) {
-         this.xVelocity = MathUtil.applyDeadband(controllerX, 0.1, 1) * DriveConstants.MaxSpeed;
-        this.yVelocity = MathUtil.applyDeadband(controllerY, 0.1,1) * DriveConstants.MaxSpeed;
-        this.omegaVelocity = MathUtil.applyDeadband(controllerOmega, 0.1,1) * DriveConstants.MaxAngularRate;
+         this.xVelocity = MathUtil.applyDeadband(controllerX, 0.1, 1) * DriveConstants.MaxSpeed * DriveConstants.driverSpeed;
+        this.yVelocity = MathUtil.applyDeadband(controllerY, 0.1,1) * DriveConstants.MaxSpeed * DriveConstants.driverSpeed;
+        this.omegaVelocity = MathUtil.applyDeadband(controllerOmega, 0.1,1) * DriveConstants.MaxAngularRate * DriveConstants.driverSpeed;
         //this.xVelocity = controllerX * DriveConstants.MaxSpeed;
         //this.yVelocity = controllerY * DriveConstants.MaxSpeed;
         //this.omegaVelocity = controllerOmega * DriveConstants.MaxAngularRate;
@@ -293,9 +293,9 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
             // Set all of the parameters related to the supply current. The values should
             // come from Constants.
-            customCurrentLimitConfigs.SupplyCurrentLimit = 60;
-            customCurrentLimitConfigs.SupplyCurrentThreshold = 90;
-            customCurrentLimitConfigs.SupplyTimeThreshold = .5;
+            customCurrentLimitConfigs.SupplyCurrentLimit = 40;
+            customCurrentLimitConfigs.SupplyCurrentThreshold = 80;
+            customCurrentLimitConfigs.SupplyTimeThreshold = .2;
             customCurrentLimitConfigs.SupplyCurrentLimitEnable = true;
 
             customCurrentLimitConfigs.StatorCurrentLimit = 80;

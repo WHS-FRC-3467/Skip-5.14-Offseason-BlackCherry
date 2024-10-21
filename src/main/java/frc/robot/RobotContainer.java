@@ -168,8 +168,8 @@ public class RobotContainer {
 		joystick.start().onTrue(Commands.runOnce(() -> climbStep += 1));
 
 		//Slow drivetrain to 25% while climbing
-		climbRequest.whileTrue(drivetrain.run(() -> drivetrain.setControllerInput(-joystick.getLeftY()*0.25,
-		-joystick.getLeftX()*0.25, -joystick.getRightX()*0.50)));
+		climbRequest.whileTrue(drivetrain.run(() -> drivetrain.setControllerInput(-joystick.getLeftY()*0.5,
+		-joystick.getLeftX()*0.5, -joystick.getRightX())));
 
 		climbRequest.and(climbStep0).whileTrue(
 				Commands.parallel(
