@@ -43,7 +43,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 //https://github.com/gladiatorsprogramming1591/Crescendo2024/blob/main/src/main/java/frc/robot/subsystems/DriveSubsystem.java#L794
 
-public class PhotonVisionTest extends SubsystemBase {
+public class PhotonGreece extends SubsystemBase {
     private Drivetrain drivetrain;
     private PhotonPoseEstimator[] m_photonPoseEstimators;
     private PhotonCamera m_frontLeftCamera;
@@ -51,7 +51,7 @@ public class PhotonVisionTest extends SubsystemBase {
     private boolean hasTarget;
     AprilTagFieldLayout fieldLayout;
 
-    public PhotonVisionTest(Drivetrain drivetrain) {
+    public PhotonGreece(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
         
         fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
