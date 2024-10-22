@@ -127,10 +127,13 @@ public class RobotContainer {
 						shooterRollers.setStateCommand(ShooterRollers.State.SUBWOOFER),
 						shooterJoint.setStateCommand(ShooterJoint.State.SUBWOOFER)));
 
-		//Amp
+		// Amp
 		joystick.rightBumper().whileTrue(
 				Commands.parallel(
-						robotState.setTargetCommand(RobotState.TARGET.AMP),
+						Commands.either(
+								Commands.none(),
+								robotState.setTargetCommand(RobotState.TARGET.AMP),
+								climbRequest),
 						elevatorJoint.setStateCommand(ElevatorJoint.State.STOW),
 						Commands.waitUntil(elevatorJoint::atGoal)
 								.andThen(Commands.deadline(
