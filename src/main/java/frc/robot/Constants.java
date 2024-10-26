@@ -166,8 +166,9 @@ public class Constants {
 
         public static CANcoderConfiguration encoderConfig() {
             CANcoderConfiguration m_configuration = new CANcoderConfiguration();
-            m_configuration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
-            m_configuration.MagnetSensor.MagnetOffset = -0.396240234375;
+            m_configuration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;  
+            //following line is for shooter cancoder offset
+            m_configuration.MagnetSensor.MagnetOffset = -0.474609375;
             m_configuration.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
 
             return m_configuration;

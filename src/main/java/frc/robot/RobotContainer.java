@@ -157,7 +157,7 @@ public class RobotContainer {
 						.withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
 		joystick.rightBumper().and(noteAmp).whileTrue(Commands.startEnd(() -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 1), () -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 0)));
-
+ 
 		//Feed
 		joystick.y().whileTrue(
 				Commands.parallel(
