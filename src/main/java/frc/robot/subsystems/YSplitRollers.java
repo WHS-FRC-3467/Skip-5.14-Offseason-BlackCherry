@@ -27,7 +27,7 @@ public class YSplitRollers extends SubsystemBase {
         OFF(0.0, 0.0), // No movement
         INTAKE(0.65, 0.0), // Roller 1 only
         SLOWINTAKE(0.4, 0.0),
-        SHUFFLE(-0.15, 0.3),
+        SHUFFLE(-0.05, 0.1),
         SHOOTER(1.0, -1.0), // Roller 1 intakes, Roller 2 sends to shooter
         REVSHOOTER(-1.0, 1.0), // Reverse out of shooter
         AMP(0.65, 0.65), // Roller 1 intake, Roller 2 sends to elevator //Was .5 before 10/25

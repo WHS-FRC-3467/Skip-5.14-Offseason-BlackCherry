@@ -206,7 +206,7 @@ public class RobotContainer {
 					climberJoint.setStateCommand(ClimberJoint.State.STOW)));
 
 		//Score Shooter
-		scoreRequested.and(noteAmp.negate()).and(climbRequest.negate()).whileTrue(
+		scoreRequested.and(noteStored).and(noteAmp.negate()).and(climbRequest.negate()).whileTrue(
 				Commands.deadline(
 						Commands.waitUntil(noteStored.negate()),
 						Commands.waitUntil(readyToShoot)
@@ -218,7 +218,8 @@ public class RobotContainer {
 						elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE),
 						Commands.waitUntil(readyToAmp)
 								.andThen(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE))));
-		
+
+		scoreRequested.and(joystick.leftBumper()).whileTrue(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE));		
 		//Score Trap
 		scoreRequested.and(climbRequest).whileTrue(
 			elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE));
@@ -272,6 +273,11 @@ public class RobotContainer {
 						robotState.setTargetCommand(RobotState.TARGET.SPEAKER),
 						shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
 						shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
+
+		NamedCommands.registerCommand("Speaker Prep", 
+			Commands.parallel(
+					shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
+					shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
 
 		NamedCommands.registerCommand("Note Collect",
 				Commands.race(

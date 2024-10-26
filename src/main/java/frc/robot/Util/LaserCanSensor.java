@@ -11,7 +11,7 @@ import au.grapplerobotics.LaserCan.Measurement;
 /** Add your docs here. */
 public class LaserCanSensor {
     private LaserCan lc;
-    private double closeCut = 180;
+    private double closeCut = 200;
 
     public LaserCanSensor(int ID) {
         lc = new LaserCan(ID);

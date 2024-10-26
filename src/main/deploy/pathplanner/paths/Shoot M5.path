@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.261067366579178,
-        "y": 0.7597888973555714
+        "x": 8.150797279372338,
+        "y": 0.5760054186775034
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.406474190726159,
-        "y": 0.36465441819772465
+        "x": 7.296204103519318,
+        "y": 0.18087093951965666
       },
       "isLocked": false,
       "linkedName": "M5"
     },
     {
       "anchor": {
-        "x": 3.225400050800102,
-        "y": 2.8549205542855534
+        "x": 2.7016171365676063,
+        "y": 3.194919989839979
       },
       "prevControl": {
-        "x": 4.098371574520927,
-        "y": 1.5408686817373631
+        "x": 3.5745886602884314,
+        "y": 1.8808681172917887
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,19 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Prep Shooter",
+      "waypointRelativePos": 0.617558886509636,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Speaker Prep"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 4.0,
     "maxAcceleration": 4.0,
@@ -42,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 141.66665989090143
+    "rotation": 163.55707564769276
   },
   "reversed": false,
   "folder": null,

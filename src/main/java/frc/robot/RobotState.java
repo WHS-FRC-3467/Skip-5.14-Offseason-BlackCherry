@@ -107,16 +107,16 @@ public class RobotState {
 
     private static final InterpolatingDoubleTreeMap speakerAngleMap = new InterpolatingDoubleTreeMap();
     static {
-        speakerAngleMap.put(1.01, 42.00);
-        speakerAngleMap.put(2.15, 26.00);
-        speakerAngleMap.put(2.56, 22.00);
-        speakerAngleMap.put(3.0, 20.00);
-        speakerAngleMap.put(3.5, 16.00);
-        speakerAngleMap.put(4.02, 14.00);
-        speakerAngleMap.put(4.6, 10.50);
-        speakerAngleMap.put(4.95, 9.00);
-        speakerAngleMap.put(5.5,8.00);
-        speakerAngleMap.put(6.08,7.00);
+        speakerAngleMap.put(1.01, 43.00);
+        speakerAngleMap.put(2.15, 27.00);
+        speakerAngleMap.put(2.56, 23.00);
+        speakerAngleMap.put(3.0, 21.00);
+        speakerAngleMap.put(3.5, 17.00);
+        speakerAngleMap.put(4.02, 15.00);
+        speakerAngleMap.put(4.6, 11.50);
+        speakerAngleMap.put(4.95, 10.00);
+        speakerAngleMap.put(5.5,9.00);
+        speakerAngleMap.put(6.08,8.00);
     }
 
     private static final InterpolatingDoubleTreeMap feedOverAngleMap = new InterpolatingDoubleTreeMap();

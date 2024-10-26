@@ -20,6 +20,7 @@
       "/SmartDashboard/Module 1": "Mechanism2d",
       "/SmartDashboard/Module 2": "Mechanism2d",
       "/SmartDashboard/Module 3": "Mechanism2d",
+      "/SmartDashboard/Photon Greece Pose": "Field2d",
       "/SmartDashboard/Reset Climber Index": "Command",
       "/SmartDashboard/Robot Pose Field Map": "Field2d",
       "/SmartDashboard/Shooter Climber Clearance": "Command",
