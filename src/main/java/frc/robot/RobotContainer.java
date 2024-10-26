@@ -4,6 +4,11 @@
 
 package frc.robot;
 
+import java.lang.reflect.Field;
+
+import org.opencv.photo.Photo;
+
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -13,6 +18,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -58,7 +64,8 @@ public class RobotContainer {
 	private Trigger BB1 = new Trigger(() -> !bb1.get());
 
 	//Photonvision and Limelight cameras
-	PhotonVision photonVision = new PhotonVision(drivetrain,0);
+	//PhotonVision photonVision = new PhotonVision(drivetrain,0);
+	PhotonGreece photonGreece = new PhotonGreece(drivetrain);
 	Limelight limelight = new Limelight();
 
 
@@ -92,8 +99,9 @@ public class RobotContainer {
 	private Trigger climbStep2 = new Trigger(() -> climbStep == 2);
 	private Trigger climbStep3 = new Trigger(() -> climbStep >= 3);
 
-
 	private SendableChooser<Command> autoChooser;
+
+
 
 	private final Telemetry logger = new Telemetry(Constants.DriveConstants.MaxSpeed);
 
@@ -237,10 +245,13 @@ public class RobotContainer {
 						ySplitRollers.setStateCommand(YSplitRollers.State.REVSHOOTER),
 						intakeRollers.setStateCommand(IntakeRollers.State.EJECT)));
 
+		joystick.leftBumper().whileTrue(
+				elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE)
+		);
+
 		//Un-amp
-		joystick.povDown().whileTrue(
-				Commands.deadline(
-						Commands.waitUntil(LC1),
+		joystick.povDown().whileTrue(Commands.parallel(
+
 						ySplitRollers.setStateCommand(YSplitRollers.State.REVAMP),
 						elevatorRollers.setStateCommand(ElevatorRollers.State.EJECT)));
 

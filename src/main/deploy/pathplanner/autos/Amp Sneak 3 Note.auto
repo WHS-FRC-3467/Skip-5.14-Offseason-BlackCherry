@@ -17,10 +17,16 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Speaker"
+                  "name": "Subwoofer"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Amp Side Speaker Sneak"
           }
         },
         {
@@ -36,26 +42,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Amp Side Sub - R1"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Note Collect"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "R1 - M1"
+                  "pathName": "Amp Sneak - M1"
                 }
               }
             ]

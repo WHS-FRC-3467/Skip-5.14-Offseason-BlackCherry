@@ -108,7 +108,7 @@ public class Constants {
 
             m_configuration.CurrentLimits.SupplyCurrentLimit = 20;
             m_configuration.CurrentLimits.SupplyCurrentThreshold = 60;
-            m_configuration.CurrentLimits.SupplyTimeThreshold = 0.1;
+            m_configuration.CurrentLimits.SupplyTimeThreshold = 0.25;
             m_configuration.CurrentLimits.SupplyCurrentLimitEnable = true;
             m_configuration.CurrentLimits.StatorCurrentLimit = 140;
             m_configuration.CurrentLimits.StatorCurrentLimitEnable = true;

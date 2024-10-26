@@ -33,8 +33,12 @@
  import edu.wpi.first.math.numbers.N1;
  import edu.wpi.first.math.numbers.N3;
  import edu.wpi.first.wpilibj.smartdashboard.Field2d;
- import edu.wpi.first.wpilibj2.command.SubsystemBase;
- import frc.robot.Robot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.PhotonVisionConstants.back_right_cam;
+import frc.robot.Constants.PhotonVisionConstants.front_left_cam;
+import frc.robot.Constants.PhotonVisionConstants.front_right_cam;
+import frc.robot.Robot;
  import java.util.Optional;
  import org.photonvision.EstimatedRobotPose;
  import org.photonvision.PhotonCamera;
@@ -55,6 +59,8 @@
      // Simulation
      private PhotonCameraSim cameraSim;
      private VisionSystemSim visionSim;
+
+    private Field2d visionPose = new Field2d();   
  
      public PhotonVision(Drivetrain drivetrain, int cam_num) {
          this.drivetrain = drivetrain;
@@ -107,6 +113,8 @@
  
              cameraSim.enableDrawWireframe(true);
          }
+         SmartDashboard.putData("Photon Vision Pose",visionPose);
+
      }
  
      public PhotonPipelineResult getLatestResult() {
@@ -186,8 +194,8 @@
                      // Change our trust in the measurement based on the tags we can see
                      var estStdDevs = getEstimationStdDevs(estPose);
                      // System.out.println("Adding to vision");
-                     drivetrain.addVisionMeasurement(
-                             est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
+                     //drivetrain.addVisionMeasurement(est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
+                     visionPose.setRobotPose(est.estimatedPose.toPose2d());
                  });
  
          hasTarget = getLatestResult().hasTargets();

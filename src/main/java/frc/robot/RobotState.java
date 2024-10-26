@@ -121,11 +121,11 @@ public class RobotState {
 
     private static final InterpolatingDoubleTreeMap feedOverAngleMap = new InterpolatingDoubleTreeMap();
     static { //TODO: Tune angles for feeding over stage
-        
+        feedOverAngleMap.put(8.00, 30.0);
         feedOverAngleMap.put(8.42, 28.0);
         feedOverAngleMap.put(9.0, 26.0);
-        feedOverAngleMap.put(9.82, 24.0);
-        feedOverAngleMap.put(11.0, 24.0);
+        feedOverAngleMap.put(9.82, 25.0);
+        feedOverAngleMap.put(11.0, 25.0);
     }
 
     public double getShotAngle() {

@@ -39,7 +39,7 @@ public class IntakeJoint extends SubsystemBase {
     private final SendableChooser<State> stateChooser = new SendableChooser<>();
     
 
-    TalonFX m_motor = new TalonFX(IntakeJointConstants.ID_Motor);
+    public TalonFX m_motor = new TalonFX(IntakeJointConstants.ID_Motor);
     private final MotionMagicVoltage m_position = new MotionMagicVoltage(state.getOutput());
     private final DutyCycleOut m_duty = new DutyCycleOut(0.0);
     //private final NeutralOut m_neutral = new NeutralOut();

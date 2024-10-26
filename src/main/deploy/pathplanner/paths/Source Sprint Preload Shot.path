@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0032399175909466,
-        "y": 2.946812293624587
+        "x": 2.471887788220021,
+        "y": 2.1289758135071817
       },
       "isLocked": false,
       "linkedName": "RetrieveNoteSource"
     },
     {
       "anchor": {
-        "x": 3.014049050320323,
-        "y": 2.92843394575678
+        "x": 3.225400050800102,
+        "y": 2.8549205542855534
       },
       "prevControl": {
-        "x": 2.8394547455761576,
-        "y": 2.3127592921852504
+        "x": 3.0508057460559375,
+        "y": 2.2392459007140237
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "SourceNL"
+      "linkedName": "ShootM4"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 150.25511870305778
+    "rotation": 136.71835800165545
   },
   "reversed": false,
   "folder": null,

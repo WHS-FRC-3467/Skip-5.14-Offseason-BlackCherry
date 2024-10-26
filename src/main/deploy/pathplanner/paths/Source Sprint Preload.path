@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.014049050320323,
-        "y": 2.92843394575678
+        "x": 3.225400050800102,
+        "y": 2.8549205542855534
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.418372703412074,
-        "y": 2.6987045974091948
+        "x": 3.629723703891853,
+        "y": 2.625191205937968
       },
       "isLocked": false,
-      "linkedName": "SourceNL"
+      "linkedName": "ShootM4"
     },
     {
       "anchor": {

@@ -29,6 +29,8 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PhotonVisionConstants;
@@ -51,25 +53,28 @@ public class PhotonGreece extends SubsystemBase {
     private boolean hasTarget;
     AprilTagFieldLayout fieldLayout;
 
+    private Field2d visionPose = new Field2d();  
+
     public PhotonGreece(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
         
         fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
         m_frontLeftCamera = new PhotonCamera(front_left_cam.kCameraName);
         m_frontRightCamera = new PhotonCamera(front_right_cam.kCameraName);
-
         m_photonPoseEstimators = new PhotonPoseEstimator[] {
                 new PhotonPoseEstimator(
                     AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
                     PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
                     m_frontLeftCamera,
                     front_left_cam.kRobotToCam),
-                 new PhotonPoseEstimator(
+/*                    new PhotonPoseEstimator(
                      AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
                      PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
                      m_frontRightCamera,
-                     front_right_cam.kRobotToCam),
+                     front_right_cam.kRobotToCam) */ 
             };
+
+            SmartDashboard.putData("Photon Greece Pose",visionPose);
     }
 
   
@@ -104,6 +109,7 @@ public class PhotonGreece extends SubsystemBase {
                         double rotStd = PhotonVisionConstants.VISION_STD_ROT_SCALE * stdScale;
 
                         drivetrain.addVisionMeasurement(pose2d, pose.get().timestampSeconds, VecBuilder.fill(xyStd, xyStd, rotStd));
+                        visionPose.setRobotPose(pose2d);
                         continue;
                     }
                 }

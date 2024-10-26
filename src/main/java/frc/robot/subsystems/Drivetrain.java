@@ -4,6 +4,9 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
@@ -82,6 +85,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     private SwerveRequest.FieldCentricFacingAngle fieldCentricFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
             .withDeadband(DriveConstants.MaxSpeed * 0.01).withRotationalDeadband(DriveConstants.MaxAngularRate * 0.01)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
 
 /*     private SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric()
             .withDeadband(DriveConstants.MaxSpeed * 0.1).withRotationalDeadband(DriveConstants.MaxAngularRate * 0.1)
@@ -192,7 +196,8 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
         switch (state) {
             case TELEOP -> {
-                this.setControl(fieldCentric
+                this.setControl(
+                    fieldCentric
                         .withVelocityX(xVelocity)
                         .withVelocityY(yVelocity)
                         .withRotationalRate(omegaVelocity));
@@ -281,6 +286,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         // Create a current configuration to use for the drive motor of each swerve
         // module.
         var customCurrentLimitConfigs = new CurrentLimitsConfigs();
+        var customMotorConfigs = new TalonFXConfiguration();
 
         // Iterate through each module.
         for (var module : Modules) {
@@ -290,19 +296,31 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
             // Refresh the current configuration, since the stator current limit has already
             // been set.
             currentConfigurator.refresh(customCurrentLimitConfigs);
+            currentConfigurator.refresh(customMotorConfigs);
 
             // Set all of the parameters related to the supply current. The values should
             // come from Constants.
-            customCurrentLimitConfigs.SupplyCurrentLimit = 40;
+            customCurrentLimitConfigs.SupplyCurrentLimit = 60;
             customCurrentLimitConfigs.SupplyCurrentThreshold = 80;
-            customCurrentLimitConfigs.SupplyTimeThreshold = .2;
+            customCurrentLimitConfigs.SupplyTimeThreshold = .1;
             customCurrentLimitConfigs.SupplyCurrentLimitEnable = true;
 
-            customCurrentLimitConfigs.StatorCurrentLimit = 80;
+            customCurrentLimitConfigs.StatorCurrentLimit = 90;
             customCurrentLimitConfigs.StatorCurrentLimitEnable = true;
 
+            customMotorConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.25;
+            customMotorConfigs.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.25;
+            customMotorConfigs.Voltage.PeakForwardVoltage = 12.0;
+            customMotorConfigs.Voltage.PeakReverseVoltage = 12.0;
+            customMotorConfigs.CurrentLimits = customCurrentLimitConfigs;
+
+            
+            
+            
+
             // Apply the new current limit configuration.
-            currentConfigurator.apply(customCurrentLimitConfigs);
+            //currentConfigurator.apply(customCurrentLimitConfigs);
+            currentConfigurator.apply(customMotorConfigs);
         }
     }
 }
