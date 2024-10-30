@@ -17,55 +17,55 @@ import lombok.Setter;
 
 public class IntakeRollers extends SubsystemBase {
 
-  @RequiredArgsConstructor
-  @Getter
-  public enum State {
-    OFF(0.0),
-    INTAKE(1.0),
-    EJECT(-0.3);
+    @RequiredArgsConstructor
+    @Getter
+    public enum State {
+        OFF(0.0),
+        INTAKE(1.0),
+        EJECT(-0.3);
 
-    private final double output;
-  }
-
-  @Getter
-  @Setter
-  private State state = State.OFF;
-
-  private boolean debug = true;
-
-  TalonFX m_motor = new TalonFX(IntakeRollersConstants.ID_Motor);
-  private final DutyCycleOut m_percent = new DutyCycleOut(0);
-  private final NeutralOut m_neutral = new NeutralOut();
-
-  /** Creates a new SimpleSubsystem. */
-  public IntakeRollers() {
-    m_motor.getConfigurator().apply(IntakeRollersConstants.motorConfig());
-
-  }
-
-  @Override
-  public void periodic() {
-
-    if (state == State.OFF) {
-      m_motor.setControl(m_neutral);
-    } else {
-      m_motor.setControl(m_percent.withOutput(state.getOutput()));
+        private final double output;
     }
 
-    displayInfo(debug);
-  }
+    @Getter
+    @Setter
+    private State state = State.OFF;
 
-  public Command setStateCommand(State state) {
-    return startEnd(() -> this.state = state, () -> this.state = State.OFF);
-  }
+    private boolean debug = true;
 
-  private void displayInfo(boolean debug) {
-    if (debug) {
-      SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());
-      SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint ", state.getOutput());
-      SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", m_motor.getMotorVoltage().getValueAsDouble());
-      SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw", m_motor.getSupplyCurrent().getValueAsDouble());
+    TalonFX m_motor = new TalonFX(IntakeRollersConstants.ID_Motor);
+    private final DutyCycleOut m_percent = new DutyCycleOut(0);
+    private final NeutralOut m_neutral = new NeutralOut();
+
+    /** Creates a new SimpleSubsystem. */
+    public IntakeRollers() {
+        m_motor.getConfigurator().apply(IntakeRollersConstants.motorConfig());
+
     }
 
-  }
+    @Override
+    public void periodic() {
+
+        if (state == State.OFF) {
+            m_motor.setControl(m_neutral);
+        } else {
+            m_motor.setControl(m_percent.withOutput(state.getOutput()));
+        }
+
+        displayInfo(debug);
+    }
+
+    public Command setStateCommand(State state) {
+        return startEnd(() -> this.state = state, () -> this.state = State.OFF);
+    }
+
+    private void displayInfo(boolean debug) {
+        if (debug) {
+            SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint ", state.getOutput());
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", m_motor.getMotorVoltage().getValueAsDouble());
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw", m_motor.getSupplyCurrent().getValueAsDouble());
+        }
+
+    }
 }

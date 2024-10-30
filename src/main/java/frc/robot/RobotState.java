@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.OptionalDouble;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -49,11 +51,19 @@ public class RobotState {
     @Setter
     private TARGET target = TARGET.NONE;
 
+    @Getter
+    @Setter
+    private OptionalDouble angleToNote = OptionalDouble.empty();
+
     private double deltaT = .15; 
 
     @Getter
-    @Setter
-    TunableNumber shooterTuningAngle = new TunableNumber("Shooter Tuning Angle",0);
+    TunableNumber shooterTuningAngle = new TunableNumber("Shooter Tuning Angle (deg)",20);
+
+    @Getter
+    TunableNumber shooterTuningSpeed = new TunableNumber("Shooter Tuning Speed (rps)",25);
+
+    TunableNumber autoAimOffset = new TunableNumber("Auto Aim Rotatational Offset (deg)",0);
 
 
     public static RobotState getInstance() {
@@ -78,35 +88,44 @@ public class RobotState {
         return (DriverStation.getAlliance().get() == Alliance.Blue) ? target.blueTargetPose.getRotation() : target.redTargetPose.getRotation();
     }
 
-    // TODO: need to invert
     public Rotation2d getAngleToTarget() {
-        return getFuturePose()
-                .minus((DriverStation.getAlliance().get() == Alliance.Blue) ? target.blueTargetPose.getTranslation() : target.redTargetPose.getTranslation())
-                .getAngle().unaryMinus(); // TODO: Test if unaryMinus fixed it
+        return ((DriverStation.getAlliance().get() == Alliance.Blue) ? target.blueTargetPose.getTranslation() : target.redTargetPose.getTranslation())
+                .minus(getFuturePose())
+                .getAngle()
+                .plus(Rotation2d.fromDegrees(autoAimOffset.get()));
+
     }
 
-    private double getDistanceToTarget() {
-        return getFuturePose().getDistance(
+    public double getDistanceToTarget() {
+        if (target != TARGET.NONE && target != TARGET.NOTE) {
+            return getFuturePose().getDistance(
                 (DriverStation.getAlliance().get() == Alliance.Blue) ? target.blueTargetPose.getTranslation() : target.redTargetPose.getTranslation());
+        } else {
+            return -1;
+        }
     }
 
     private static final InterpolatingDoubleTreeMap speakerAngleMap = new InterpolatingDoubleTreeMap();
     static {
-        speakerAngleMap.put(1.5, 12.71);
-        speakerAngleMap.put(2.0, 21.00);
-        speakerAngleMap.put(2.5, 24.89);
-        speakerAngleMap.put(3.0, 29.00);
-        speakerAngleMap.put(3.5, 31.20);
-        speakerAngleMap.put(4.0, 32.50);
-        speakerAngleMap.put(4.5, 34.00);
-        speakerAngleMap.put(5.0, 35.00);
+        speakerAngleMap.put(1.01, 42.00);
+        speakerAngleMap.put(2.15, 26.00);
+        speakerAngleMap.put(2.56, 22.00);
+        speakerAngleMap.put(3.0, 20.00);
+        speakerAngleMap.put(3.5, 16.00);
+        speakerAngleMap.put(4.02, 14.00);
+        speakerAngleMap.put(4.6, 10.50);
+        speakerAngleMap.put(4.95, 9.00);
+        speakerAngleMap.put(5.5,8.00);
+        speakerAngleMap.put(6.08,7.00);
     }
 
-    private static final InterpolatingDoubleTreeMap feedAngleMap = new InterpolatingDoubleTreeMap();
-    static {
-        feedAngleMap.put(5.0, 0.0);
-        feedAngleMap.put(6.0, -10.0);
-        feedAngleMap.put(7.0, -19.0);
+    private static final InterpolatingDoubleTreeMap feedOverAngleMap = new InterpolatingDoubleTreeMap();
+    static { //TODO: Tune angles for feeding over stage
+        feedOverAngleMap.put(8.00, 30.0);
+        feedOverAngleMap.put(8.42, 28.0);
+        feedOverAngleMap.put(9.0, 26.0);
+        feedOverAngleMap.put(9.82, 25.0);
+        feedOverAngleMap.put(11.0, 25.0);
     }
 
     public double getShotAngle() {
@@ -114,7 +133,11 @@ public class RobotState {
             case SPEAKER:
                 return speakerAngleMap.get(getDistanceToTarget());
             case FEED:
-                return feedAngleMap.get(getDistanceToTarget());
+                if (getDistanceToTarget() < 8) { //TODO: Check this distance
+                    return 0.5; //TODO: Check this angle
+                } else {
+                    return feedOverAngleMap.get(getDistanceToTarget()); 
+                }
             default:
                 return 0.0;
         }

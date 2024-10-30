@@ -15,6 +15,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotState;
 import frc.robot.Constants.ShooterRollersConstants;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +28,11 @@ public class ShooterRollers extends SubsystemBase {
     public enum State { // RPS
         OFF(() -> 0.0),
         PASSTHROUGH(() -> 10.0), // Poop & Scoot
-        SUBWOOFER(() -> 40.0),
+        SUBWOOFER(() -> 35.0),
         SPEAKER(() -> 45.0), // Default
-        FEED(() -> 28.0),
-        REVERSE(() -> -20.0); // Hopefully never have to use this irl
+        FEED(() -> 22.0),
+        REVERSE(() -> -20.0), // Hopefully never have to use this irl
+        TUNING(() -> RobotState.getInstance().getShooterTuningSpeed().get());
 
         private final DoubleSupplier velocitySupplier;
 
@@ -65,7 +67,7 @@ public class ShooterRollers extends SubsystemBase {
         if (state == State.OFF) {
             m_motor.setControl(m_neutral);
         } else {
-            goalSpeed = MathUtil.clamp(state.getStateOutput(), ShooterRollersConstants.lowerLimit, ShooterRollersConstants.upperLimit);  
+            goalSpeed = MathUtil.clamp(state.getStateOutput(), ShooterRollersConstants.lowerLimit, ShooterRollersConstants.upperLimit); //TODO:Remove 
             m_motor.setControl(m_velocity.withVelocity(goalSpeed).withSlot(1)); // create a velocity closed-loop request, voltage output, slot 1 configs
         }
 
