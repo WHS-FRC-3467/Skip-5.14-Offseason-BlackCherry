@@ -29,7 +29,7 @@ public class ShooterRollers extends SubsystemBase {
         OFF(() -> 0.0),
         PASSTHROUGH(() -> 10.0), // Poop & Scoot
         SUBWOOFER(() -> 35.0),
-        SPEAKER(() -> 45.0), // Default
+        SPEAKER(() -> 45.0),
         FEED(() -> 22.0),
         REVERSE(() -> -20.0), // Hopefully never have to use this irl
         TUNING(() -> RobotState.getInstance().getShooterTuningSpeed().get());

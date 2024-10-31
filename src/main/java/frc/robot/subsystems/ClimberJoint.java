@@ -7,6 +7,8 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,10 +22,10 @@ public class ClimberJoint extends SubsystemBase {
     @Getter
     public enum State {
 
-        STOW(0.0),
-        HOMING(0.0),
-        PREP(50.0),
-        CLIMB(68.0);
+        STOW(0.0), //Lowered down onto the drivebase
+        HOMING(0.0), //Homing state
+        PREP(50.0), //Partially raised, low enough to pass under the chain
+        CLIMB(68.0); //Fully up above robot, ready to climb
 
         private final double output;
     }
@@ -40,6 +42,7 @@ public class ClimberJoint extends SubsystemBase {
     private final NeutralOut m_neutral = new NeutralOut();
 
     public boolean hasHomed = false;
+    private Debouncer homingDebouncer = new Debouncer(0.5,DebounceType.kRising); 
 
     public ClimberJoint() {
         m_motor.getConfigurator().apply(ClimberJointConstants.motorConfig());
@@ -57,9 +60,11 @@ public class ClimberJoint extends SubsystemBase {
 
         } else 
         if (state == State.HOMING) {
-            m_motor.setControl(m_duty.withOutput(-0.1));
+            m_motor.setControl(m_duty.withOutput(-0.25));
 
-            if (m_motor.getSupplyCurrent().getValueAsDouble() > 2) {
+            //TODO: Test velocity based homing
+            //if (m_motor.getSupplyCurrent().getValueAsDouble() > 2) {
+            if (homingDebouncer.calculate(m_motor.getVelocity().getValueAsDouble() < 0.1)) {
                 m_motor.setPosition(0.0);
                 System.out.println("HOMED Climber");
                 this.hasHomed = true;

@@ -49,7 +49,7 @@ public class PhotonVision extends SubsystemBase {
     private Drivetrain drivetrain;
     private PhotonPoseEstimator[] m_photonPoseEstimators;
     private PhotonCamera m_frontLeftCamera;
-    private PhotonCamera m_frontRightCamera;
+    //private PhotonCamera m_frontRightCamera;
     AprilTagFieldLayout fieldLayout;
 
     private Field2d visionPose = new Field2d();  
@@ -59,7 +59,7 @@ public class PhotonVision extends SubsystemBase {
         
         fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
         m_frontLeftCamera = new PhotonCamera(front_left_cam.kCameraName);
-        m_frontRightCamera = new PhotonCamera(front_right_cam.kCameraName);
+        //m_frontRightCamera = new PhotonCamera(front_right_cam.kCameraName);
         m_photonPoseEstimators = new PhotonPoseEstimator[] {
                 new PhotonPoseEstimator(
                     AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),

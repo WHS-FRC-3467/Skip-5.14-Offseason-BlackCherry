@@ -23,6 +23,7 @@ import frc.robot.RobotState.TARGET;
 import frc.robot.Util.LaserCanSensor;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
+
 public class RobotContainer {
 
 	//TODO: test new shooterjoint positional pid
@@ -44,8 +45,8 @@ public class RobotContainer {
 	private final GenericHID rumble = joystick.getHID();
 
 	//Lasercan sensors in YSplitRollers to determine note location 
-	private final LaserCanSensor lc1 = new LaserCanSensor(SensorConstants.ID_LC1);
-	private final LaserCanSensor lc2 = new LaserCanSensor(SensorConstants.ID_LC2);
+	private final LaserCanSensor lc1 = new LaserCanSensor(SensorConstants.ID_LC1, 180);
+	private final LaserCanSensor lc2 = new LaserCanSensor(SensorConstants.ID_LC2, 180);
 	private Trigger LC1 = new Trigger(() -> lc1.isClose());
 	private Trigger LC2 = new Trigger(() -> lc2.isClose());
 
@@ -59,7 +60,7 @@ public class RobotContainer {
 	Limelight limelight = new Limelight();
 
 
-    
+    //Logic Triggers
 	private Trigger noteStored = new Trigger(() -> (lc1.isClose() || lc2.isClose())); //Note in YSplitRollers trigger
 	private Trigger noteAmp = new Trigger(() -> ampDebouncer.calculate(!bb1.get())); //Note in ElevatorRollers
 
