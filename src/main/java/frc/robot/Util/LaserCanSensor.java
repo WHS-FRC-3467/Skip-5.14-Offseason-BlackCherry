@@ -13,8 +13,9 @@ public class LaserCanSensor {
     private LaserCan lc;
     private double closeCut = 200;
 
-    public LaserCanSensor(int ID) {
+    public LaserCanSensor(int ID, double closeCut) {
         lc = new LaserCan(ID);
+        this.closeCut = closeCut;
         try {
             lc.setRangingMode(LaserCan.RangingMode.SHORT);
             lc.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 6, 6));

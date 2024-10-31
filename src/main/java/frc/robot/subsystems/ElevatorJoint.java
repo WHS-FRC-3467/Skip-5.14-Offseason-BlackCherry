@@ -24,10 +24,10 @@ public class ElevatorJoint extends SubsystemBase {
     @RequiredArgsConstructor
     @Getter
     public enum State {
-        STOW(0.0),
+        STOW(0.0), 
         HOMING(0.0),
-        SCORE(30.0),
-        TRAP(30.0);
+        SCORE(30.0), //Scoring in amp
+        TRAP(30.0); //Scoring in trap
 
         private final double output;
     }

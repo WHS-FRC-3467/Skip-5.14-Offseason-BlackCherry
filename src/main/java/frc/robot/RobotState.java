@@ -34,7 +34,7 @@ public class RobotState {
 
     @RequiredArgsConstructor
     @Getter
-    public enum TARGET {
+    public enum TARGET { //Targets for aiming the robot, separate blue and red poses to allow for adjustment to field
         NONE(null,null),
         NOTE(null,null), //TODO: Add supplier from LL
         SUBWOOFER(Constants.FieldConstants.BLUE_SPEAKER,Constants.FieldConstants.RED_SPEAKER),
@@ -55,6 +55,7 @@ public class RobotState {
     @Setter
     private OptionalDouble angleToNote = OptionalDouble.empty();
 
+    //The amount of time into the future to predict pose (seconds)
     private double deltaT = .15; 
 
     @Getter
@@ -63,39 +64,38 @@ public class RobotState {
     @Getter
     TunableNumber shooterTuningSpeed = new TunableNumber("Shooter Tuning Speed (rps)",25);
 
-    TunableNumber autoAimOffset = new TunableNumber("Auto Aim Rotatational Offset (deg)",0);
-
-
     public static RobotState getInstance() {
         if (instance == null)
             instance = new RobotState();
         return instance;
     }
 
+    //Returns future pose based on current velocity
     private Translation2d getFuturePose() {
-        // If magnitude of velocity is low enough, use current pose
+        //If magnitude of velocity is low enough, use current pose
         if (Math.hypot(robotSpeeds.vxMetersPerSecond, robotSpeeds.vyMetersPerSecond) < .25) {
             return robotPose.getTranslation();
         } else {
-            // Add translation based on current speed and time in the future deltaT
+            //Add translation based on current speed and time in the future deltaT
             return robotPose.getTranslation().plus(new Translation2d(deltaT * robotSpeeds.vxMetersPerSecond, deltaT * robotSpeeds.vyMetersPerSecond));
         }
         
     }
 
+    //Return the angle to allign to target (cardinal)
     public Rotation2d getAngleOfTarget() {
-        // Return the angle to allign to target
         return (DriverStation.getAlliance().get() == Alliance.Blue) ? target.blueTargetPose.getRotation() : target.redTargetPose.getRotation();
     }
 
+    //Return the angle to point towards the target (heading)
     public Rotation2d getAngleToTarget() {
         return ((DriverStation.getAlliance().get() == Alliance.Blue) ? target.blueTargetPose.getTranslation() : target.redTargetPose.getTranslation())
                 .minus(getFuturePose())
-                .getAngle()
-                .plus(Rotation2d.fromDegrees(autoAimOffset.get()));
+                .getAngle();
 
     }
 
+    //Return distance from target
     public double getDistanceToTarget() {
         if (target != TARGET.NONE && target != TARGET.NOTE) {
             return getFuturePose().getDistance(
@@ -105,6 +105,7 @@ public class RobotState {
         }
     }
 
+    //Lookup table for speaker shots
     private static final InterpolatingDoubleTreeMap speakerAngleMap = new InterpolatingDoubleTreeMap();
     static {
         speakerAngleMap.put(1.01, 43.00);
@@ -119,8 +120,9 @@ public class RobotState {
         speakerAngleMap.put(6.08,8.00);
     }
 
+    //Lookup table for feeding over stage
     private static final InterpolatingDoubleTreeMap feedOverAngleMap = new InterpolatingDoubleTreeMap();
-    static { //TODO: Tune angles for feeding over stage
+    static {
         feedOverAngleMap.put(8.00, 30.0);
         feedOverAngleMap.put(8.42, 28.0);
         feedOverAngleMap.put(9.0, 26.0);
@@ -128,13 +130,14 @@ public class RobotState {
         feedOverAngleMap.put(11.0, 25.0);
     }
 
+    //Returns angle for the shooter based on target and distance
     public double getShotAngle() {
         switch (target) {
             case SPEAKER:
                 return speakerAngleMap.get(getDistanceToTarget());
             case FEED:
-                if (getDistanceToTarget() < 8) { //TODO: Check this distance
-                    return 0.5; //TODO: Check this angle
+                if (getDistanceToTarget() < 8) {
+                    return 0.5;
                 } else {
                     return feedOverAngleMap.get(getDistanceToTarget()); 
                 }

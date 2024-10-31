@@ -4,21 +4,13 @@
 
 package frc.robot;
 
-import java.lang.reflect.Field;
-
-import org.opencv.photo.Photo;
-
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,6 +23,7 @@ import frc.robot.RobotState.TARGET;
 import frc.robot.Util.LaserCanSensor;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
+
 public class RobotContainer {
 
 	//TODO: test new shooterjoint positional pid
@@ -52,11 +45,10 @@ public class RobotContainer {
 	private final GenericHID rumble = joystick.getHID();
 
 	//Lasercan sensors in YSplitRollers to determine note location 
-	private final LaserCanSensor lc1 = new LaserCanSensor(SensorConstants.ID_LC1);
-	private final LaserCanSensor lc2 = new LaserCanSensor(SensorConstants.ID_LC2);
+	private final LaserCanSensor lc1 = new LaserCanSensor(SensorConstants.ID_LC1, 180);
+	private final LaserCanSensor lc2 = new LaserCanSensor(SensorConstants.ID_LC2, 180);
 	private Trigger LC1 = new Trigger(() -> lc1.isClose());
 	private Trigger LC2 = new Trigger(() -> lc2.isClose());
-
 
 	//Beam Break sensor in the ElevatorRollers to determine note location
 	private final DigitalInput bb1 = new DigitalInput(SensorConstants.PORT_BB1);
@@ -64,19 +56,15 @@ public class RobotContainer {
 	private Trigger BB1 = new Trigger(() -> !bb1.get());
 
 	//Photonvision and Limelight cameras
-	//PhotonVision photonVision = new PhotonVision(drivetrain,0);
-	PhotonGreece photonGreece = new PhotonGreece(drivetrain);
+	PhotonVision photonVision = new PhotonVision(drivetrain);
 	Limelight limelight = new Limelight();
 
 
-    
+    //Logic Triggers
 	private Trigger noteStored = new Trigger(() -> (lc1.isClose() || lc2.isClose())); //Note in YSplitRollers trigger
 	private Trigger noteAmp = new Trigger(() -> ampDebouncer.calculate(!bb1.get())); //Note in ElevatorRollers
 
 	private Trigger jointsHaveHomed = new Trigger(() -> (climberJoint.hasHomed && elevatorJoint.hasHomed && intakeJoint.hasHomed));
-
-	private Debouncer notMovingDebouncer = new Debouncer(0.5,DebounceType.kRising);
-	private Trigger notMoving = new Trigger(() -> notMovingDebouncer.calculate(drivetrain.getCurrentRobotChassisSpeeds().vxMetersPerSecond < .1));
 
 	private Trigger readyToShoot = new Trigger(
 			() -> (shooterRollers.getState() != ShooterRollers.State.OFF) && shooterRollers.atGoal() &&
@@ -85,8 +73,6 @@ public class RobotContainer {
 
   	private Trigger readyToAmp = new Trigger(
 			() -> (elevatorJoint.getState() == ElevatorJoint.State.SCORE) && elevatorJoint.atGoal()); 			
-
-	private Trigger scoreRequested = joystick.rightTrigger(); //Binding right trigger to request scoring
 	
 	//Climbing Triggers
 	private boolean climbRequested = false; //Whether or not a climb request is active
@@ -100,8 +86,6 @@ public class RobotContainer {
 	private Trigger climbStep3 = new Trigger(() -> climbStep >= 3);
 
 	private SendableChooser<Command> autoChooser;
-
-
 
 	private final Telemetry logger = new Telemetry(Constants.DriveConstants.MaxSpeed);
 
@@ -126,7 +110,10 @@ public class RobotContainer {
 												Commands.waitUntil(LC2),
 												intakeRollers.setStateCommand(IntakeRollers.State.INTAKE)))))));
 
+		//Rumbled when LC2 is active
 		joystick.leftTrigger().and(LC2).whileTrue(Commands.startEnd(() -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 1), () -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 0)));
+
+		joystick.leftTrigger().and(LC2).onTrue(limelight.blinkLEDCommand());
 
 		//Subwoofer
 		joystick.a().whileTrue(
@@ -135,13 +122,14 @@ public class RobotContainer {
 						shooterRollers.setStateCommand(ShooterRollers.State.SUBWOOFER),
 						shooterJoint.setStateCommand(ShooterJoint.State.SUBWOOFER)));
 
-		// Amp
+		//Amp Score
 		joystick.rightBumper().whileTrue(
 				Commands.parallel(
 						Commands.either(
 								Commands.none(),
 								robotState.setTargetCommand(RobotState.TARGET.AMP),
 								climbRequest),
+
 						elevatorJoint.setStateCommand(ElevatorJoint.State.STOW),
 						Commands.waitUntil(elevatorJoint::atGoal)
 								.andThen(Commands.deadline(
@@ -156,6 +144,7 @@ public class RobotContainer {
 												ElevatorRollers.State.INTAKE))))
 						.withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
+		//Rumble when Note is in elevatorRollers
 		joystick.rightBumper().and(noteAmp).whileTrue(Commands.startEnd(() -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 1), () -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 0)));
  
 		//Feed
@@ -182,23 +171,27 @@ public class RobotContainer {
 		climbRequest.whileTrue(drivetrain.run(() -> drivetrain.setControllerInput(-joystick.getLeftY()*0.5,
 		-joystick.getLeftX()*0.5, -joystick.getRightX())));
 
+		//Climb step 0: Raise shooter and move climber to prep
 		climbRequest.and(climbStep0).whileTrue(
 				Commands.parallel(
 						shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
 						Commands.waitUntil(() -> shooterJoint.atGoal())
 								.andThen(climberJoint.setStateCommand(ClimberJoint.State.PREP))));
 
+		//Climb step 1: Move climber to climb
 		climbRequest.and(climbStep1).whileTrue(
 				Commands.parallel(
 						shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
 						climberJoint.setStateCommand(ClimberJoint.State.CLIMB)));
 
+		//Climb step 2: Move elevtor to trap
 		climbRequest.and(climbStep2).whileTrue(
 				Commands.parallel(
 						climberJoint.setStateCommand(ClimberJoint.State.CLIMB),
 						shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
 						elevatorJoint.setStateCommand(ElevatorJoint.State.TRAP)));
-		
+
+		//Climb step 2: Move climber to stow
 		climbRequest.and(climbStep3).whileTrue(
 			Commands.parallel(
 					shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
@@ -206,13 +199,13 @@ public class RobotContainer {
 					climberJoint.setStateCommand(ClimberJoint.State.STOW)));
 
 		//Score Shooter
-		scoreRequested.and(noteStored).and(noteAmp.negate()).and(climbRequest.negate()).whileTrue(
+		joystick.rightTrigger().and(noteAmp.negate()).and(climbRequest.negate()).whileTrue(
 				Commands.deadline(
 						Commands.waitUntil(noteStored.negate()),
 						Commands.waitUntil(readyToShoot)
 								.andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER))));
 		//Score Amp
-		scoreRequested.and(noteAmp).and(climbRequest.negate()).whileTrue(
+		joystick.rightTrigger().and(noteAmp).and(climbRequest.negate()).whileTrue(
 				Commands.deadline(
 						Commands.waitUntil(noteAmp.negate()),
 						elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE),
@@ -221,16 +214,17 @@ public class RobotContainer {
 
 		scoreRequested.and(joystick.leftBumper()).whileTrue(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE));		
 		//Score Trap
-		scoreRequested.and(climbRequest).whileTrue(
+		joystick.rightTrigger().and(climbRequest).whileTrue(
 			elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE));
 		
-		//Home Mechanisms
+		//Reset homed bool
 		joystick.povLeft().onTrue(Commands.runOnce(() -> {
 			climberJoint.hasHomed = false;
 			elevatorJoint.hasHomed = false;
 			intakeJoint.hasHomed = false;
 		}));
 
+		//Home intake, elevator, climber
 		joystick.povLeft().whileTrue(
 				Commands.parallel(
 						intakeJoint.setStateCommand(IntakeJoint.State.HOMING).until(() -> intakeJoint.hasHomed),
@@ -246,6 +240,7 @@ public class RobotContainer {
 						ySplitRollers.setStateCommand(YSplitRollers.State.REVSHOOTER),
 						intakeRollers.setStateCommand(IntakeRollers.State.EJECT)));
 
+		//Elevator Up
 		joystick.leftBumper().whileTrue(
 				elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE)
 		);
@@ -256,13 +251,10 @@ public class RobotContainer {
 						ySplitRollers.setStateCommand(YSplitRollers.State.REVAMP),
 						elevatorRollers.setStateCommand(ElevatorRollers.State.EJECT)));
 
-		joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative(new Pose2d(1.332, 5.529, new Rotation2d(Math.PI)))));
-
 	}
 
 	private void registerNamedCommands() {
-
-
+		
 		NamedCommands.registerCommand("Subwoofer",
 				Commands.parallel(
 						shooterJoint.setStateCommand(ShooterJoint.State.SUBWOOFER),
@@ -341,7 +333,6 @@ public class RobotContainer {
 		SmartDashboard.putBoolean("Climb Requested", climbRequest.getAsBoolean());
 		SmartDashboard.putNumber("Climb Step", climbStep);
 		SmartDashboard.putBoolean("All Joints Homed", jointsHaveHomed.getAsBoolean());
-		SmartDashboard.putBoolean("Not Moving Trigger", notMoving.getAsBoolean());
     }
 
 	public RobotContainer() {

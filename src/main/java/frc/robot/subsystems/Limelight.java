@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.LimelightHelpers;
@@ -46,6 +48,12 @@ public class Limelight extends SubsystemBase {
 
     public boolean hasTarget() {
         return hasTarget;
+    }
+
+    public Command blinkLEDCommand() {
+        return Commands.startEnd(
+            () -> LimelightHelpers.setLEDMode_ForceOn(kCameraName), 
+            () -> LimelightHelpers.setLEDMode_ForceOff(kCameraName));
     }
 
 }
