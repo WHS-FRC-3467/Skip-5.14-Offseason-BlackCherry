@@ -113,6 +113,8 @@ public class RobotContainer {
 		//Rumbled when LC2 is active
 		joystick.leftTrigger().and(LC2).whileTrue(Commands.startEnd(() -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 1), () -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 0)));
 
+		joystick.leftTrigger().and(LC2).onTrue(limelight.blinkLEDCommand());
+
 		//Subwoofer
 		joystick.a().whileTrue(
 				Commands.parallel(
