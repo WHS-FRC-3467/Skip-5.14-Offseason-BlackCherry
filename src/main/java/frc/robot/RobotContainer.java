@@ -11,6 +11,7 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -58,6 +59,8 @@ public class RobotContainer {
 	//Photonvision and Limelight cameras
 	PhotonVision photonVision = new PhotonVision(drivetrain);
 	Limelight limelight = new Limelight();
+
+	private PowerDistribution pdp = new PowerDistribution();
 
 
     //Logic Triggers
@@ -212,7 +215,9 @@ public class RobotContainer {
 						Commands.waitUntil(readyToAmp)
 								.andThen(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE))));
 
-		scoreRequested.and(joystick.leftBumper()).whileTrue(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE));		
+		joystick.rightTrigger().and(joystick.leftBumper())
+				.whileTrue(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE));	
+
 		//Score Trap
 		joystick.rightTrigger().and(climbRequest).whileTrue(
 			elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE));
@@ -301,6 +306,8 @@ public class RobotContainer {
 	}
 
 	private void configureDebugCommands() {
+		
+		
 		SmartDashboard.putData("YSplit Eject Shooter",Commands.parallel(ySplitRollers.setStateCommand(YSplitRollers.State.REVSHOOTER)));
 		SmartDashboard.putData("YSplit Eject Amp",Commands.parallel(ySplitRollers.setStateCommand(YSplitRollers.State.REVAMP)));
 		SmartDashboard.putData("Intake Eject",Commands.parallel(intakeRollers.setStateCommand(IntakeRollers.State.EJECT)));
@@ -323,6 +330,7 @@ public class RobotContainer {
 	}
 
     public void displaySystemInfo() {
+		
         SmartDashboard.putBoolean("Beam Break 1", BB1.getAsBoolean());
 		SmartDashboard.putBoolean("Lasercan 1", LC1.getAsBoolean());
 		SmartDashboard.putBoolean("Lasercan 2", LC2.getAsBoolean());

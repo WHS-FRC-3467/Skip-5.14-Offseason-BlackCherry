@@ -51,9 +51,10 @@ public class Limelight extends SubsystemBase {
     }
 
     public Command blinkLEDCommand() {
-        return Commands.startEnd(
-            () -> LimelightHelpers.setLEDMode_ForceOn(kCameraName), 
-            () -> LimelightHelpers.setLEDMode_ForceOff(kCameraName));
+        return Commands.sequence(
+            Commands.runOnce(() -> LimelightHelpers.setLEDMode_ForceOn(kCameraName)),
+            Commands.waitSeconds(2), 
+            Commands.runOnce(() -> LimelightHelpers.setLEDMode_ForceOff(kCameraName)));
     }
 
 }

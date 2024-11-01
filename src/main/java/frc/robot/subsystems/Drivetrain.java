@@ -24,6 +24,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -309,7 +310,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
             customMotorConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.25;
             customMotorConfigs.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.25;
             customMotorConfigs.Voltage.PeakForwardVoltage = 12.0;
-            customMotorConfigs.Voltage.PeakReverseVoltage = 12.0;
+            customMotorConfigs.Voltage.PeakReverseVoltage = -12.0;
             customMotorConfigs.CurrentLimits = customCurrentLimitConfigs;
 
             

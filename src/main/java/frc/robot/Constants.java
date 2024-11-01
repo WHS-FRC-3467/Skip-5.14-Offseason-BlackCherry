@@ -52,7 +52,7 @@ public class Constants {
         public static final int ID_LEADER = 25;
         public static final int ID_FOLLOWER = 26;
 
-        public static final double tolerance = 1;
+        public static final double tolerance = 2;
 
         public static TalonFXConfiguration motorConfig() {
             TalonFXConfiguration m_configuration = new TalonFXConfiguration();
@@ -168,7 +168,7 @@ public class Constants {
             CANcoderConfiguration m_configuration = new CANcoderConfiguration();
             m_configuration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;  
             //following line is for shooter cancoder offset
-            m_configuration.MagnetSensor.MagnetOffset = -0.474609375;
+            m_configuration.MagnetSensor.MagnetOffset = -0.554931640625;
             m_configuration.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
 
             return m_configuration;
