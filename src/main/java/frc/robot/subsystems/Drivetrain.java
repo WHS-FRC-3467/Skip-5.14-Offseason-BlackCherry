@@ -70,7 +70,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     private double yVelocity = 0.0;
     private double omegaVelocity = 0.0;
 
-    private final ModuleConfig moduleConfig = new ModuleConfig(Units.inchesToMeters(3.95/2), 5.1, 1.2, DCMotor.getKrakenX60(1).withReduction(6.122), 90, 1);
+    private final ModuleConfig moduleConfig = new ModuleConfig(Units.inchesToMeters(3.92/2), 5.1, 1.2, DCMotor.getKrakenX60(1).withReduction(6.122), 90, 1);
     
     private final RobotConfig robotConfig = new RobotConfig(Units.lbsToKilograms(129), 4.785, moduleConfig, Units.inchesToMeters(10.375*2), Units.inchesToMeters(10.375*2));
 
