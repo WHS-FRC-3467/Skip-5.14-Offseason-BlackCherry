@@ -22,7 +22,7 @@ public class ClimberJoint extends SubsystemBase {
     @Getter
     public enum State {
 
-        STOW(0.0), //Lowered down onto the drivebase
+        STOW(0.5), //Lowered down onto the drivebase
         HOMING(0.0), //Homing state
         PREP(50.0), //Partially raised, low enough to pass under the chain
         CLIMB(68.0); //Fully up above robot, ready to climb
@@ -60,7 +60,7 @@ public class ClimberJoint extends SubsystemBase {
 
         } else 
         if (state == State.HOMING) {
-            m_motor.setControl(m_duty.withOutput(-0.5));
+            m_motor.setControl(m_duty.withOutput(-0.2));
 
             //TODO: Test velocity based homing
             if (m_motor.getSupplyCurrent().getValueAsDouble() > 2) {

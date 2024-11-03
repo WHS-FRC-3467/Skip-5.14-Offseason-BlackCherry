@@ -5,13 +5,25 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "Amp Move"
+          }
+        },
+        {
           "type": "deadline",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "SimplePath"
+                  "name": "Shooting Command"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Speaker"
                 }
               }
             ]
@@ -21,6 +33,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Old",
+  "folder": null,
   "choreoAuto": false
 }

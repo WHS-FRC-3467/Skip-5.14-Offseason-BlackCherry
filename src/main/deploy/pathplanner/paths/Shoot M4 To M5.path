@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.5145937402985916,
-        "y": 7.293291564360906
+        "x": 2.7016171365676063,
+        "y": 3.194919989839979
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2443956373826883,
-        "y": 7.304629148864254
+        "x": 3.6113453560240454,
+        "y": 2.395461857590382
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "ShootM4"
     },
     {
       "anchor": {
-        "x": 7.865932887421331,
-        "y": 7.293291564360906
+        "x": 8.24686823162776,
+        "y": 0.888755737619987
       },
       "prevControl": {
-        "x": 7.615974098948768,
-        "y": 7.288752394246379
+        "x": 5.021468180827658,
+        "y": 0.7415446349755586
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "M5"
     }
   ],
   "rotationTargets": [],
@@ -33,10 +33,10 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3,
-    "maxAcceleration": 3,
-    "maxAngularVelocity": 540,
-    "maxAngularAcceleration": 720,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -178.15238973400545
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

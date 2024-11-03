@@ -48,8 +48,8 @@ public class RobotContainer {
 	//Lasercan sensors in YSplitRollers to determine note location 
 	private final LaserCanSensor lc1 = new LaserCanSensor(SensorConstants.ID_LC1, 180);
 	private final LaserCanSensor lc2 = new LaserCanSensor(SensorConstants.ID_LC2, 180);
-	private Trigger LC1 = new Trigger(() -> lc1.isClose());
-	private Trigger LC2 = new Trigger(() -> lc2.isClose());
+	//private Trigger LC1 = new Trigger(() -> lc1.isClose());
+	private Trigger LC2 = new Trigger(() -> lc1.isClose());
 
 	//Beam Break sensor in the ElevatorRollers to determine note location
 	private final DigitalInput bb1 = new DigitalInput(SensorConstants.PORT_BB1);
@@ -103,9 +103,9 @@ public class RobotContainer {
 				// robotState.setTargetCommand(RobotState.TARGET.NOTE),
 				Commands.deadline(
 						Commands.waitUntil(LC2),
-						ySplitRollers.setStateCommand(YSplitRollers.State.INTAKE)
-								.until(LC1)
-								.andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SLOWINTAKE)),
+						ySplitRollers.setStateCommand(YSplitRollers.State.INTAKE),
+								//.until(LC1)
+								//.andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SLOWINTAKE)),
 						Commands.parallel(
 								intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
 								Commands.waitUntil(intakeJoint::atGoal)
@@ -243,6 +243,7 @@ public class RobotContainer {
 		joystick.povRight().whileTrue(
 				Commands.parallel(
 						ySplitRollers.setStateCommand(YSplitRollers.State.REVSHOOTER),
+						elevatorRollers.setStateCommand(ElevatorRollers.State.EJECT),
 						intakeRollers.setStateCommand(IntakeRollers.State.EJECT)));
 
 		//Elevator Up
@@ -278,12 +279,12 @@ public class RobotContainer {
 
 		NamedCommands.registerCommand("Note Collect",
 				Commands.race(
-						Commands.waitSeconds(8),
+						Commands.waitSeconds(2),
 						Commands.deadline(
 								Commands.waitUntil(LC2),
-								ySplitRollers.setStateCommand(YSplitRollers.State.INTAKE)
-										.until(LC1)
-										.andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SLOWINTAKE)),
+								ySplitRollers.setStateCommand(YSplitRollers.State.INTAKE),
+										//.until(LC1)
+										//.andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SLOWINTAKE)),
 								Commands.parallel(
 										intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
 										Commands.waitUntil(intakeJoint::atGoal)
@@ -296,7 +297,7 @@ public class RobotContainer {
 
 		NamedCommands.registerCommand("Shooting Command",
 				Commands.race(
-						Commands.waitSeconds(3),
+						Commands.waitSeconds(2),
 						Commands.waitUntil(readyToShoot)
 								.andThen(Commands.deadline(
 										Commands.waitUntil(LC2.negate()),
@@ -332,7 +333,7 @@ public class RobotContainer {
     public void displaySystemInfo() {
 		
         SmartDashboard.putBoolean("Beam Break 1", BB1.getAsBoolean());
-		SmartDashboard.putBoolean("Lasercan 1", LC1.getAsBoolean());
+		//SmartDashboard.putBoolean("Lasercan 1", LC1.getAsBoolean());
 		SmartDashboard.putBoolean("Lasercan 2", LC2.getAsBoolean());
 		SmartDashboard.putBoolean("readyToScore",readyToShoot.getAsBoolean());
 		SmartDashboard.putBoolean("readyToAmp",readyToAmp.getAsBoolean());

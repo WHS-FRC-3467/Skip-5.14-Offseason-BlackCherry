@@ -42,10 +42,10 @@ public class Constants {
     }
 
     public static final class DriveConstants {
-        public static final double headingAngleTolerance = 3.0;
+        public static final double headingAngleTolerance = 5.0;
         public static final double MaxSpeed = TunerConstants.kSpeedAt12VoltsMps; // kSpeedAt12VoltsMps desired top speed
         public static final double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
-        public static final double driverSpeed = 1.0; //Multiplier to the controller input
+        public static final double driverSpeed = 0.75; //Multiplier to the controller input
     }
 
     public static final class ClimberJointConstants {
@@ -168,7 +168,7 @@ public class Constants {
             CANcoderConfiguration m_configuration = new CANcoderConfiguration();
             m_configuration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;  
             //following line is for shooter cancoder offset
-            m_configuration.MagnetSensor.MagnetOffset = -0.554931640625;
+            m_configuration.MagnetSensor.MagnetOffset = -0.55615234375;
             m_configuration.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
 
             return m_configuration;
@@ -278,9 +278,8 @@ public class Constants {
             m_configuration.MotionMagic.MotionMagicAcceleration = 500;
             m_configuration.MotionMagic.MotionMagicJerk = 0;
 
-            m_configuration.CurrentLimits.SupplyCurrentLimit = 40;
-            m_configuration.CurrentLimits.SupplyCurrentThreshold = 40;
-            m_configuration.CurrentLimits.SupplyTimeThreshold = 0.01;
+            m_configuration.CurrentLimits.SupplyCurrentLimit = 50;
+            m_configuration.CurrentLimits.SupplyTimeThreshold = 0.25;
             m_configuration.CurrentLimits.SupplyCurrentLimitEnable = true;
             m_configuration.CurrentLimits.StatorCurrentLimit = 70;
             m_configuration.CurrentLimits.StatorCurrentLimitEnable = true;
