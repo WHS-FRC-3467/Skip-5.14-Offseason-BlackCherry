@@ -11,7 +11,6 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -48,7 +47,8 @@ public class RobotContainer {
 	//Lasercan sensors in YSplitRollers to determine note location 
 	private final LaserCanSensor lc1 = new LaserCanSensor(SensorConstants.ID_LC1, 180);
 	private final LaserCanSensor lc2 = new LaserCanSensor(SensorConstants.ID_LC2, 180);
-	//private Trigger LC1 = new Trigger(() -> lc1.isClose());
+
+	//private Trigger LC1 = new Trigger(() -> lc1.isClose()); //Commented out due to sensor breaking during GbG
 	private Trigger LC2 = new Trigger(() -> lc1.isClose());
 
 	//Beam Break sensor in the ElevatorRollers to determine note location
@@ -59,9 +59,6 @@ public class RobotContainer {
 	//Photonvision and Limelight cameras
 	PhotonVision photonVision = new PhotonVision(drivetrain);
 	Limelight limelight = new Limelight();
-
-	private PowerDistribution pdp = new PowerDistribution();
-
 
     //Logic Triggers
 	private Trigger noteStored = new Trigger(() -> (lc1.isClose() || lc2.isClose())); //Note in YSplitRollers trigger

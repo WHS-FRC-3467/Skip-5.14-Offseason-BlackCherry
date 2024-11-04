@@ -16,9 +16,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-// TODO: Check rotation direction
-// TODO: add shuffle behavior
-
 public class YSplitRollers extends SubsystemBase {
 
     @RequiredArgsConstructor
