@@ -119,6 +119,9 @@ public class ShooterRollersIOKrakenFOC implements ShooterRollersIO {
         inputs.bottomAppliedVolts = bottomAppliedVolts.getValueAsDouble();
         inputs.bottomSupplyCurrentAmps = bottomSupplyCurrent.getValueAsDouble();
         inputs.bottomTorqueCurrentAmps = bottomTorqueCurrent.getValueAsDouble();
+
+        // CURRENTLY USED
+        inputs.motorVelocity = TopTalon.getVelocity().getValueAsDouble();
     }
 
     @Override
@@ -137,5 +140,10 @@ public class ShooterRollersIOKrakenFOC implements ShooterRollersIO {
     public void runVelocity(double Rpm, double Feedforward) {
         BottomTalon.setControl(m_velocity.withVelocity(Rpm/60.0).withFeedForward(Feedforward));
         TopTalon.setControl(m_velocity.withVelocity(Rpm/60.0).withFeedForward(Feedforward));
+    }
+
+    @Override
+    public void setPoint(double goalSpeed) {
+        TopTalon.setControl(m_velocity.withVelocity(goalSpeed).withSlot(1)); // create a velocity closed-loop request, voltage output, slot 1 configs
     }
 }

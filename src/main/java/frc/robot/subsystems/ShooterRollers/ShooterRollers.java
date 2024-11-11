@@ -20,6 +20,8 @@ import frc.robot.Constants.ShooterRollersConstants;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public class ShooterRollers extends SubsystemBase {
 
@@ -46,36 +48,40 @@ public class ShooterRollers extends SubsystemBase {
     private State state = State.OFF;
 
     // Initialize motor controllers
-    TalonFX m_motor = new TalonFX(ShooterRollersConstants.ID_LEADER);   // Can we change this to be Bottom Motor? MJW
-    TalonFX m_follower = new TalonFX(ShooterRollersConstants.ID_FOLLOWER); // Can we change this to be Top Motor? MJW
+    //TalonFX m_motor = new TalonFX(ShooterRollersConstants.ID_LEADER);   // Can we change this to be Bottom Motor? MJW
+    //TalonFX m_follower = new TalonFX(ShooterRollersConstants.ID_FOLLOWER); // Can we change this to be Top Motor? MJW
     
-    private final VelocityVoltage m_velocity = new VelocityVoltage(0).withSlot(1);
-    private final NeutralOut m_neutral = new NeutralOut();
+    //private final VelocityVoltage m_velocity = new VelocityVoltage(0).withSlot(1);
+    //private final NeutralOut m_neutral = new NeutralOut();
 
     private double goalSpeed;
 
+    //AdvantageKit addition MJW 10/29/2024
+    private final ShooterRollersIO io;
+    private final ShooterRollersIOInputsAutoLogged inputs = new ShooterRollersIOInputsAutoLogged();
+
     /** Creates a new Flywheel. */
-    public ShooterRollers() {
-        m_motor.getConfigurator().apply(ShooterRollersConstants.motorConfig());
-        m_follower.getConfigurator().apply(ShooterRollersConstants.motorConfig());
-        m_follower.setControl(new Follower(m_motor.getDeviceID(), true));
+    public ShooterRollers(ShooterRollersIO io) {
+        this.io = io;
     }
 
     @Override
     public void periodic() {
-      
+        io.updateInputs(inputs);
+        Logger.processInputs("ShooterRollers", inputs);
         if (state == State.OFF) {
-            m_motor.setControl(m_neutral);
+            //m_motor.setControl(m_neutral);
+            io.stop();  //MJW: See the ShooterRollersIO to see all the commands we feed to motors
         } else {
             goalSpeed = MathUtil.clamp(state.getStateOutput(), ShooterRollersConstants.lowerLimit, ShooterRollersConstants.upperLimit); //TODO:Remove 
-            m_motor.setControl(m_velocity.withVelocity(goalSpeed).withSlot(1)); // create a velocity closed-loop request, voltage output, slot 1 configs
+            io.setPoint(goalSpeed);
         }
 
         displayInfo(true);
     }
 
     public boolean atGoal() {
-        return Math.abs(state.getStateOutput() - m_motor.getVelocity().getValueAsDouble()) < ShooterRollersConstants.tolerance;
+        return Math.abs(state.getStateOutput() - inputs.motorVelocity) < ShooterRollersConstants.tolerance;
     }
 
     public Command setStateCommand(State state) {
@@ -86,9 +92,14 @@ public class ShooterRollers extends SubsystemBase {
         if (debug) {
             SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());
             SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint ", state.getStateOutput());
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", m_motor.getVelocity().getValueAsDouble());
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw", m_motor.getSupplyCurrent().getValueAsDouble());
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", inputs.motorVelocity);
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw", inputs.topSupplyCurrentAmps);
             SmartDashboard.putBoolean(this.getClass().getSimpleName() + " atGoal", atGoal());
         }
+        // AdvantageKit Logging
+        /* If you want to log a variable not already logged use this:
+         * Logger.recordOutput("<name>", data);
+         */
     }
 }
+ 

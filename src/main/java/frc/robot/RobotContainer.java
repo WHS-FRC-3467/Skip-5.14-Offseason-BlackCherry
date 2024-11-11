@@ -31,6 +31,11 @@ import frc.robot.RobotState.TARGET;
 import frc.robot.Util.LaserCanSensor;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.ClimberJoint.ClimberJoint;
+import frc.robot.subsystems.ShooterRollers.ShooterRollers;
+import frc.robot.subsystems.ShooterRollers.ShooterRollersIO;
+import frc.robot.subsystems.ShooterRollers.ShooterRollersIOKrakenFOC;
+import frc.robot.subsystems.ShooterRollers.ShooterRollersIOSim;
 public class RobotContainer {
 
 	//TODO: test new shooterjoint positional pid
@@ -39,15 +44,19 @@ public class RobotContainer {
 
 	public final Drivetrain drivetrain = TunerConstants.DriveTrain;
 	public final RobotState robotState = RobotState.getInstance();
-	public final ClimberJoint climberJoint = new ClimberJoint();
+	//public final ClimberJoint climberJoint = new ClimberJoint();
 	public final ElevatorJoint elevatorJoint = new ElevatorJoint();
 	public final ElevatorRollers elevatorRollers = new ElevatorRollers();
 	public final IntakeJoint intakeJoint = new IntakeJoint();
 	public final IntakeRollers intakeRollers = new IntakeRollers();
 	public final ShooterJoint shooterJoint = new ShooterJoint();
-	public final ShooterRollers shooterRollers = new ShooterRollers();
+	//public final ShooterRollers shooterRollers = new ShooterRollers();
 	public final YSplitRollers ySplitRollers = new YSplitRollers();
 
+	/* AdvantageKit Setup */
+	public ShooterRollers shooterRollers;
+	public ClimberJoint ClimberJoint;
+		
 	private final CommandXboxController joystick = new CommandXboxController(0);
 	private final GenericHID rumble = joystick.getHID();
 
@@ -104,6 +113,37 @@ public class RobotContainer {
 
 
 	private final Telemetry logger = new Telemetry(Constants.DriveConstants.MaxSpeed);
+
+	public RobotContainer() {
+		/* base them on Null before we beform Switch Statement check */
+		shooterRollers = null;
+		ClimberJoint = null;
+
+		/* Setup according to Which Robot we are using */
+
+		if (Constants.currentMode != Constants.Mode.REPLAY) {
+			switch (Constants.currentMode) {
+				case REAL:
+					shooterRollers = new ShooterRollers(new ShooterRollersIOKrakenFOC());
+					break;
+					/* We will include the other subsystems */
+				case SIM:
+					shooterRollers = new ShooterRollers(new ShooterRollersIOSim());
+					break;
+				default:
+			}
+		}
+
+	if (shooterRollers == null) {
+		shooterRollers = new ShooterRollers(new ShooterRollersIO() {});
+	}
+
+		configureBindings();
+		configureDebugCommands();
+		registerNamedCommands();
+		autoChooser = AutoBuilder.buildAutoChooser();
+		SmartDashboard.putData("Auto Chooser", autoChooser);
+	}
 
 	private void configureBindings() {
 		drivetrain.setDefaultCommand(drivetrain.run(() -> drivetrain.setControllerInput(-joystick.getLeftY(),
@@ -337,14 +377,6 @@ public class RobotContainer {
 		SmartDashboard.putBoolean("All Joints Homed", jointsHaveHomed.getAsBoolean());
 		SmartDashboard.putBoolean("Not Moving Trigger", notMoving.getAsBoolean());
     }
-
-	public RobotContainer() {
-		configureBindings();
-		configureDebugCommands();
-		registerNamedCommands();
-		autoChooser = AutoBuilder.buildAutoChooser();
-		SmartDashboard.putData("Auto Chooser", autoChooser);
-	}
 
 	public Command getAutonomousCommand() {
 		return autoChooser.getSelected();

@@ -1,15 +1,15 @@
-package frc.robot.subsystems.ShooterRollers;
+package frc.robot.subsystems.ClimberJoint;
 
 import frc.robot.Constants;
 
-public class ShooterRollersConstants {
+public class ClimberJointConstants {
+    public static double Tolerance = 1.0;
 
-    double Tolerance = 10.00;
     public static final Gains gains =
         switch (Constants.currentMode) {
             case SIM -> new Gains(0, 0, 0, 0, 0, 0);
-            case REAL -> new Gains(1, 0, 0, 0, 0.13, 0);
-            default -> new Gains(1, 0, 0, 0, 0.13, 0);
+            case REAL -> new Gains(1, 0, 0, 0, 0.19, 0);
+            default -> new Gains(1, 0, 0, 0, 0.19, 0);
         };
 
     public record Gains(double kP, double kI, double kD, double kS, double kV, double kA) {}
