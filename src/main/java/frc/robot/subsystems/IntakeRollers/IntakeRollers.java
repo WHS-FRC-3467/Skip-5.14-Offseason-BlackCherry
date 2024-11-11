@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.IntakeRollers;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
@@ -10,20 +10,19 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ElevatorRollersConstants;
+import frc.robot.Constants.IntakeRollersConstants;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-public class ElevatorRollers extends SubsystemBase {
+public class IntakeRollers extends SubsystemBase {
 
     @RequiredArgsConstructor
     @Getter
     public enum State {
         OFF(0.0),
-        INTAKE(0.25),
-        SCORE(0.75),
-        EJECT(-0.30);
+        INTAKE(1.0),
+        EJECT(-0.3);
 
         private final double output;
     }
@@ -34,13 +33,13 @@ public class ElevatorRollers extends SubsystemBase {
 
     private boolean debug = true;
 
-    TalonFX m_motor = new TalonFX(ElevatorRollersConstants.ID_Motor);
+    TalonFX m_motor = new TalonFX(IntakeRollersConstants.ID_Motor);
     private final DutyCycleOut m_percent = new DutyCycleOut(0);
     private final NeutralOut m_neutral = new NeutralOut();
 
     /** Creates a new SimpleSubsystem. */
-    public ElevatorRollers() {
-        m_motor.getConfigurator().apply(ElevatorRollersConstants.motorConfig());
+    public IntakeRollers() {
+        m_motor.getConfigurator().apply(IntakeRollersConstants.motorConfig());
 
     }
 

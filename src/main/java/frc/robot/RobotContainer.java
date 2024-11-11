@@ -35,10 +35,16 @@ import frc.robot.subsystems.ClimberJoint.ClimberJoint;
 import frc.robot.subsystems.ClimberJoint.ClimberJointIO;
 import frc.robot.subsystems.ClimberJoint.ClimberJointIOKrakenFOC;
 import frc.robot.subsystems.ClimberJoint.ClimberJointIOSim;
+import frc.robot.subsystems.ElevatorJoint.ElevatorJoint;
+import frc.robot.subsystems.ElevatorRollers.ElevatorRollers;
+import frc.robot.subsystems.IntakeJoint.IntakeJoint;
+import frc.robot.subsystems.IntakeRollers.IntakeRollers;
+import frc.robot.subsystems.ShooterJoint.ShooterJoint;
 import frc.robot.subsystems.ShooterRollers.ShooterRollers;
 import frc.robot.subsystems.ShooterRollers.ShooterRollersIO;
 import frc.robot.subsystems.ShooterRollers.ShooterRollersIOKrakenFOC;
 import frc.robot.subsystems.ShooterRollers.ShooterRollersIOSim;
+import frc.robot.subsystems.YSplitRollers.YSplitRollers;
 public class RobotContainer {
 
 	//TODO: test new shooterjoint positional pid
