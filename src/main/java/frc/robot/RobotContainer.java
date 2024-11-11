@@ -32,6 +32,9 @@ import frc.robot.Util.LaserCanSensor;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.ClimberJoint.ClimberJoint;
+import frc.robot.subsystems.ClimberJoint.ClimberJointIO;
+import frc.robot.subsystems.ClimberJoint.ClimberJointIOKrakenFOC;
+import frc.robot.subsystems.ClimberJoint.ClimberJointIOSim;
 import frc.robot.subsystems.ShooterRollers.ShooterRollers;
 import frc.robot.subsystems.ShooterRollers.ShooterRollersIO;
 import frc.robot.subsystems.ShooterRollers.ShooterRollersIOKrakenFOC;
@@ -55,7 +58,7 @@ public class RobotContainer {
 
 	/* AdvantageKit Setup */
 	public ShooterRollers shooterRollers;
-	public ClimberJoint ClimberJoint;
+	public ClimberJoint climberJoint;
 		
 	private final CommandXboxController joystick = new CommandXboxController(0);
 	private final GenericHID rumble = joystick.getHID();
@@ -117,7 +120,7 @@ public class RobotContainer {
 	public RobotContainer() {
 		/* base them on Null before we beform Switch Statement check */
 		shooterRollers = null;
-		ClimberJoint = null;
+		climberJoint = null;
 
 		/* Setup according to Which Robot we are using */
 
@@ -125,10 +128,12 @@ public class RobotContainer {
 			switch (Constants.currentMode) {
 				case REAL:
 					shooterRollers = new ShooterRollers(new ShooterRollersIOKrakenFOC());
+					climberJoint = new ClimberJoint(new ClimberJointIOKrakenFOC());
 					break;
 					/* We will include the other subsystems */
 				case SIM:
 					shooterRollers = new ShooterRollers(new ShooterRollersIOSim());
+					climberJoint = new ClimberJoint(new ClimberJointIOSim());
 					break;
 				default:
 			}

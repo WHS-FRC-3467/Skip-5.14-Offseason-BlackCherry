@@ -1,5 +1,5 @@
 package frc.robot.subsystems.ClimberJoint;
 
-public class ClimberJointIOSim {
+public class ClimberJointIOSim implements ClimberJointIO {
     
 }
