@@ -4,9 +4,8 @@
 
 package frc.robot.subsystems.ElevatorRollers;
 
-import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.hardware.TalonFX;
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -34,23 +33,30 @@ public class ElevatorRollers extends SubsystemBase {
 
     private boolean debug = true;
 
-    TalonFX m_motor = new TalonFX(ElevatorRollersConstants.ID_Motor);
-    private final DutyCycleOut m_percent = new DutyCycleOut(0);
-    private final NeutralOut m_neutral = new NeutralOut();
+    //TalonFX m_motor = new TalonFX(ElevatorRollersConstants.ID_Motor);
+    //private final DutyCycleOut m_percent = new DutyCycleOut(0);
+    //private final NeutralOut m_neutral = new NeutralOut();
+
+    //AdvantageKit addition MJW 11/11/2024
+    private final ElevatorRollersIO io;
+    private final ElevatorRollersIOInputsAutoLogged inputs = new ElevatorRollersIOInputsAutoLogged();
 
     /** Creates a new SimpleSubsystem. */
-    public ElevatorRollers() {
-        m_motor.getConfigurator().apply(ElevatorRollersConstants.motorConfig());
-
+    public ElevatorRollers(ElevatorRollersIO io) {
+        this.io = io;
+        //m_motor.getConfigurator().apply(ElevatorRollersConstants.motorConfig());
     }
 
     @Override
     public void periodic() {
-
+        io.updateInputs(inputs);
+        Logger.processInputs("ElevatorRollers", inputs);
         if (state == State.OFF) {
-            m_motor.setControl(m_neutral);
+            //m_motor.setControl(m_neutral);
+            io.stop();
         } else {
-            m_motor.setControl(m_percent.withOutput(state.getOutput()));
+            //m_motor.setControl(m_percent.withOutput(state.getOutput()));
+            io.runDutyCycle(state.getOutput());
         }
 
         displayInfo(debug);
@@ -64,8 +70,8 @@ public class ElevatorRollers extends SubsystemBase {
         if (debug) {
             SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());
             SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint ", state.getOutput());
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", m_motor.getMotorVoltage().getValueAsDouble());
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw", m_motor.getSupplyCurrent().getValueAsDouble());
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", inputs.motorVoltage);
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw", inputs.supplyCurrent);
         }
 
     }

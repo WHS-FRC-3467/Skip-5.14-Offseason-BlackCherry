@@ -40,6 +40,9 @@ import frc.robot.subsystems.ElevatorJoint.ElevatorJointIO;
 import frc.robot.subsystems.ElevatorJoint.ElevatorJointIOKrakenFOC;
 import frc.robot.subsystems.ElevatorJoint.ElevatorJointIOSim;
 import frc.robot.subsystems.ElevatorRollers.ElevatorRollers;
+import frc.robot.subsystems.ElevatorRollers.ElevatorRollersIO;
+import frc.robot.subsystems.ElevatorRollers.ElevatorRollersIOKrakenFOC;
+import frc.robot.subsystems.ElevatorRollers.ElevatorRollersIOSim;
 import frc.robot.subsystems.IntakeJoint.IntakeJoint;
 import frc.robot.subsystems.IntakeJoint.IntakeJointIO;
 import frc.robot.subsystems.IntakeJoint.IntakeJointIOKrakenFOC;
@@ -64,7 +67,7 @@ public class RobotContainer {
 	public final RobotState robotState = RobotState.getInstance();
 	//public final ClimberJoint climberJoint = new ClimberJoint();
 	//public final ElevatorJoint elevatorJoint = new ElevatorJoint();
-	public final ElevatorRollers elevatorRollers = new ElevatorRollers();
+	//public final ElevatorRollers elevatorRollers = new ElevatorRollers();
 	//public final IntakeJoint intakeJoint = new IntakeJoint();
 	public final IntakeRollers intakeRollers = new IntakeRollers();
 	//public final ShooterJoint shooterJoint = new ShooterJoint();
@@ -75,6 +78,7 @@ public class RobotContainer {
 	public ShooterRollers shooterRollers;
 	public ClimberJoint climberJoint;
 	public ElevatorJoint elevatorJoint;
+	public ElevatorRollers elevatorRollers;
 	public IntakeJoint intakeJoint;
 	public ShooterJoint shooterJoint;
 		
@@ -142,6 +146,7 @@ public class RobotContainer {
 		elevatorJoint = null;
 		intakeJoint = null;
 		shooterJoint = null;
+		elevatorRollers = null;
 
 		/* Setup according to Which Robot we are using */
 
@@ -151,6 +156,7 @@ public class RobotContainer {
 					shooterRollers = new ShooterRollers(new ShooterRollersIOKrakenFOC());
 					climberJoint = new ClimberJoint(new ClimberJointIOKrakenFOC());
 					elevatorJoint = new ElevatorJoint(new ElevatorJointIOKrakenFOC());
+					elevatorRollers = new ElevatorRollers(new ElevatorRollersIOKrakenFOC());
 					intakeJoint = new IntakeJoint(new IntakeJointIOKrakenFOC());
 					shooterJoint = new ShooterJoint(new ShooterJointIOKrakenFOC());
 					break;
@@ -159,6 +165,7 @@ public class RobotContainer {
 					shooterRollers = new ShooterRollers(new ShooterRollersIOSim());
 					climberJoint = new ClimberJoint(new ClimberJointIOSim());
 					elevatorJoint = new ElevatorJoint(new ElevatorJointIOSim());
+					elevatorRollers = new ElevatorRollers(new ElevatorRollersIOSim());
 					intakeJoint = new IntakeJoint(new IntakeJointIOSim());
 					shooterJoint = new ShooterJoint(new ShooterJointIOSim());
 					break;
@@ -166,21 +173,24 @@ public class RobotContainer {
 			}
 		}
 
-	if (shooterRollers == null) {
-		shooterRollers = new ShooterRollers(new ShooterRollersIO() {});
-	}
-	if (climberJoint == null) {
-		climberJoint = new ClimberJoint(new ClimberJointIO() {});
-	}
-	if (elevatorJoint == null) {
-		elevatorJoint = new ElevatorJoint(new ElevatorJointIO() {});
-	}
-	if (intakeJoint == null) {
-		intakeJoint = new IntakeJoint(new IntakeJointIO() {});
-	}
-	if (shooterJoint == null) {
-		shooterJoint = new ShooterJoint(new ShooterJointIO() {});
-	}
+		if (shooterRollers == null) {
+			shooterRollers = new ShooterRollers(new ShooterRollersIO() {});
+		}
+		if (climberJoint == null) {
+			climberJoint = new ClimberJoint(new ClimberJointIO() {});
+		}
+		if (elevatorJoint == null) {
+			elevatorJoint = new ElevatorJoint(new ElevatorJointIO() {});
+		}
+		if (intakeJoint == null) {
+			intakeJoint = new IntakeJoint(new IntakeJointIO() {});
+		}
+		if (shooterJoint == null) {
+			shooterJoint = new ShooterJoint(new ShooterJointIO() {});
+		}
+		if (elevatorRollers == null) {
+			elevatorRollers = new ElevatorRollers(new ElevatorRollersIO() {});
+		}
 	
 
 		configureBindings();
