@@ -1,11 +1,7 @@
 package frc.robot.subsystems.IntakeJoint;
 
 import org.littletonrobotics.junction.AutoLog;
-
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-
-import frc.robot.subsystems.ClimberJoint.ClimberJointIO.ClimberJointIOInputs;
 
 public interface IntakeJointIO {
     // MJW: IO Layering 11/11/2024

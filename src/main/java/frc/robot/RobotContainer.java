@@ -41,6 +41,9 @@ import frc.robot.subsystems.ElevatorJoint.ElevatorJointIOKrakenFOC;
 import frc.robot.subsystems.ElevatorJoint.ElevatorJointIOSim;
 import frc.robot.subsystems.ElevatorRollers.ElevatorRollers;
 import frc.robot.subsystems.IntakeJoint.IntakeJoint;
+import frc.robot.subsystems.IntakeJoint.IntakeJointIO;
+import frc.robot.subsystems.IntakeJoint.IntakeJointIOKrakenFOC;
+import frc.robot.subsystems.IntakeJoint.IntakeJointIOSim;
 import frc.robot.subsystems.IntakeRollers.IntakeRollers;
 import frc.robot.subsystems.ShooterJoint.ShooterJoint;
 import frc.robot.subsystems.ShooterRollers.ShooterRollers;
@@ -59,7 +62,7 @@ public class RobotContainer {
 	//public final ClimberJoint climberJoint = new ClimberJoint();
 	//public final ElevatorJoint elevatorJoint = new ElevatorJoint();
 	public final ElevatorRollers elevatorRollers = new ElevatorRollers();
-	public final IntakeJoint intakeJoint = new IntakeJoint();
+	//public final IntakeJoint intakeJoint = new IntakeJoint();
 	public final IntakeRollers intakeRollers = new IntakeRollers();
 	public final ShooterJoint shooterJoint = new ShooterJoint();
 	//public final ShooterRollers shooterRollers = new ShooterRollers();
@@ -69,6 +72,7 @@ public class RobotContainer {
 	public ShooterRollers shooterRollers;
 	public ClimberJoint climberJoint;
 	public ElevatorJoint elevatorJoint;
+	public IntakeJoint intakeJoint;
 		
 	private final CommandXboxController joystick = new CommandXboxController(0);
 	private final GenericHID rumble = joystick.getHID();
@@ -132,6 +136,7 @@ public class RobotContainer {
 		shooterRollers = null;
 		climberJoint = null;
 		elevatorJoint = null;
+		intakeJoint = null;
 
 		/* Setup according to Which Robot we are using */
 
@@ -141,12 +146,14 @@ public class RobotContainer {
 					shooterRollers = new ShooterRollers(new ShooterRollersIOKrakenFOC());
 					climberJoint = new ClimberJoint(new ClimberJointIOKrakenFOC());
 					elevatorJoint = new ElevatorJoint(new ElevatorJointIOKrakenFOC());
+					intakeJoint = new IntakeJoint(new IntakeJointIOKrakenFOC());
 					break;
 					/* We will include the other subsystems */
 				case SIM:
 					shooterRollers = new ShooterRollers(new ShooterRollersIOSim());
 					climberJoint = new ClimberJoint(new ClimberJointIOSim());
 					elevatorJoint = new ElevatorJoint(new ElevatorJointIOSim());
+					intakeJoint = new IntakeJoint(new IntakeJointIOSim());
 					break;
 				default:
 			}
@@ -160,6 +167,9 @@ public class RobotContainer {
 	}
 	if (elevatorJoint == null) {
 		elevatorJoint = new ElevatorJoint(new ElevatorJointIO() {});
+	}
+	if (intakeJoint == null) {
+		intakeJoint = new IntakeJoint(new IntakeJointIO() {});
 	}
 	
 
