@@ -73,7 +73,7 @@ public class ElevatorJoint extends SubsystemBase {
             //m_motor.setControl(m_duty.withOutput(-0.05));
             io.runDutyCycle(-0.05);
 
-            if (inputs.supplyCurrent > ElevatorConstants.homingCurrent) {
+            if (inputs.supplyCurrent > ElevatorJointConstants.homingCurrent) {
                 //m_motor.setPosition(0.0);
                 io.setPosition(0.0);
                 System.out.println("HOMED Elevator");
@@ -91,7 +91,7 @@ public class ElevatorJoint extends SubsystemBase {
 
     public boolean atGoal() {
         return MathUtil.isNear(state.getOutput(), inputs.position,
-                ElevatorConstants.Tolerance);
+                ElevatorJointConstants.tolerance);
     }
 
     public Command setStateCommand(State state) {

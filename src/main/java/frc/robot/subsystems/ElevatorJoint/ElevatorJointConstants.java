@@ -2,7 +2,7 @@ package frc.robot.subsystems.ElevatorJoint;
 
 import frc.robot.Constants;
 
-public class ElevatorConstants {
+public class ElevatorJointConstants {
     public static double Tolerance = 0.5;
     public static final double homingCurrent = 0.5;
 
