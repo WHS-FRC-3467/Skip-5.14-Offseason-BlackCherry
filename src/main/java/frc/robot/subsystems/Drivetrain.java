@@ -37,6 +37,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import org.littletonrobotics.junction.Logger;
+
 /**
  * Class that extends the Phoenix SwerveDrivetrain class and implements
  * subsystem so it can be used in command-based projects easily.
@@ -167,9 +169,13 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         RobotState.getInstance().setRobotPose(getState().Pose); // Tell RobotState current pose
         RobotState.getInstance().setRobotSpeeds(getCurrentRobotChassisSpeeds()); // Tell RobotState current speeds
         
+        //MJW: Added Logging for replay 11/11/2024
+        Logger.recordOutput("Drivebase/RobotPose", getState().Pose);
         fieldMap.setRobotPose(getState().Pose);
         
+        //MJW: Added Logging for replay 11/11/2024
         SmartDashboard.putNumber("Distance To Target", RobotState.getInstance().getDistanceToTarget());
+        Logger.recordOutput("Drivebase/DistanceToTarget", RobotState.getInstance().getDistanceToTarget());
 
         target = RobotState.getInstance().getTarget();
 
