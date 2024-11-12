@@ -40,7 +40,9 @@ import frc.robot.Constants.PhotonVisionConstants.front_left_cam;
 import frc.robot.Constants.PhotonVisionConstants.front_right_cam;
 import frc.robot.Robot;
  import java.util.Optional;
- import org.photonvision.EstimatedRobotPose;
+
+import org.littletonrobotics.junction.Logger;
+import org.photonvision.EstimatedRobotPose;
  import org.photonvision.PhotonCamera;
  import org.photonvision.PhotonPoseEstimator;
  import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -199,6 +201,7 @@ import frc.robot.Robot;
                  });
  
          hasTarget = getLatestResult().hasTargets();
+         Logger.recordOutput("Drivebase/VisionPose", visionPose.getRobotPose());
  
      }
  

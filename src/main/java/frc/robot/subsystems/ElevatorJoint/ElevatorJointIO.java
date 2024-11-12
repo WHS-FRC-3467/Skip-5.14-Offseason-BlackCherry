@@ -1,15 +1,13 @@
-package frc.robot.subsystems.ClimberJoint;
+package frc.robot.subsystems.ElevatorJoint;
 
 import org.littletonrobotics.junction.AutoLog;
 
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
-public interface ClimberJointIO {
-    // MJW: IO Layering 11/11/2024
+public interface ElevatorJointIO {
+    //MJW: IO Layering 11/11/2024
     @AutoLog
-    class ClimberJointIOInputs {
-
+    class ElevatorJointIOInputs {
         // USED CURRENTLY
         double supplyCurrent = 0.0;
         double position = 0.0;
@@ -17,9 +15,9 @@ public interface ClimberJointIO {
     }
 
     // Update Inputs
-    default void updateInputs(ClimberJointIOInputs inputs) {}
+    default void updateInputs(ElevatorJointIOInputs inputs) {}
 
-    // Turn motors to Nuetral Mode
+    // Stop Elevator and set to Neutral Mode
     default void stop() {}
 
     // Run Duty Cycle

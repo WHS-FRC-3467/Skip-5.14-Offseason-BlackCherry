@@ -36,6 +36,9 @@ import frc.robot.subsystems.ClimberJoint.ClimberJointIO;
 import frc.robot.subsystems.ClimberJoint.ClimberJointIOKrakenFOC;
 import frc.robot.subsystems.ClimberJoint.ClimberJointIOSim;
 import frc.robot.subsystems.ElevatorJoint.ElevatorJoint;
+import frc.robot.subsystems.ElevatorJoint.ElevatorJointIO;
+import frc.robot.subsystems.ElevatorJoint.ElevatorJointIOKrakenFOC;
+import frc.robot.subsystems.ElevatorJoint.ElevatorJointIOSim;
 import frc.robot.subsystems.ElevatorRollers.ElevatorRollers;
 import frc.robot.subsystems.IntakeJoint.IntakeJoint;
 import frc.robot.subsystems.IntakeRollers.IntakeRollers;
@@ -54,7 +57,7 @@ public class RobotContainer {
 	public final Drivetrain drivetrain = TunerConstants.DriveTrain;
 	public final RobotState robotState = RobotState.getInstance();
 	//public final ClimberJoint climberJoint = new ClimberJoint();
-	public final ElevatorJoint elevatorJoint = new ElevatorJoint();
+	//public final ElevatorJoint elevatorJoint = new ElevatorJoint();
 	public final ElevatorRollers elevatorRollers = new ElevatorRollers();
 	public final IntakeJoint intakeJoint = new IntakeJoint();
 	public final IntakeRollers intakeRollers = new IntakeRollers();
@@ -65,6 +68,7 @@ public class RobotContainer {
 	/* AdvantageKit Setup */
 	public ShooterRollers shooterRollers;
 	public ClimberJoint climberJoint;
+	public ElevatorJoint elevatorJoint;
 		
 	private final CommandXboxController joystick = new CommandXboxController(0);
 	private final GenericHID rumble = joystick.getHID();
@@ -127,6 +131,7 @@ public class RobotContainer {
 		/* base them on Null before we beform Switch Statement check */
 		shooterRollers = null;
 		climberJoint = null;
+		elevatorJoint = null;
 
 		/* Setup according to Which Robot we are using */
 
@@ -135,11 +140,13 @@ public class RobotContainer {
 				case REAL:
 					shooterRollers = new ShooterRollers(new ShooterRollersIOKrakenFOC());
 					climberJoint = new ClimberJoint(new ClimberJointIOKrakenFOC());
+					elevatorJoint = new ElevatorJoint(new ElevatorJointIOKrakenFOC());
 					break;
 					/* We will include the other subsystems */
 				case SIM:
 					shooterRollers = new ShooterRollers(new ShooterRollersIOSim());
 					climberJoint = new ClimberJoint(new ClimberJointIOSim());
+					elevatorJoint = new ElevatorJoint(new ElevatorJointIOSim());
 					break;
 				default:
 			}
@@ -148,6 +155,13 @@ public class RobotContainer {
 	if (shooterRollers == null) {
 		shooterRollers = new ShooterRollers(new ShooterRollersIO() {});
 	}
+	if (climberJoint == null) {
+		climberJoint = new ClimberJoint(new ClimberJointIO() {});
+	}
+	if (elevatorJoint == null) {
+		elevatorJoint = new ElevatorJoint(new ElevatorJointIO() {});
+	}
+	
 
 		configureBindings();
 		configureDebugCommands();
@@ -326,7 +340,7 @@ public class RobotContainer {
 
 		NamedCommands.registerCommand("Note Collect",
 				Commands.race(
-						Commands.waitSeconds(8),
+						Commands.waitSeconds(2),
 						Commands.deadline(
 								Commands.waitUntil(LC2),
 								ySplitRollers.setStateCommand(YSplitRollers.State.INTAKE)
@@ -344,7 +358,7 @@ public class RobotContainer {
 
 		NamedCommands.registerCommand("Shooting Command",
 				Commands.race(
-						Commands.waitSeconds(3),
+						Commands.waitSeconds(1),
 						Commands.waitUntil(readyToShoot)
 								.andThen(Commands.deadline(
 										Commands.waitUntil(LC2.negate()),
