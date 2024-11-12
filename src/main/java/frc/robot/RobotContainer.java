@@ -46,6 +46,9 @@ import frc.robot.subsystems.IntakeJoint.IntakeJointIOKrakenFOC;
 import frc.robot.subsystems.IntakeJoint.IntakeJointIOSim;
 import frc.robot.subsystems.IntakeRollers.IntakeRollers;
 import frc.robot.subsystems.ShooterJoint.ShooterJoint;
+import frc.robot.subsystems.ShooterJoint.ShooterJointIO;
+import frc.robot.subsystems.ShooterJoint.ShooterJointIOKrakenFOC;
+import frc.robot.subsystems.ShooterJoint.ShooterJointIOSim;
 import frc.robot.subsystems.ShooterRollers.ShooterRollers;
 import frc.robot.subsystems.ShooterRollers.ShooterRollersIO;
 import frc.robot.subsystems.ShooterRollers.ShooterRollersIOKrakenFOC;
@@ -64,7 +67,7 @@ public class RobotContainer {
 	public final ElevatorRollers elevatorRollers = new ElevatorRollers();
 	//public final IntakeJoint intakeJoint = new IntakeJoint();
 	public final IntakeRollers intakeRollers = new IntakeRollers();
-	public final ShooterJoint shooterJoint = new ShooterJoint();
+	//public final ShooterJoint shooterJoint = new ShooterJoint();
 	//public final ShooterRollers shooterRollers = new ShooterRollers();
 	public final YSplitRollers ySplitRollers = new YSplitRollers();
 
@@ -73,6 +76,7 @@ public class RobotContainer {
 	public ClimberJoint climberJoint;
 	public ElevatorJoint elevatorJoint;
 	public IntakeJoint intakeJoint;
+	public ShooterJoint shooterJoint;
 		
 	private final CommandXboxController joystick = new CommandXboxController(0);
 	private final GenericHID rumble = joystick.getHID();
@@ -137,6 +141,7 @@ public class RobotContainer {
 		climberJoint = null;
 		elevatorJoint = null;
 		intakeJoint = null;
+		shooterJoint = null;
 
 		/* Setup according to Which Robot we are using */
 
@@ -147,6 +152,7 @@ public class RobotContainer {
 					climberJoint = new ClimberJoint(new ClimberJointIOKrakenFOC());
 					elevatorJoint = new ElevatorJoint(new ElevatorJointIOKrakenFOC());
 					intakeJoint = new IntakeJoint(new IntakeJointIOKrakenFOC());
+					shooterJoint = new ShooterJoint(new ShooterJointIOKrakenFOC());
 					break;
 					/* We will include the other subsystems */
 				case SIM:
@@ -154,6 +160,7 @@ public class RobotContainer {
 					climberJoint = new ClimberJoint(new ClimberJointIOSim());
 					elevatorJoint = new ElevatorJoint(new ElevatorJointIOSim());
 					intakeJoint = new IntakeJoint(new IntakeJointIOSim());
+					shooterJoint = new ShooterJoint(new ShooterJointIOSim());
 					break;
 				default:
 			}
@@ -170,6 +177,9 @@ public class RobotContainer {
 	}
 	if (intakeJoint == null) {
 		intakeJoint = new IntakeJoint(new IntakeJointIO() {});
+	}
+	if (shooterJoint == null) {
+		shooterJoint = new ShooterJoint(new ShooterJointIO() {});
 	}
 	
 

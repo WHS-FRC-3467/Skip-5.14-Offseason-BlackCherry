@@ -6,6 +6,8 @@ package frc.robot.subsystems.ShooterJoint;
 
 import java.util.function.DoubleSupplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -47,32 +49,40 @@ public class ShooterJoint extends SubsystemBase {
 
     private Debouncer m_debounce = new Debouncer(.1);
 
-    TalonFX m_motor = new TalonFX(ShooterJointConstants.ID_MOTOR);
-    CANcoder m_encoder = new CANcoder(ShooterJointConstants.ID_ENCODER);
+    //TalonFX m_motor = new TalonFX(ShooterJointConstants.ID_MOTOR);
+    //CANcoder m_encoder = new CANcoder(ShooterJointConstants.ID_ENCODER); // Not sure what to do with Absolute Encoder
 
     private final static MotionMagicVoltage m_magic = new MotionMagicVoltage(0);
     private final static PositionVoltage m_position = new PositionVoltage(0);
     // private final NeutralOut m_neutral = new NeutralOut();
 
-    public ShooterJoint() {
-        m_encoder.getConfigurator().apply(ShooterJointConstants.encoderConfig());
-        m_motor.getConfigurator().apply(ShooterJointConstants.motorConfig());
+    private final ShooterJointIO io;
+    private final ShooterJointIOInputsAutoLogged inputs = new ShooterJointIOInputsAutoLogged();
+
+    public ShooterJoint(ShooterJointIO io) {
+        this.io = io;
+        //m_encoder.getConfigurator().apply(ShooterJointConstants.encoderConfig());
+        //m_motor.getConfigurator().apply(ShooterJointConstants.motorConfig());
     }
 
     @Override
     public void periodic() {
+        io.updateInputs(inputs);
+        Logger.processInputs("ShooterJoint", inputs);
         if (state == State.DYNAMIC) {
-            m_motor.setControl(m_position.withPosition(state.getStateOutput()).withSlot(0));
+            //m_motor.setControl(m_position.withPosition(state.getStateOutput()).withSlot(0));
+            io.setPosition(m_position.withPosition(state.getStateOutput()).withSlot(0));
             //m_motor.setControl(m_magic.withPosition(state.getStateOutput()).withSlot(1));
         } else {
-            m_motor.setControl(m_magic.withPosition(state.getStateOutput()).withSlot(1));
+            //m_motor.setControl(m_magic.withPosition(state.getStateOutput()).withSlot(1));
+            io.setControl(m_magic.withPosition(state.getStateOutput()).withSlot(1));
         }
 
         displayInfo(true);
     }
 
     public boolean atGoal() {
-        return m_debounce.calculate(MathUtil.isNear(state.getStateOutput(), m_motor.getPosition().getValueAsDouble(), ShooterJointConstants.tolerance));
+        return m_debounce.calculate(MathUtil.isNear(state.getStateOutput(), inputs.position, ShooterJointConstants.tolerance));
     }
 
     public Command setStateCommand(State state) {
@@ -84,9 +94,9 @@ public class ShooterJoint extends SubsystemBase {
             SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());
             SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint ", state.getStateOutput());
             SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint (deg) ", Units.rotationsToDegrees(state.getStateOutput()));
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", m_motor.getPosition().getValueAsDouble());
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output deg ", Units.rotationsToDegrees(m_motor.getPosition().getValueAsDouble()));
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw", m_motor.getSupplyCurrent().getValueAsDouble());
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", inputs.position);
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output deg ", inputs.positionDegrees);
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw", inputs.supplyCurrent);
             SmartDashboard.putBoolean(this.getClass().getSimpleName() + " atGoal", atGoal());
         }
 
