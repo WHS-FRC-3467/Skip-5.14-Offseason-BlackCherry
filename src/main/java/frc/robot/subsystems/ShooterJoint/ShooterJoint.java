@@ -6,6 +6,7 @@ package frc.robot.subsystems.ShooterJoint;
 
 import java.util.function.DoubleSupplier;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -89,6 +90,7 @@ public class ShooterJoint extends SubsystemBase {
         return startEnd(() -> this.state = state, () -> this.state = State.STOW);
     }
 
+    //@AutoLogOutput(key = "ShooterJoint/Info")
     private void displayInfo(boolean debug) {
         if (debug) {
             SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());

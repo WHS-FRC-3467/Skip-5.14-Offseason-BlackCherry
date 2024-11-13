@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.ElevatorRollers;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -66,6 +67,7 @@ public class ElevatorRollers extends SubsystemBase {
         return startEnd(() -> this.state = state, () -> this.state = State.OFF);
     }
 
+    //@AutoLogOutput(key = "ElevatorRollers/Info")
     private void displayInfo(boolean debug) {
         if (debug) {
             SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());

@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.ElevatorJoint;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -98,6 +99,7 @@ public class ElevatorJoint extends SubsystemBase {
         return startEnd(() -> this.state = state, () -> this.state = State.STOW);
     }
 
+    //@AutoLogOutput(key = "ElevatorJoint/Info")
     private void displayInfo(boolean debug) {
         if (debug) {
             SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());

@@ -88,6 +88,7 @@ public class ShooterRollers extends SubsystemBase {
         return startEnd(() -> this.state = state, () -> this.state = State.OFF);
     }
 
+    //@AutoLogOutput(key = "ShooterRollers/Info")
     public void displayInfo(boolean debug) {
         if (debug) {
             SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());

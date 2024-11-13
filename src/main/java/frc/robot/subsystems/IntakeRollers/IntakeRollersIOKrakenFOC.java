@@ -1,4 +1,4 @@
-package frc.robot.subsystems.ElevatorRollers;
+package frc.robot.subsystems.IntakeRollers;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -7,9 +7,10 @@ import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import frc.robot.Constants.ElevatorRollersConstants;
 
-public class ElevatorRollersIOKrakenFOC implements ElevatorRollersIO{
+import frc.robot.Constants.IntakeRollersConstants;
+
+public class IntakeRollersIOKrakenFOC implements IntakeRollersIO{
     // Hardware
     private final TalonFX m_motor;
 
@@ -23,8 +24,8 @@ public class ElevatorRollersIOKrakenFOC implements ElevatorRollersIO{
     private final NeutralOut m_neutral = new NeutralOut();
     private final DutyCycleOut m_duty = new DutyCycleOut(0.0);
 
-    public ElevatorRollersIOKrakenFOC() {
-        m_motor = new TalonFX(ElevatorRollersConstants.ID_Motor);
+    public IntakeRollersIOKrakenFOC() {
+        m_motor = new TalonFX(IntakeRollersConstants.ID_Motor);
 
         TalonFXConfiguration m_configuration = new TalonFXConfiguration();
 
@@ -33,12 +34,12 @@ public class ElevatorRollersIOKrakenFOC implements ElevatorRollersIO{
         m_configuration.Voltage.PeakForwardVoltage = 12.0;
         m_configuration.Voltage.PeakReverseVoltage = -12.0;
 
-        m_configuration.CurrentLimits.SupplyCurrentLimit = 20;
+        m_configuration.CurrentLimits.SupplyCurrentLimit = 40;
         m_configuration.CurrentLimits.SupplyCurrentThreshold = 40;
         m_configuration.CurrentLimits.SupplyTimeThreshold = 0.1;
-        m_configuration.CurrentLimits.SupplyCurrentLimitEnable = false;
-        m_configuration.CurrentLimits.StatorCurrentLimit = 70;
-        m_configuration.CurrentLimits.StatorCurrentLimitEnable = false;
+        m_configuration.CurrentLimits.SupplyCurrentLimitEnable = true;
+        m_configuration.CurrentLimits.StatorCurrentLimit = 80;
+        m_configuration.CurrentLimits.StatorCurrentLimitEnable = true;
 
         // Apply Configs
         m_motor.getConfigurator().apply(m_configuration);
@@ -56,7 +57,7 @@ public class ElevatorRollersIOKrakenFOC implements ElevatorRollersIO{
             );
     }
     // Update Inputs
-    public void updateInputs(ElevatorRollersIOInputs inputs) {
+    public void updateInputs(IntakeRollersIOInputs inputs) {
         inputs.motorVoltage = m_motorAppliedVolts.getValueAsDouble();
         inputs.supplyCurrent = m_motorSupplyCurrent.getValueAsDouble();
     }

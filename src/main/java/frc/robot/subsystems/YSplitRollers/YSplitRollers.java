@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.YSplitRollers;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -12,6 +14,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.IntakeRollers.IntakeRollersIO;
+import frc.robot.subsystems.IntakeRollers.IntakeRollersIOInputsAutoLogged;
+import frc.robot.subsystems.YSplitRollers.YSplitRollersIO.YSplitRollersIOInputs;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -43,26 +48,34 @@ public class YSplitRollers extends SubsystemBase {
 
     private boolean debug = true;
 
-    TalonFX m_roller1 = new TalonFX(Constants.YSplitRollersConstants.ID_YSPLIT_ROLLER1);
-    TalonFX m_roller2 = new TalonFX(Constants.YSplitRollersConstants.ID_YSPLIT_ROLLER2);
-    private final DutyCycleOut m_percent = new DutyCycleOut(0);
-    private final NeutralOut m_neutral = new NeutralOut();
+    //TalonFX m_roller1 = new TalonFX(Constants.YSplitRollersConstants.ID_YSPLIT_ROLLER1);
+    //TalonFX m_roller2 = new TalonFX(Constants.YSplitRollersConstants.ID_YSPLIT_ROLLER2);
+    //private final DutyCycleOut m_percent = new DutyCycleOut(0);
+    //private final NeutralOut m_neutral = new NeutralOut();
+
+    //AdvantageKit addition MJW 11/12/2024
+    private final YSplitRollersIO io;
+    private final YSplitRollersIOInputsAutoLogged inputs = new YSplitRollersIOInputsAutoLogged();
 
     /** Creates a new YSplitRollers. */
-    public YSplitRollers() {
-        m_roller1.getConfigurator().apply(Constants.YSplitRollersConstants.motorConfig());
-        m_roller2.getConfigurator().apply(Constants.YSplitRollersConstants.motorConfig());
+    public YSplitRollers(YSplitRollersIO io) {
+        this.io = io;
+        //m_roller1.getConfigurator().apply(Constants.YSplitRollersConstants.motorConfig());
+        //m_roller2.getConfigurator().apply(Constants.YSplitRollersConstants.motorConfig());
     }
 
     @Override
     public void periodic() {
 
         if (state == State.OFF) {
-            m_roller1.setControl(m_neutral);
-            m_roller2.setControl(m_neutral);
+            //m_roller1.setControl(m_neutral);
+            io.stop(); // Maybe add seperation so that one will stop and not the other
+            //m_roller2.setControl(m_neutral);
         } else {
-            m_roller1.setControl(m_percent.withOutput(state.getRoller1()));
-            m_roller2.setControl(m_percent.withOutput(state.getRoller2()));
+            //m_roller1.setControl(m_percent.withOutput(state.getRoller1()));
+            io.runDutyCycle(1, state.getRoller1());
+            //m_roller2.setControl(m_percent.withOutput(state.getRoller2()));
+            io.runDutyCycle(2, state.getRoller2());
         }
 
         displayInfo(debug);
@@ -72,15 +85,16 @@ public class YSplitRollers extends SubsystemBase {
         return startEnd(() -> this.state = state, () -> this.state = State.OFF);
     }
 
+    //@AutoLogOutput(key = "YSplitRollers/Info")
     private void displayInfo(boolean debug) {
         if (debug) {
             SmartDashboard.putString(this.getClass().getSimpleName() + "  State ", state.toString());
             SmartDashboard.putNumber(this.getClass().getSimpleName() + " Roller1 Setpoint ", state.getRoller1());
             SmartDashboard.putNumber(this.getClass().getSimpleName() + " Roller2 Setpoint ", state.getRoller2());
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Roller1 Output ", m_roller1.getMotorVoltage().getValueAsDouble());
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Roller2 Output ", m_roller2.getMotorVoltage().getValueAsDouble());
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Roller1 Current Draw", m_roller1.getSupplyCurrent().getValueAsDouble());
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Roller2 Current Draw", m_roller2.getSupplyCurrent().getValueAsDouble());
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Roller1 Output ", inputs.motorVoltage);
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Roller2 Output ", inputs.motor2Voltage);
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Roller1 Current Draw", inputs.supplyCurrent);
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Roller2 Current Draw", inputs.motor2supplyCurrent);
         }
 
     }

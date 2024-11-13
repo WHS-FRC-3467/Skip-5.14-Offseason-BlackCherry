@@ -6,6 +6,7 @@ package frc.robot.subsystems.IntakeJoint;
 
 
 
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -106,6 +107,7 @@ public class IntakeJoint extends SubsystemBase {
         return startEnd(() -> this.state = state, () -> this.state = State.STOW);
     }
 
+    //@AutoLogOutput(key = "IntakeJoint/Info")
     private void displayInfo(boolean debug) {
         if (debug) {
             SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());

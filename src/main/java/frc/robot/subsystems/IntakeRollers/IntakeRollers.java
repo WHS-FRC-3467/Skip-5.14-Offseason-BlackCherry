@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.IntakeRollers;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -11,6 +13,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeRollersConstants;
+import frc.robot.subsystems.ElevatorRollers.ElevatorRollersIO;
+import frc.robot.subsystems.ElevatorRollers.ElevatorRollersIOInputsAutoLogged;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -33,13 +37,18 @@ public class IntakeRollers extends SubsystemBase {
 
     private boolean debug = true;
 
-    TalonFX m_motor = new TalonFX(IntakeRollersConstants.ID_Motor);
-    private final DutyCycleOut m_percent = new DutyCycleOut(0);
-    private final NeutralOut m_neutral = new NeutralOut();
+    //TalonFX m_motor = new TalonFX(IntakeRollersConstants.ID_Motor);
+    //private final DutyCycleOut m_percent = new DutyCycleOut(0);
+    //private final NeutralOut m_neutral = new NeutralOut();
+
+    //AdvantageKit addition MJW 11/12/2024
+    private final IntakeRollersIO io;
+    private final IntakeRollersIOInputsAutoLogged inputs = new IntakeRollersIOInputsAutoLogged();
 
     /** Creates a new SimpleSubsystem. */
-    public IntakeRollers() {
-        m_motor.getConfigurator().apply(IntakeRollersConstants.motorConfig());
+    public IntakeRollers(IntakeRollersIO io) {
+        this.io = io;
+        //m_motor.getConfigurator().apply(IntakeRollersConstants.motorConfig());
 
     }
 
@@ -47,9 +56,11 @@ public class IntakeRollers extends SubsystemBase {
     public void periodic() {
 
         if (state == State.OFF) {
-            m_motor.setControl(m_neutral);
+            //m_motor.setControl(m_neutral);
+            io.stop();
         } else {
-            m_motor.setControl(m_percent.withOutput(state.getOutput()));
+            //m_motor.setControl(m_percent.withOutput(state.getOutput()));
+            io.runDutyCycle(state.getOutput());
         }
 
         displayInfo(debug);
@@ -59,12 +70,13 @@ public class IntakeRollers extends SubsystemBase {
         return startEnd(() -> this.state = state, () -> this.state = State.OFF);
     }
 
+    //@AutoLogOutput(key = "IntakeRollers/Info")
     private void displayInfo(boolean debug) {
         if (debug) {
             SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());
             SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint ", state.getOutput());
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", m_motor.getMotorVoltage().getValueAsDouble());
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw", m_motor.getSupplyCurrent().getValueAsDouble());
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", inputs.motorVoltage);
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw", inputs.supplyCurrent);
         }
 
     }

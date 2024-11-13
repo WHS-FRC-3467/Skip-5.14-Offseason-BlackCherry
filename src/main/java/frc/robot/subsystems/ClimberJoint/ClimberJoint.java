@@ -1,6 +1,8 @@
 package frc.robot.subsystems.ClimberJoint;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
@@ -97,6 +99,7 @@ public class ClimberJoint extends SubsystemBase {
         return startEnd(() -> this.state = state, () -> this.state = State.STOW);
     }
 
+    //@AutoLogOutput(key = "ClimberJoint/Info")
     private void displayInfo(boolean debug) {
         if (debug) {
             SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());
