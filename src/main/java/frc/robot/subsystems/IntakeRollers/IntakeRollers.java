@@ -13,11 +13,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeRollersConstants;
-import frc.robot.subsystems.ElevatorRollers.ElevatorRollersIO;
-import frc.robot.subsystems.ElevatorRollers.ElevatorRollersIOInputsAutoLogged;
+//import frc.robot.subsystems.ElevatorRollers.ElevatorRollersIO;
+//import frc.robot.subsystems.ElevatorRollers.ElevatorRollersIOInputsAutoLogged;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+
+/* Local Imports */
+import frc.robot.subsystems.IntakeRollers.IntakeRollersIO;
+import frc.robot.subsystems.IntakeRollers.IntakeRollersIOInputsAutoLogged;
+//import frc.robot.subsystems.IntakeRollers.IntakeRollersConstants;
 
 public class IntakeRollers extends SubsystemBase {
 
