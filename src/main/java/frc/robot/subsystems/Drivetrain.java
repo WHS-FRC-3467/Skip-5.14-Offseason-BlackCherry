@@ -10,16 +10,16 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.config.ModuleConfig;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+// import com.pathplanner.lib.auto.AutoBuilder;
+// import com.pathplanner.lib.commands.PathPlannerAuto;
+// import com.pathplanner.lib.config.ModuleConfig;
+// import com.pathplanner.lib.config.PIDConstants;
+// import com.pathplanner.lib.config.RobotConfig;
+// import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.system.plant.DCMotor;
+// import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -69,12 +69,12 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     private double yVelocity = 0.0;
     private double omegaVelocity = 0.0;
 
-    private final ModuleConfig moduleConfig = new ModuleConfig(Units.inchesToMeters(3.92/2), 5.1, 1.2, DCMotor.getKrakenX60(1).withReduction(6.122), 90, 1);
+    // private final ModuleConfig moduleConfig = new ModuleConfig(Units.inchesToMeters(3.92/2), 5.1, 1.2, DCMotor.getKrakenX60(1).withReduction(6.122), 90, 1);
     
-    private final RobotConfig robotConfig = new RobotConfig(Units.lbsToKilograms(129), 4.785, moduleConfig, Units.inchesToMeters(10.375*2), Units.inchesToMeters(10.375*2));
+    // private final RobotConfig robotConfig = new RobotConfig(Units.lbsToKilograms(129), 4.785, moduleConfig, Units.inchesToMeters(10.375*2), Units.inchesToMeters(10.375*2));
 
 
-    private final SwerveRequest.ApplyChassisSpeeds AutoRequest = new SwerveRequest.ApplyChassisSpeeds();
+    // private final SwerveRequest.ApplyChassisSpeeds AutoRequest = new SwerveRequest.ApplyChassisSpeeds();
 
     private SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
             .withDeadband(DriveConstants.MaxSpeed * 0.01).withRotationalDeadband(DriveConstants.MaxAngularRate * 0.01)
@@ -94,7 +94,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
     public Drivetrain(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
         super(driveTrainConstants, modules);
-        configurePathPlanner();
+        // configurePathPlanner();
         setHeadingPID();
         setSwerveDriveCustomCurrentLimits();
         SmartDashboard.putData("Robot Pose Field Map",fieldMap);
@@ -103,30 +103,31 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         }
     }
 
-    private void configurePathPlanner() {
-        double driveBaseRadius = 0;
-        for (var moduleLocation : m_moduleLocations) {
-            driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
-        }
+    // private void configurePathPlanner() {
+    //     double driveBaseRadius = 0;
+    //     for (var moduleLocation : m_moduleLocations) {
+    //         driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
+    //     }
 
-		AutoBuilder.configure(
-            () -> this.getState().Pose, // Supplier
-            this::seedFieldRelative, // Reset Pose
-            this::getCurrentRobotChassisSpeeds, //Robot Relative Speed Supplier
-            (speeds) -> this.setControl(AutoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the robot
-            new PPHolonomicDriveController(new PIDConstants(5, 0, 0.08), // Translation PID
-                new PIDConstants(5, 0, 0)), // Rotational PID
-            robotConfig, //Robot Config
-            () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, //Alliance Flip
-            this);  // Subsystem for requirements
-    }
+	// 	AutoBuilder.configure(
+    //         () -> this.getState().Pose, // Supplier
+    //         this::seedFieldRelative, // Reset Pose
+    //         this::getCurrentRobotChassisSpeeds, //Robot Relative Speed Supplier
+    //         (speeds) -> this.setControl(AutoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the robot
+    //         new PPHolonomicDriveController(new PIDConstants(5, 0, 0.08), // Translation PID
+    //             new PIDConstants(5, 0, 0)), // Rotational PID
+    //         robotConfig, //Robot Config
+    //         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, //Alliance Flip
+    //         this);  // Subsystem for requirements
+    // }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
     public Command getAutoPath(String pathName) {
-        return new PathPlannerAuto(pathName);
+    //     return new PathPlannerAuto(pathName);
+        return null;
     }
 
     public ChassisSpeeds getCurrentRobotChassisSpeeds() {

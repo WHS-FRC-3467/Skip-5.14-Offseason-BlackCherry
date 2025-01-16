@@ -4,8 +4,8 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
+// import com.pathplanner.lib.auto.AutoBuilder;
+// import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
@@ -90,8 +90,10 @@ public class RobotContainer {
 	private final Telemetry logger = new Telemetry(Constants.DriveConstants.MaxSpeed);
 
 	private void configureBindings() {
-		drivetrain.setDefaultCommand(drivetrain.run(() -> drivetrain.setControllerInput(-joystick.getLeftY(),
-				-joystick.getLeftX(), -joystick.getRightX())));
+		// drivetrain.setDefaultCommand(drivetrain.run(() -> drivetrain.setControllerInput(-joystick.getLeftY(),
+		// 		-joystick.getLeftX(), -joystick.getRightX())));
+		drivetrain.setDefaultCommand(drivetrain.run(() -> drivetrain.setControllerInput(-joystick.getLeftY()*0.5,
+		-joystick.getLeftX()*0.5, -joystick.getRightX())));
 
 		drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -127,7 +129,8 @@ public class RobotContainer {
 				Commands.parallel(
 						Commands.either(
 								Commands.none(),
-								robotState.setTargetCommand(RobotState.TARGET.AMP),
+								Commands.none(),
+								// robotState.setTargetCommand(RobotState.TARGET.AMP),
 								climbRequest),
 
 						elevatorJoint.setStateCommand(ElevatorJoint.State.STOW),
@@ -256,52 +259,52 @@ public class RobotContainer {
 
 	}
 
-	private void registerNamedCommands() {
+	// private void registerNamedCommands() {
 		
-		NamedCommands.registerCommand("Subwoofer",
-				Commands.parallel(
-						shooterJoint.setStateCommand(ShooterJoint.State.SUBWOOFER),
-						shooterRollers.setStateCommand(ShooterRollers.State.SUBWOOFER)));
+	// 	NamedCommands.registerCommand("Subwoofer",
+	// 			Commands.parallel(
+	// 					shooterJoint.setStateCommand(ShooterJoint.State.SUBWOOFER),
+	// 					shooterRollers.setStateCommand(ShooterRollers.State.SUBWOOFER)));
 
-		NamedCommands.registerCommand("Speaker", 
-				Commands.parallel(
-						robotState.setTargetCommand(RobotState.TARGET.SPEAKER),
-						shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
-						shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
+	// 	NamedCommands.registerCommand("Speaker", 
+	// 			Commands.parallel(
+	// 					robotState.setTargetCommand(RobotState.TARGET.SPEAKER),
+	// 					shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
+	// 					shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
 
-		NamedCommands.registerCommand("Speaker Prep", 
-			Commands.parallel(
-					shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
-					shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
+	// 	NamedCommands.registerCommand("Speaker Prep", 
+	// 		Commands.parallel(
+	// 				shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
+	// 				shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
 
-		NamedCommands.registerCommand("Note Collect",
-				Commands.race(
-						Commands.waitSeconds(2),
-						Commands.deadline(
-								Commands.waitUntil(LC2),
-								ySplitRollers.setStateCommand(YSplitRollers.State.INTAKE),
-										//.until(LC1)
-										//.andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SLOWINTAKE)),
-								Commands.parallel(
-										intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
-										Commands.waitUntil(intakeJoint::atGoal)
-												.andThen(Commands.deadline(
-														Commands.waitUntil(LC2),
-														intakeRollers
-																.setStateCommand(IntakeRollers.State.INTAKE))))))
-																//;
-																);
+	// 	NamedCommands.registerCommand("Note Collect",
+	// 			Commands.race(
+	// 					Commands.waitSeconds(2),
+	// 					Commands.deadline(
+	// 							Commands.waitUntil(LC2),
+	// 							ySplitRollers.setStateCommand(YSplitRollers.State.INTAKE),
+	// 									//.until(LC1)
+	// 									//.andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SLOWINTAKE)),
+	// 							Commands.parallel(
+	// 									intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
+	// 									Commands.waitUntil(intakeJoint::atGoal)
+	// 											.andThen(Commands.deadline(
+	// 													Commands.waitUntil(LC2),
+	// 													intakeRollers
+	// 															.setStateCommand(IntakeRollers.State.INTAKE))))))
+	// 															//;
+	// 															);
 
-		NamedCommands.registerCommand("Shooting Command",
-				Commands.race(
-						Commands.waitSeconds(2),
-						Commands.waitUntil(readyToShoot)
-								.andThen(Commands.deadline(
-										Commands.waitUntil(LC2.negate()),
-										ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER)))));
+	// 	NamedCommands.registerCommand("Shooting Command",
+	// 			Commands.race(
+	// 					Commands.waitSeconds(2),
+	// 					Commands.waitUntil(readyToShoot)
+	// 							.andThen(Commands.deadline(
+	// 									Commands.waitUntil(LC2.negate()),
+	// 									ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER)))));
 
 		
-	}
+	// }
 
 	private void configureDebugCommands() {
 		
@@ -344,12 +347,13 @@ public class RobotContainer {
 	public RobotContainer() {
 		configureBindings();
 		configureDebugCommands();
-		registerNamedCommands();
-		autoChooser = AutoBuilder.buildAutoChooser();
-		SmartDashboard.putData("Auto Chooser", autoChooser);
+		// registerNamedCommands();
+		// autoChooser = AutoBuilder.buildAutoChooser();
+		// SmartDashboard.putData("Auto Chooser", autoChooser);
 	}
 
 	public Command getAutonomousCommand() {
-		return autoChooser.getSelected();
+		// return autoChooser.getSelected();
+		return null;
 	}
 }
