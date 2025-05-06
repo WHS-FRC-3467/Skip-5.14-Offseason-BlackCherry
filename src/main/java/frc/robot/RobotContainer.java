@@ -32,7 +32,7 @@ public class RobotContainer {
 
 	public final Drivetrain drivetrain = TunerConstants.DriveTrain;
 	public final RobotState robotState = RobotState.getInstance();
-	public final ClimberJoint climberJoint = new ClimberJoint();
+	// public final ClimberJoint climberJoint = new ClimberJoint();
 	public final ElevatorJoint elevatorJoint = new ElevatorJoint();
 	public final ElevatorRollers elevatorRollers = new ElevatorRollers();
 	public final IntakeJoint intakeJoint = new IntakeJoint();
@@ -64,7 +64,7 @@ public class RobotContainer {
 	private Trigger noteStored = new Trigger(() -> (lc1.isClose() || lc2.isClose())); //Note in YSplitRollers trigger
 	private Trigger noteAmp = new Trigger(() -> ampDebouncer.calculate(!bb1.get())); //Note in ElevatorRollers
 
-	private Trigger jointsHaveHomed = new Trigger(() -> (climberJoint.hasHomed && elevatorJoint.hasHomed && intakeJoint.hasHomed));
+	private Trigger jointsHaveHomed = new Trigger(() -> (elevatorJoint.hasHomed && intakeJoint.hasHomed)); // climberJoint.hasHomed
 
 	private Trigger readyToShoot = new Trigger(
 			() -> (shooterRollers.getState() != ShooterRollers.State.OFF) && shooterRollers.atGoal() &&
@@ -77,13 +77,13 @@ public class RobotContainer {
 	//Climbing Triggers
 	private boolean climbRequested = false; //Whether or not a climb request is active
 	private Trigger climbRequest = new Trigger(() -> climbRequested); //Trigger for climb request
-	private int climbStep = 0; //Tracking what step in the climb sequence we are on
+	// private int climbStep = 0; //Tracking what step in the climb sequence we are on
 
 	//Triggers for each step of the climb sequence
-	private Trigger climbStep0 = new Trigger(() -> climbStep == 0);
-	private Trigger climbStep1 = new Trigger(() -> climbStep == 1);
-	private Trigger climbStep2 = new Trigger(() -> climbStep == 2);
-	private Trigger climbStep3 = new Trigger(() -> climbStep >= 3);
+	// private Trigger climbStep0 = new Trigger(() -> climbStep == 0);
+	// private Trigger climbStep1 = new Trigger(() -> climbStep == 1);
+	// private Trigger climbStep2 = new Trigger(() -> climbStep == 2);
+	// private Trigger climbStep3 = new Trigger(() -> climbStep >= 3);
 
 	private SendableChooser<Command> autoChooser;
 
@@ -164,6 +164,7 @@ public class RobotContainer {
 						shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
 						shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
 
+		/* Demo code: Comment out climbing
 		//Climb Request (toggle)
 		joystick.back().onTrue(Commands.runOnce(() -> climbRequested = !climbRequested));
 
@@ -207,6 +208,8 @@ public class RobotContainer {
 						Commands.waitUntil(noteStored.negate()),
 						Commands.waitUntil(readyToShoot)
 								.andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER))));
+		*/
+		
 		//Score Amp
 		joystick.rightTrigger().and(noteAmp).and(climbRequest.negate()).whileTrue(
 				Commands.deadline(
@@ -224,7 +227,7 @@ public class RobotContainer {
 		
 		//Reset homed bool
 		joystick.povLeft().onTrue(Commands.runOnce(() -> {
-			climberJoint.hasHomed = false;
+			// climberJoint.hasHomed = false;
 			elevatorJoint.hasHomed = false;
 			intakeJoint.hasHomed = false;
 		}));
@@ -233,12 +236,13 @@ public class RobotContainer {
 		joystick.povLeft().whileTrue(
 				Commands.parallel(
 						intakeJoint.setStateCommand(IntakeJoint.State.HOMING).until(() -> intakeJoint.hasHomed),
-						elevatorJoint.setStateCommand(ElevatorJoint.State.HOMING).until(() -> elevatorJoint.hasHomed),
-						Commands.deadline(
-								Commands.waitUntil(() -> climberJoint.hasHomed),
-								shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
-								Commands.waitUntil(() -> shooterJoint.getState() == ShooterJoint.State.CLIMBCLEARANCE && shooterJoint.atGoal())
-										.andThen(climberJoint.setStateCommand(ClimberJoint.State.HOMING)))));
+						elevatorJoint.setStateCommand(ElevatorJoint.State.HOMING).until(() -> elevatorJoint.hasHomed) //,
+						// Commands.deadline(
+						// 		Commands.waitUntil(() -> climberJoint.hasHomed),
+						// 		shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
+						// 		Commands.waitUntil(() -> shooterJoint.getState() == ShooterJoint.State.CLIMBCLEARANCE && shooterJoint.atGoal())
+						// 				.andThen(climberJoint.setStateCommand(ClimberJoint.State.HOMING)))
+										));
 		//Eject
 		joystick.povRight().whileTrue(
 				Commands.parallel(
@@ -318,7 +322,7 @@ public class RobotContainer {
 		SmartDashboard.putData("Elevator Score",Commands.parallel(elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE)));
 		SmartDashboard.putData("Elevator Homing",Commands.parallel(elevatorJoint.setStateCommand(ElevatorJoint.State.HOMING)));
         SmartDashboard.putData("Intake Homing",Commands.parallel(intakeJoint.setStateCommand(IntakeJoint.State.HOMING)));
-        SmartDashboard.putData("Climber Homing",Commands.parallel(climberJoint.setStateCommand(ClimberJoint.State.HOMING)));
+        // SmartDashboard.putData("Climber Homing",Commands.parallel(climberJoint.setStateCommand(ClimberJoint.State.HOMING)));
 		SmartDashboard.putData("Shooter Tuning Angle",Commands.parallel(shooterJoint.setStateCommand(ShooterJoint.State.TUNING)));
 		SmartDashboard.putData("Shooter Climber Clearance",Commands.parallel(shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE)));
 		SmartDashboard.putData("Shooter Roller Speaker",
@@ -327,7 +331,7 @@ public class RobotContainer {
         SmartDashboard.putData("Shooter Roller Sub",Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.SUBWOOFER)));
 		SmartDashboard.putData("Shooter Roller Speed TUNING",Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.TUNING)));
 
-		SmartDashboard.putData("Reset Climber Index",Commands.runOnce(() -> climbStep = 0));
+		// SmartDashboard.putData("Reset Climber Index",Commands.runOnce(() -> climbStep = 0));
 	}
 
     public void displaySystemInfo() {
@@ -339,8 +343,8 @@ public class RobotContainer {
 		SmartDashboard.putBoolean("readyToAmp",readyToAmp.getAsBoolean());
         SmartDashboard.putBoolean("Note in YSplit", noteStored.getAsBoolean());
         SmartDashboard.putBoolean("Note in Amp", noteAmp.getAsBoolean());
-		SmartDashboard.putBoolean("Climb Requested", climbRequest.getAsBoolean());
-		SmartDashboard.putNumber("Climb Step", climbStep);
+		// SmartDashboard.putBoolean("Climb Requested", climbRequest.getAsBoolean());
+		// SmartDashboard.putNumber("Climb Step", climbStep);
 		SmartDashboard.putBoolean("All Joints Homed", jointsHaveHomed.getAsBoolean());
     }
 
