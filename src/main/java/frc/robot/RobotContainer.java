@@ -30,7 +30,7 @@ public class RobotContainer {
 	//TODO: change shooter rollers to MMVelocity
 	//TODO: test auto intake
 
-	public final Drivetrain drivetrain = TunerConstants.DriveTrain;
+	public final Drivetrain drivetrain = TunerConstants.createDrivetrain();
 	public final RobotState robotState = RobotState.getInstance();
 	// public final ClimberJoint climberJoint = new ClimberJoint();
 	public final ElevatorJoint elevatorJoint = new ElevatorJoint();
@@ -75,8 +75,8 @@ public class RobotContainer {
 			() -> (elevatorJoint.getState() == ElevatorJoint.State.SCORE) && elevatorJoint.atGoal()); 			
 	
 	//Climbing Triggers
-	private boolean climbRequested = false; //Whether or not a climb request is active
-	private Trigger climbRequest = new Trigger(() -> climbRequested); //Trigger for climb request
+	// private boolean climbRequested = false; //Whether or not a climb request is active
+	// private Trigger climbRequest = new Trigger(() -> climbRequested); //Trigger for climb request
 	// private int climbStep = 0; //Tracking what step in the climb sequence we are on
 
 	//Triggers for each step of the climb sequence
@@ -127,11 +127,11 @@ public class RobotContainer {
 		//Amp Score
 		joystick.rightBumper().whileTrue(
 				Commands.parallel(
-						Commands.either(
-								Commands.none(),
-								Commands.none(),
-								// robotState.setTargetCommand(RobotState.TARGET.AMP),
-								climbRequest),
+						// Commands.either(
+						// 		Commands.none(),
+						// 		Commands.none(),
+						// 		// robotState.setTargetCommand(RobotState.TARGET.AMP),
+						// 		climbRequest),
 
 						elevatorJoint.setStateCommand(ElevatorJoint.State.STOW),
 						Commands.waitUntil(elevatorJoint::atGoal)
@@ -211,7 +211,7 @@ public class RobotContainer {
 		*/
 		
 		//Score Amp
-		joystick.rightTrigger().and(noteAmp).and(climbRequest.negate()).whileTrue(
+		joystick.rightTrigger().and(noteAmp).whileTrue( // .and(climbRequest.negate())
 				Commands.deadline(
 						Commands.waitUntil(noteAmp.negate()),
 						elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE),
@@ -221,9 +221,9 @@ public class RobotContainer {
 		joystick.rightTrigger().and(joystick.leftBumper())
 				.whileTrue(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE));	
 
-		//Score Trap
-		joystick.rightTrigger().and(climbRequest).whileTrue(
-			elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE));
+		// //Score Trap
+		// joystick.rightTrigger().and(climbRequest).whileTrue( 
+		// 	elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE));
 		
 		//Reset homed bool
 		joystick.povLeft().onTrue(Commands.runOnce(() -> {

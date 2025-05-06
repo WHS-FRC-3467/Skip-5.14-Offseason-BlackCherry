@@ -5,11 +5,12 @@ import java.util.function.Supplier;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.hardware.core.CoreCANcoder;
+import com.ctre.phoenix6.hardware.core.CoreTalonFX;
+import com.ctre.phoenix6.swerve.*;
+
 // import com.pathplanner.lib.auto.AutoBuilder;
 // import com.pathplanner.lib.commands.PathPlannerAuto;
 // import com.pathplanner.lib.config.ModuleConfig;
@@ -35,11 +36,13 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+
 /**
  * Class that extends the Phoenix SwerveDrivetrain class and implements
  * subsystem so it can be used in command-based projects easily.
  */
-public class Drivetrain extends SwerveDrivetrain implements Subsystem {
+public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
     @RequiredArgsConstructor
     @Getter
@@ -78,11 +81,11 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
     private SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
             .withDeadband(DriveConstants.MaxSpeed * 0.01).withRotationalDeadband(DriveConstants.MaxAngularRate * 0.01)
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+            .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
 
     private SwerveRequest.FieldCentricFacingAngle fieldCentricFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
             .withDeadband(DriveConstants.MaxSpeed * 0.01).withRotationalDeadband(DriveConstants.MaxAngularRate * 0.01)
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+            .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
 
 
 /*     private SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric()
@@ -109,7 +112,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     //         driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
     //     }
 
-	// 	AutoBuilder.configure(
+    // 	AutoBuilder.configure(
     //         () -> this.getState().Pose, // Supplier
     //         this::seedFieldRelative, // Reset Pose
     //         this::getCurrentRobotChassisSpeeds, //Robot Relative Speed Supplier
@@ -131,7 +134,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     }
 
     public ChassisSpeeds getCurrentRobotChassisSpeeds() {
-        return m_kinematics.toChassisSpeeds(getState().ModuleStates);
+        return getKinematics().toChassisSpeeds(getState().ModuleStates);
     }
 
     private void startSimThread() {
@@ -226,9 +229,9 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
                         .withRotationalRate(RobotState.getInstance().getAngleToNote().getAsDouble()/10)); //TODO: TUNE THIS VALUE
                 } else {
                     this.setControl(robotCentric
-                    	.withVelocityX(controllerX * DriveConstants.MaxSpeed)
-                    	.withVelocityY(controllerY * DriveConstants.MaxSpeed)
-                    	.withRotationalRate(0));
+                        .withVelocityX(controllerX * DriveConstants.MaxSpeed)
+                        .withVelocityY(controllerY * DriveConstants.MaxSpeed)
+                        .withRotationalRate(0));
                 }
                 break; */
                 this.setControl(fieldCentric
@@ -288,9 +291,9 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         var customMotorConfigs = new TalonFXConfiguration();
 
         // Iterate through each module.
-        for (var module : Modules) {
+        for (var module : getModules()) {
             // Get the Configurator for the current drive motor.
-            var currentConfigurator = module.getDriveMotor().getConfigurator();
+            var currentConfigurator = ((CoreTalonFX) module.getDriveMotor()).getConfigurator();
 
             // Refresh the current configuration, since the stator current limit has already
             // been set.
@@ -299,9 +302,9 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
             // Set all of the parameters related to the supply current. The values should
             // come from Constants.
-            customCurrentLimitConfigs.SupplyCurrentLimit = 40;
-            customCurrentLimitConfigs.SupplyCurrentThreshold = 60;
-            customCurrentLimitConfigs.SupplyTimeThreshold = .1;
+            customCurrentLimitConfigs.SupplyCurrentLowerLimit = 40;
+            customCurrentLimitConfigs.SupplyCurrentLimit = 60;
+            customCurrentLimitConfigs.SupplyCurrentLowerTime = .1;
             customCurrentLimitConfigs.SupplyCurrentLimitEnable = true;
 
             customCurrentLimitConfigs.StatorCurrentLimit = 80;
