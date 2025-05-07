@@ -67,12 +67,12 @@ public class RobotContainer {
 	private Trigger jointsHaveHomed = new Trigger(() -> (elevatorJoint.hasHomed && intakeJoint.hasHomed)); // climberJoint.hasHomed
 
 	private Trigger readyToShoot = new Trigger(
-			() -> (shooterRollers.getState() != ShooterRollers.State.OFF) && shooterRollers.atGoal() &&
-					(shooterJoint.getState() != ShooterJoint.State.STOW) && shooterJoint.atGoal() &&
-					drivetrain.atGoal());
+			() -> (shooterRollers.getState() != ShooterRollers.State.OFF) && // shooterRollers.atGoal()
+					(shooterJoint.getState() != ShooterJoint.State.STOW) // && shooterJoint.atGoal()
+					); // && drivetrain.atGoal()
 
   	private Trigger readyToAmp = new Trigger(
-			() -> (elevatorJoint.getState() == ElevatorJoint.State.SCORE) && elevatorJoint.atGoal()); 			
+			() -> (elevatorJoint.getState() == ElevatorJoint.State.SCORE)); // elevatorJoint.atGoal()			
 	
 	//Climbing Triggers
 	// private boolean climbRequested = false; //Whether or not a climb request is active
@@ -120,7 +120,7 @@ public class RobotContainer {
 		//Subwoofer
 		joystick.a().whileTrue(
 				Commands.parallel(
-						robotState.setTargetCommand(RobotState.TARGET.SUBWOOFER),
+						// robotState.setTargetCommand(RobotState.TARGET.SUBWOOFER),
 						shooterRollers.setStateCommand(ShooterRollers.State.SUBWOOFER),
 						shooterJoint.setStateCommand(ShooterJoint.State.SUBWOOFER)));
 
@@ -153,16 +153,16 @@ public class RobotContainer {
 		//Feed
 		joystick.y().whileTrue(
 				Commands.parallel(
-						robotState.setTargetCommand(RobotState.TARGET.FEED),
+						// robotState.setTargetCommand(RobotState.TARGET.FEED),
 						shooterRollers.setStateCommand(ShooterRollers.State.FEED),
-						shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
+						shooterJoint.setStateCommand(ShooterJoint.State.DEMO_FEED))); // was ShooterJoint.State.DYNAMIC, now a set value for demos
 
 		//Speaker
 		joystick.x().whileTrue(
 				Commands.parallel(
-						robotState.setTargetCommand(RobotState.TARGET.SPEAKER),
+						// robotState.setTargetCommand(RobotState.TARGET.SPEAKER),
 						shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
-						shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
+						shooterJoint.setStateCommand(ShooterJoint.State.DEMO_SPEAKER)));
 
 		/* Demo code: Comment out climbing
 		//Climb Request (toggle)
@@ -326,8 +326,8 @@ public class RobotContainer {
 		SmartDashboard.putData("Shooter Tuning Angle",Commands.parallel(shooterJoint.setStateCommand(ShooterJoint.State.TUNING)));
 		SmartDashboard.putData("Shooter Climber Clearance",Commands.parallel(shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE)));
 		SmartDashboard.putData("Shooter Roller Speaker",
-				Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
-						robotState.setTargetCommand(TARGET.SPEAKER)));
+				shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER)); 
+				// was parallel with robotState.setTargetCommand(TARGET.SPEAKER)
         SmartDashboard.putData("Shooter Roller Sub",Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.SUBWOOFER)));
 		SmartDashboard.putData("Shooter Roller Speed TUNING",Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.TUNING)));
 
