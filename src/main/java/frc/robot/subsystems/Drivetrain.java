@@ -5,21 +5,22 @@ import java.util.function.Supplier;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.config.ModuleConfig;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.hardware.core.CoreCANcoder;
+import com.ctre.phoenix6.hardware.core.CoreTalonFX;
+import com.ctre.phoenix6.swerve.*;
+
+// import com.pathplanner.lib.auto.AutoBuilder;
+// import com.pathplanner.lib.commands.PathPlannerAuto;
+// import com.pathplanner.lib.config.ModuleConfig;
+// import com.pathplanner.lib.config.PIDConstants;
+// import com.pathplanner.lib.config.RobotConfig;
+// import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.system.plant.DCMotor;
+// import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -35,11 +36,13 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+
 /**
  * Class that extends the Phoenix SwerveDrivetrain class and implements
  * subsystem so it can be used in command-based projects easily.
  */
-public class Drivetrain extends SwerveDrivetrain implements Subsystem {
+public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
     @RequiredArgsConstructor
     @Getter
@@ -69,20 +72,20 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     private double yVelocity = 0.0;
     private double omegaVelocity = 0.0;
 
-    private final ModuleConfig moduleConfig = new ModuleConfig(Units.inchesToMeters(3.92/2), 5.1, 1.2, DCMotor.getKrakenX60(1).withReduction(6.122), 90, 1);
+    // private final ModuleConfig moduleConfig = new ModuleConfig(Units.inchesToMeters(3.92/2), 5.1, 1.2, DCMotor.getKrakenX60(1).withReduction(6.122), 90, 1);
     
-    private final RobotConfig robotConfig = new RobotConfig(Units.lbsToKilograms(129), 4.785, moduleConfig, Units.inchesToMeters(10.375*2), Units.inchesToMeters(10.375*2));
+    // private final RobotConfig robotConfig = new RobotConfig(Units.lbsToKilograms(129), 4.785, moduleConfig, Units.inchesToMeters(10.375*2), Units.inchesToMeters(10.375*2));
 
 
-    private final SwerveRequest.ApplyChassisSpeeds AutoRequest = new SwerveRequest.ApplyChassisSpeeds();
+    // private final SwerveRequest.ApplyChassisSpeeds AutoRequest = new SwerveRequest.ApplyChassisSpeeds();
 
     private SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
             .withDeadband(DriveConstants.MaxSpeed * 0.01).withRotationalDeadband(DriveConstants.MaxAngularRate * 0.01)
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+            .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
 
     private SwerveRequest.FieldCentricFacingAngle fieldCentricFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
             .withDeadband(DriveConstants.MaxSpeed * 0.01).withRotationalDeadband(DriveConstants.MaxAngularRate * 0.01)
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+            .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
 
 
 /*     private SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric()
@@ -94,7 +97,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
     public Drivetrain(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
         super(driveTrainConstants, modules);
-        configurePathPlanner();
+        // configurePathPlanner();
         setHeadingPID();
         setSwerveDriveCustomCurrentLimits();
         SmartDashboard.putData("Robot Pose Field Map",fieldMap);
@@ -103,34 +106,35 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         }
     }
 
-    private void configurePathPlanner() {
-        double driveBaseRadius = 0;
-        for (var moduleLocation : m_moduleLocations) {
-            driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
-        }
+    // private void configurePathPlanner() {
+    //     double driveBaseRadius = 0;
+    //     for (var moduleLocation : m_moduleLocations) {
+    //         driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
+    //     }
 
-		AutoBuilder.configure(
-            () -> this.getState().Pose, // Supplier
-            this::seedFieldRelative, // Reset Pose
-            this::getCurrentRobotChassisSpeeds, //Robot Relative Speed Supplier
-            (speeds) -> this.setControl(AutoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the robot
-            new PPHolonomicDriveController(new PIDConstants(5, 0, 0.08), // Translation PID
-                new PIDConstants(5, 0, 0)), // Rotational PID
-            robotConfig, //Robot Config
-            () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, //Alliance Flip
-            this);  // Subsystem for requirements
-    }
+    // 	AutoBuilder.configure(
+    //         () -> this.getState().Pose, // Supplier
+    //         this::seedFieldRelative, // Reset Pose
+    //         this::getCurrentRobotChassisSpeeds, //Robot Relative Speed Supplier
+    //         (speeds) -> this.setControl(AutoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the robot
+    //         new PPHolonomicDriveController(new PIDConstants(5, 0, 0.08), // Translation PID
+    //             new PIDConstants(5, 0, 0)), // Rotational PID
+    //         robotConfig, //Robot Config
+    //         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, //Alliance Flip
+    //         this);  // Subsystem for requirements
+    // }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
     public Command getAutoPath(String pathName) {
-        return new PathPlannerAuto(pathName);
+    //     return new PathPlannerAuto(pathName);
+        return null;
     }
 
     public ChassisSpeeds getCurrentRobotChassisSpeeds() {
-        return m_kinematics.toChassisSpeeds(getState().ModuleStates);
+        return getKinematics().toChassisSpeeds(getState().ModuleStates);
     }
 
     private void startSimThread() {
@@ -225,9 +229,9 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
                         .withRotationalRate(RobotState.getInstance().getAngleToNote().getAsDouble()/10)); //TODO: TUNE THIS VALUE
                 } else {
                     this.setControl(robotCentric
-                    	.withVelocityX(controllerX * DriveConstants.MaxSpeed)
-                    	.withVelocityY(controllerY * DriveConstants.MaxSpeed)
-                    	.withRotationalRate(0));
+                        .withVelocityX(controllerX * DriveConstants.MaxSpeed)
+                        .withVelocityY(controllerY * DriveConstants.MaxSpeed)
+                        .withRotationalRate(0));
                 }
                 break; */
                 this.setControl(fieldCentric
@@ -287,9 +291,9 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         var customMotorConfigs = new TalonFXConfiguration();
 
         // Iterate through each module.
-        for (var module : Modules) {
+        for (var module : getModules()) {
             // Get the Configurator for the current drive motor.
-            var currentConfigurator = module.getDriveMotor().getConfigurator();
+            var currentConfigurator = ((CoreTalonFX) module.getDriveMotor()).getConfigurator();
 
             // Refresh the current configuration, since the stator current limit has already
             // been set.
@@ -298,9 +302,9 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
             // Set all of the parameters related to the supply current. The values should
             // come from Constants.
-            customCurrentLimitConfigs.SupplyCurrentLimit = 40;
-            customCurrentLimitConfigs.SupplyCurrentThreshold = 60;
-            customCurrentLimitConfigs.SupplyTimeThreshold = .1;
+            customCurrentLimitConfigs.SupplyCurrentLowerLimit = 40;
+            customCurrentLimitConfigs.SupplyCurrentLimit = 60;
+            customCurrentLimitConfigs.SupplyCurrentLowerTime = .1;
             customCurrentLimitConfigs.SupplyCurrentLimitEnable = true;
 
             customCurrentLimitConfigs.StatorCurrentLimit = 80;

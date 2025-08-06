@@ -4,8 +4,10 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
+import java.util.function.BooleanSupplier;
+
+// import com.pathplanner.lib.auto.AutoBuilder;
+// import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
@@ -23,6 +25,7 @@ import frc.robot.RobotState.TARGET;
 import frc.robot.Util.LaserCanSensor;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.ElevatorJoint.State;
 
 public class RobotContainer {
 
@@ -30,9 +33,9 @@ public class RobotContainer {
 	//TODO: change shooter rollers to MMVelocity
 	//TODO: test auto intake
 
-	public final Drivetrain drivetrain = TunerConstants.DriveTrain;
+	public final Drivetrain drivetrain = TunerConstants.createDrivetrain();
 	public final RobotState robotState = RobotState.getInstance();
-	public final ClimberJoint climberJoint = new ClimberJoint();
+	// public final ClimberJoint climberJoint = new ClimberJoint();
 	public final ElevatorJoint elevatorJoint = new ElevatorJoint();
 	public final ElevatorRollers elevatorRollers = new ElevatorRollers();
 	public final IntakeJoint intakeJoint = new IntakeJoint();
@@ -58,40 +61,42 @@ public class RobotContainer {
 
 	//Photonvision and Limelight cameras
 	PhotonVision photonVision = new PhotonVision(drivetrain);
-	Limelight limelight = new Limelight();
+	// Limelight limelight = new Limelight();
 
-    //Logic Triggers
+	//Logic Triggers
 	private Trigger noteStored = new Trigger(() -> (lc1.isClose() || lc2.isClose())); //Note in YSplitRollers trigger
 	private Trigger noteAmp = new Trigger(() -> ampDebouncer.calculate(!bb1.get())); //Note in ElevatorRollers
 
-	private Trigger jointsHaveHomed = new Trigger(() -> (climberJoint.hasHomed && elevatorJoint.hasHomed && intakeJoint.hasHomed));
+	private Trigger jointsHaveHomed = new Trigger(() -> (elevatorJoint.hasHomed && intakeJoint.hasHomed)); // climberJoint.hasHomed
 
 	private Trigger readyToShoot = new Trigger(
-			() -> (shooterRollers.getState() != ShooterRollers.State.OFF) && shooterRollers.atGoal() &&
-					(shooterJoint.getState() != ShooterJoint.State.STOW) && shooterJoint.atGoal() &&
-					drivetrain.atGoal());
+			() -> (shooterRollers.getState() != ShooterRollers.State.OFF) && // shooterRollers.atGoal()
+					(shooterJoint.getState() != ShooterJoint.State.STOW) // && shooterJoint.atGoal()
+					); // && drivetrain.atGoal()
 
   	private Trigger readyToAmp = new Trigger(
-			() -> (elevatorJoint.getState() == ElevatorJoint.State.SCORE) && elevatorJoint.atGoal()); 			
+			() -> (elevatorJoint.getState() == ElevatorJoint.State.SCORE)); // elevatorJoint.atGoal()			
 	
 	//Climbing Triggers
-	private boolean climbRequested = false; //Whether or not a climb request is active
-	private Trigger climbRequest = new Trigger(() -> climbRequested); //Trigger for climb request
-	private int climbStep = 0; //Tracking what step in the climb sequence we are on
+	// private boolean climbRequested = false; //Whether or not a climb request is active
+	// private Trigger climbRequest = new Trigger(() -> climbRequested); //Trigger for climb request
+	// private int climbStep = 0; //Tracking what step in the climb sequence we are on
 
 	//Triggers for each step of the climb sequence
-	private Trigger climbStep0 = new Trigger(() -> climbStep == 0);
-	private Trigger climbStep1 = new Trigger(() -> climbStep == 1);
-	private Trigger climbStep2 = new Trigger(() -> climbStep == 2);
-	private Trigger climbStep3 = new Trigger(() -> climbStep >= 3);
+	// private Trigger climbStep0 = new Trigger(() -> climbStep == 0);
+	// private Trigger climbStep1 = new Trigger(() -> climbStep == 1);
+	// private Trigger climbStep2 = new Trigger(() -> climbStep == 2);
+	// private Trigger climbStep3 = new Trigger(() -> climbStep >= 3);
 
 	private SendableChooser<Command> autoChooser;
 
 	private final Telemetry logger = new Telemetry(Constants.DriveConstants.MaxSpeed);
 
 	private void configureBindings() {
-		drivetrain.setDefaultCommand(drivetrain.run(() -> drivetrain.setControllerInput(-joystick.getLeftY(),
-				-joystick.getLeftX(), -joystick.getRightX())));
+		// drivetrain.setDefaultCommand(drivetrain.run(() -> drivetrain.setControllerInput(-joystick.getLeftY(),
+		// 		-joystick.getLeftX(), -joystick.getRightX())));
+		drivetrain.setDefaultCommand(drivetrain.run(() -> drivetrain.setControllerInput(-joystick.getLeftY()*0.5,
+		-joystick.getLeftX()*0.5, -joystick.getRightX())));
 
 		drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -113,22 +118,23 @@ public class RobotContainer {
 		//Rumbled when LC2 is active
 		joystick.leftTrigger().and(LC2).whileTrue(Commands.startEnd(() -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 1), () -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 0)));
 
-		joystick.leftTrigger().and(LC2).onTrue(limelight.blinkLEDCommand());
+		//joystick.leftTrigger().and(LC2).onTrue(limelight.blinkLEDCommand());
 
 		//Subwoofer
 		joystick.a().whileTrue(
 				Commands.parallel(
-						robotState.setTargetCommand(RobotState.TARGET.SUBWOOFER),
+						// robotState.setTargetCommand(RobotState.TARGET.SUBWOOFER),
 						shooterRollers.setStateCommand(ShooterRollers.State.SUBWOOFER),
 						shooterJoint.setStateCommand(ShooterJoint.State.SUBWOOFER)));
 
 		//Amp Score
 		joystick.rightBumper().whileTrue(
 				Commands.parallel(
-						Commands.either(
-								Commands.none(),
-								robotState.setTargetCommand(RobotState.TARGET.AMP),
-								climbRequest),
+						// Commands.either(
+						// 		Commands.none(),
+						// 		Commands.none(),
+						// 		// robotState.setTargetCommand(RobotState.TARGET.AMP),
+						// 		climbRequest),
 
 						elevatorJoint.setStateCommand(ElevatorJoint.State.STOW),
 						Commands.waitUntil(elevatorJoint::atGoal)
@@ -150,17 +156,18 @@ public class RobotContainer {
 		//Feed
 		joystick.y().whileTrue(
 				Commands.parallel(
-						robotState.setTargetCommand(RobotState.TARGET.FEED),
+						// robotState.setTargetCommand(RobotState.TARGET.FEED),
 						shooterRollers.setStateCommand(ShooterRollers.State.FEED),
-						shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
+						shooterJoint.setStateCommand(ShooterJoint.State.DEMO_FEED))); // was ShooterJoint.State.DYNAMIC, now a set value for demos
 
 		//Speaker
 		joystick.x().whileTrue(
 				Commands.parallel(
-						robotState.setTargetCommand(RobotState.TARGET.SPEAKER),
+						// robotState.setTargetCommand(RobotState.TARGET.SPEAKER),
 						shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
-						shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
+						shooterJoint.setStateCommand(ShooterJoint.State.DEMO_SPEAKER)));
 
+		/* Demo code: Comment out climbing
 		//Climb Request (toggle)
 		joystick.back().onTrue(Commands.runOnce(() -> climbRequested = !climbRequested));
 
@@ -204,24 +211,33 @@ public class RobotContainer {
 						Commands.waitUntil(noteStored.negate()),
 						Commands.waitUntil(readyToShoot)
 								.andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER))));
+		*/
+		
 		//Score Amp
-		joystick.rightTrigger().and(noteAmp).and(climbRequest.negate()).whileTrue(
+		
+		/*
+		joystick.rightTrigger().and(noteAmp).whileTrue( // .and(climbRequest.negate())
 				Commands.deadline(
 						Commands.waitUntil(noteAmp.negate()),
 						elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE),
 						Commands.waitUntil(readyToAmp)
 								.andThen(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE))));
+		*/
+			
+		joystick.rightTrigger().and(noteAmp).whileTrue( // .and(climbRequest.negate())
+				Commands.deadline(
+					elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE)));
 
-		joystick.rightTrigger().and(joystick.leftBumper())
+		joystick.rightTrigger().and(joystick.leftBumper()).and(noteAmp)
 				.whileTrue(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE));	
 
-		//Score Trap
-		joystick.rightTrigger().and(climbRequest).whileTrue(
-			elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE));
+		// //Score Trap
+		// joystick.rightTrigger().and(climbRequest).whileTrue( 
+		// 	elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE));
 		
 		//Reset homed bool
 		joystick.povLeft().onTrue(Commands.runOnce(() -> {
-			climberJoint.hasHomed = false;
+			// climberJoint.hasHomed = false;
 			elevatorJoint.hasHomed = false;
 			intakeJoint.hasHomed = false;
 		}));
@@ -230,12 +246,13 @@ public class RobotContainer {
 		joystick.povLeft().whileTrue(
 				Commands.parallel(
 						intakeJoint.setStateCommand(IntakeJoint.State.HOMING).until(() -> intakeJoint.hasHomed),
-						elevatorJoint.setStateCommand(ElevatorJoint.State.HOMING).until(() -> elevatorJoint.hasHomed),
-						Commands.deadline(
-								Commands.waitUntil(() -> climberJoint.hasHomed),
-								shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
-								Commands.waitUntil(() -> shooterJoint.getState() == ShooterJoint.State.CLIMBCLEARANCE && shooterJoint.atGoal())
-										.andThen(climberJoint.setStateCommand(ClimberJoint.State.HOMING)))));
+						elevatorJoint.setStateCommand(ElevatorJoint.State.HOMING).until(() -> elevatorJoint.hasHomed) //,
+						// Commands.deadline(
+						// 		Commands.waitUntil(() -> climberJoint.hasHomed),
+						// 		shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
+						// 		Commands.waitUntil(() -> shooterJoint.getState() == ShooterJoint.State.CLIMBCLEARANCE && shooterJoint.atGoal())
+						// 				.andThen(climberJoint.setStateCommand(ClimberJoint.State.HOMING)))
+										));
 		//Eject
 		joystick.povRight().whileTrue(
 				Commands.parallel(
@@ -256,52 +273,52 @@ public class RobotContainer {
 
 	}
 
-	private void registerNamedCommands() {
+	// private void registerNamedCommands() {
 		
-		NamedCommands.registerCommand("Subwoofer",
-				Commands.parallel(
-						shooterJoint.setStateCommand(ShooterJoint.State.SUBWOOFER),
-						shooterRollers.setStateCommand(ShooterRollers.State.SUBWOOFER)));
+	// 	NamedCommands.registerCommand("Subwoofer",
+	// 			Commands.parallel(
+	// 					shooterJoint.setStateCommand(ShooterJoint.State.SUBWOOFER),
+	// 					shooterRollers.setStateCommand(ShooterRollers.State.SUBWOOFER)));
 
-		NamedCommands.registerCommand("Speaker", 
-				Commands.parallel(
-						robotState.setTargetCommand(RobotState.TARGET.SPEAKER),
-						shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
-						shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
+	// 	NamedCommands.registerCommand("Speaker", 
+	// 			Commands.parallel(
+	// 					robotState.setTargetCommand(RobotState.TARGET.SPEAKER),
+	// 					shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
+	// 					shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
 
-		NamedCommands.registerCommand("Speaker Prep", 
-			Commands.parallel(
-					shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
-					shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
+	// 	NamedCommands.registerCommand("Speaker Prep", 
+	// 		Commands.parallel(
+	// 				shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
+	// 				shooterJoint.setStateCommand(ShooterJoint.State.DYNAMIC)));
 
-		NamedCommands.registerCommand("Note Collect",
-				Commands.race(
-						Commands.waitSeconds(2),
-						Commands.deadline(
-								Commands.waitUntil(LC2),
-								ySplitRollers.setStateCommand(YSplitRollers.State.INTAKE),
-										//.until(LC1)
-										//.andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SLOWINTAKE)),
-								Commands.parallel(
-										intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
-										Commands.waitUntil(intakeJoint::atGoal)
-												.andThen(Commands.deadline(
-														Commands.waitUntil(LC2),
-														intakeRollers
-																.setStateCommand(IntakeRollers.State.INTAKE))))))
-																//;
-																);
+	// 	NamedCommands.registerCommand("Note Collect",
+	// 			Commands.race(
+	// 					Commands.waitSeconds(2),
+	// 					Commands.deadline(
+	// 							Commands.waitUntil(LC2),
+	// 							ySplitRollers.setStateCommand(YSplitRollers.State.INTAKE),
+	// 									//.until(LC1)
+	// 									//.andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SLOWINTAKE)),
+	// 							Commands.parallel(
+	// 									intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
+	// 									Commands.waitUntil(intakeJoint::atGoal)
+	// 											.andThen(Commands.deadline(
+	// 													Commands.waitUntil(LC2),
+	// 													intakeRollers
+	// 															.setStateCommand(IntakeRollers.State.INTAKE))))))
+	// 															//;
+	// 															);
 
-		NamedCommands.registerCommand("Shooting Command",
-				Commands.race(
-						Commands.waitSeconds(2),
-						Commands.waitUntil(readyToShoot)
-								.andThen(Commands.deadline(
-										Commands.waitUntil(LC2.negate()),
-										ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER)))));
+	// 	NamedCommands.registerCommand("Shooting Command",
+	// 			Commands.race(
+	// 					Commands.waitSeconds(2),
+	// 					Commands.waitUntil(readyToShoot)
+	// 							.andThen(Commands.deadline(
+	// 									Commands.waitUntil(LC2.negate()),
+	// 									ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER)))));
 
 		
-	}
+	// }
 
 	private void configureDebugCommands() {
 		
@@ -315,16 +332,16 @@ public class RobotContainer {
 		SmartDashboard.putData("Elevator Score",Commands.parallel(elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE)));
 		SmartDashboard.putData("Elevator Homing",Commands.parallel(elevatorJoint.setStateCommand(ElevatorJoint.State.HOMING)));
         SmartDashboard.putData("Intake Homing",Commands.parallel(intakeJoint.setStateCommand(IntakeJoint.State.HOMING)));
-        SmartDashboard.putData("Climber Homing",Commands.parallel(climberJoint.setStateCommand(ClimberJoint.State.HOMING)));
+        // SmartDashboard.putData("Climber Homing",Commands.parallel(climberJoint.setStateCommand(ClimberJoint.State.HOMING)));
 		SmartDashboard.putData("Shooter Tuning Angle",Commands.parallel(shooterJoint.setStateCommand(ShooterJoint.State.TUNING)));
 		SmartDashboard.putData("Shooter Climber Clearance",Commands.parallel(shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE)));
 		SmartDashboard.putData("Shooter Roller Speaker",
-				Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
-						robotState.setTargetCommand(TARGET.SPEAKER)));
+				shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER)); 
+				// was parallel with robotState.setTargetCommand(TARGET.SPEAKER)
         SmartDashboard.putData("Shooter Roller Sub",Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.SUBWOOFER)));
 		SmartDashboard.putData("Shooter Roller Speed TUNING",Commands.parallel(shooterRollers.setStateCommand(ShooterRollers.State.TUNING)));
 
-		SmartDashboard.putData("Reset Climber Index",Commands.runOnce(() -> climbStep = 0));
+		// SmartDashboard.putData("Reset Climber Index",Commands.runOnce(() -> climbStep = 0));
 	}
 
     public void displaySystemInfo() {
@@ -336,20 +353,21 @@ public class RobotContainer {
 		SmartDashboard.putBoolean("readyToAmp",readyToAmp.getAsBoolean());
         SmartDashboard.putBoolean("Note in YSplit", noteStored.getAsBoolean());
         SmartDashboard.putBoolean("Note in Amp", noteAmp.getAsBoolean());
-		SmartDashboard.putBoolean("Climb Requested", climbRequest.getAsBoolean());
-		SmartDashboard.putNumber("Climb Step", climbStep);
+		// SmartDashboard.putBoolean("Climb Requested", climbRequest.getAsBoolean());
+		// SmartDashboard.putNumber("Climb Step", climbStep);
 		SmartDashboard.putBoolean("All Joints Homed", jointsHaveHomed.getAsBoolean());
     }
 
 	public RobotContainer() {
 		configureBindings();
 		configureDebugCommands();
-		registerNamedCommands();
-		autoChooser = AutoBuilder.buildAutoChooser();
-		SmartDashboard.putData("Auto Chooser", autoChooser);
+		// registerNamedCommands();
+		// autoChooser = AutoBuilder.buildAutoChooser();
+		// SmartDashboard.putData("Auto Chooser", autoChooser);
 	}
 
 	public Command getAutonomousCommand() {
-		return autoChooser.getSelected();
+		// return autoChooser.getSelected();
+		return null;
 	}
 }

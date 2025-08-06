@@ -32,6 +32,8 @@ public class ShooterJoint extends SubsystemBase {
         SUBWOOFER(() -> 42.0),
         CLIMBCLEARANCE(() -> 40.0),
         DYNAMIC(() -> RobotState.getInstance().getShotAngle()), //Dynamic aiming, data fed by RobotState for lookup tables
+        DEMO_FEED(() -> 38),
+        DEMO_SPEAKER(() -> 32),
         TUNING(() -> RobotState.getInstance().getShooterTuningAngle().get()); //Dashboard tunable number
 
         private final DoubleSupplier outputSupplier;

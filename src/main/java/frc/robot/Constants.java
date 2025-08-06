@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -83,9 +82,9 @@ public class Constants {
             m_configuration.MotionMagic.MotionMagicAcceleration = 200;
             m_configuration.MotionMagic.MotionMagicJerk = 0;
 
-            m_configuration.CurrentLimits.SupplyCurrentLimit = 20;
-            m_configuration.CurrentLimits.SupplyCurrentThreshold = 40;
-            m_configuration.CurrentLimits.SupplyTimeThreshold = 0.1;
+            m_configuration.CurrentLimits.SupplyCurrentLowerLimit = 20;
+            m_configuration.CurrentLimits.SupplyCurrentLimit = 40;
+            m_configuration.CurrentLimits.SupplyCurrentLowerTime = 0.1;
             m_configuration.CurrentLimits.SupplyCurrentLimitEnable = false;
             m_configuration.CurrentLimits.StatorCurrentLimit = 70;
             m_configuration.CurrentLimits.StatorCurrentLimitEnable = false;
@@ -106,9 +105,9 @@ public class Constants {
             m_configuration.Voltage.PeakForwardVoltage = 12.0;
             m_configuration.Voltage.PeakReverseVoltage = -12.0;
 
-            m_configuration.CurrentLimits.SupplyCurrentLimit = 20;
-            m_configuration.CurrentLimits.SupplyCurrentThreshold = 60;
-            m_configuration.CurrentLimits.SupplyTimeThreshold = 0.25;
+            m_configuration.CurrentLimits.SupplyCurrentLowerLimit = 20;
+            m_configuration.CurrentLimits.SupplyCurrentLimit = 60;
+            m_configuration.CurrentLimits.SupplyCurrentLowerTime = 0.25;
             m_configuration.CurrentLimits.SupplyCurrentLimitEnable = true;
             m_configuration.CurrentLimits.StatorCurrentLimit = 140;
             m_configuration.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -154,9 +153,9 @@ public class Constants {
             m_configuration.MotionMagic.MotionMagicAcceleration = 5;
             m_configuration.MotionMagic.MotionMagicJerk = 0;
 
-            m_configuration.CurrentLimits.SupplyCurrentLimit = 20;
-            m_configuration.CurrentLimits.SupplyCurrentThreshold = 40;
-            m_configuration.CurrentLimits.SupplyTimeThreshold = 0.1;
+            m_configuration.CurrentLimits.SupplyCurrentLowerLimit = 20;
+            m_configuration.CurrentLimits.SupplyCurrentLimit = 40;
+            m_configuration.CurrentLimits.SupplyCurrentLowerTime = 0.1;
             m_configuration.CurrentLimits.SupplyCurrentLimitEnable = true;
             m_configuration.CurrentLimits.StatorCurrentLimit = 70;
             m_configuration.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -166,7 +165,7 @@ public class Constants {
 
         public static CANcoderConfiguration encoderConfig() {
             CANcoderConfiguration m_configuration = new CANcoderConfiguration();
-            m_configuration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;  
+            m_configuration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1.0;  
             //following line is for shooter cancoder offset
             m_configuration.MagnetSensor.MagnetOffset = -0.55615234375;
             m_configuration.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
@@ -211,8 +210,8 @@ public class Constants {
             m_configuration.MotionMagic.MotionMagicAcceleration = 10;
             m_configuration.MotionMagic.MotionMagicJerk = 10;
 
-            m_configuration.CurrentLimits.SupplyCurrentLimit = 20;
-            m_configuration.CurrentLimits.SupplyTimeThreshold = 0.5;
+            m_configuration.CurrentLimits.SupplyCurrentLowerLimit = 20;
+            m_configuration.CurrentLimits.SupplyCurrentLowerTime = 0.5;
             m_configuration.CurrentLimits.SupplyCurrentLimitEnable = true;
             m_configuration.CurrentLimits.StatorCurrentLimit = 80;
             m_configuration.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -233,8 +232,7 @@ public class Constants {
             m_configuration.Voltage.PeakReverseVoltage = -12.0;
 
             m_configuration.CurrentLimits.SupplyCurrentLimit = 40;
-            m_configuration.CurrentLimits.SupplyCurrentThreshold = 40;
-            m_configuration.CurrentLimits.SupplyTimeThreshold = 0.1;
+            m_configuration.CurrentLimits.SupplyCurrentLowerTime = 0.1;
             m_configuration.CurrentLimits.SupplyCurrentLimitEnable = true;
             m_configuration.CurrentLimits.StatorCurrentLimit = 80;
             m_configuration.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -278,8 +276,8 @@ public class Constants {
             m_configuration.MotionMagic.MotionMagicAcceleration = 500;
             m_configuration.MotionMagic.MotionMagicJerk = 0;
 
-            m_configuration.CurrentLimits.SupplyCurrentLimit = 50;
-            m_configuration.CurrentLimits.SupplyTimeThreshold = 0.25;
+            m_configuration.CurrentLimits.SupplyCurrentLowerLimit = 50;
+            m_configuration.CurrentLimits.SupplyCurrentLowerTime = 0.25;
             m_configuration.CurrentLimits.SupplyCurrentLimitEnable = true;
             m_configuration.CurrentLimits.StatorCurrentLimit = 70;
             m_configuration.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -299,9 +297,9 @@ public class Constants {
             m_configuration.Voltage.PeakForwardVoltage = 12.0;
             m_configuration.Voltage.PeakReverseVoltage = -12.0;
 
-            m_configuration.CurrentLimits.SupplyCurrentLimit = 20;
-            m_configuration.CurrentLimits.SupplyCurrentThreshold = 40;
-            m_configuration.CurrentLimits.SupplyTimeThreshold = 0.1;
+            m_configuration.CurrentLimits.SupplyCurrentLowerLimit = 20;
+            m_configuration.CurrentLimits.SupplyCurrentLimit = 40;
+            m_configuration.CurrentLimits.SupplyCurrentLowerTime = 0.1;
             m_configuration.CurrentLimits.SupplyCurrentLimitEnable = false;
             m_configuration.CurrentLimits.StatorCurrentLimit = 70;
             m_configuration.CurrentLimits.StatorCurrentLimitEnable = false;
@@ -346,9 +344,9 @@ public class Constants {
             m_configuration.MotionMagic.MotionMagicAcceleration = 1000;
             m_configuration.MotionMagic.MotionMagicJerk = 0.0;
 
-            m_configuration.CurrentLimits.SupplyCurrentLimit = 20;
-            m_configuration.CurrentLimits.SupplyCurrentThreshold = 40;
-            m_configuration.CurrentLimits.SupplyTimeThreshold = 0.1;
+            m_configuration.CurrentLimits.SupplyCurrentLowerLimit = 20;
+            m_configuration.CurrentLimits.SupplyCurrentLimit = 40;
+            m_configuration.CurrentLimits.SupplyCurrentLowerTime = 0.1;
             m_configuration.CurrentLimits.SupplyCurrentLimitEnable = false;
             m_configuration.CurrentLimits.StatorCurrentLimit = 70;
             m_configuration.CurrentLimits.StatorCurrentLimitEnable = false;

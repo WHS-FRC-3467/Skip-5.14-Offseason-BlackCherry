@@ -6,7 +6,7 @@ package frc.robot.Util;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
-import au.grapplerobotics.LaserCan.Measurement;
+import au.grapplerobotics.interfaces.LaserCanInterface.Measurement;;
 
 /** Add your docs here. */
 public class LaserCanSensor {

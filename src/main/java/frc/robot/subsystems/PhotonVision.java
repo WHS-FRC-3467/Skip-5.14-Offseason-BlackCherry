@@ -57,15 +57,15 @@ public class PhotonVision extends SubsystemBase {
     public PhotonVision(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
         
-        fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+        fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo);
         m_frontLeftCamera = new PhotonCamera(front_left_cam.kCameraName);
         //m_frontRightCamera = new PhotonCamera(front_right_cam.kCameraName);
         m_photonPoseEstimators = new PhotonPoseEstimator[] {
-                new PhotonPoseEstimator(
-                    AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-                    PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-                    m_frontLeftCamera,
-                    front_left_cam.kRobotToCam),
+                // new PhotonPoseEstimator(
+                //     fieldLayout,
+                //     PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+                //     m_frontLeftCamera,
+                //     front_left_cam.kRobotToCam),
 /*                    new PhotonPoseEstimator(
                      AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
                      PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
@@ -73,7 +73,7 @@ public class PhotonVision extends SubsystemBase {
                      front_right_cam.kRobotToCam) */ 
             };
 
-            SmartDashboard.putData("PhotonVisoin Pose",visionPose);
+            SmartDashboard.putData("PhotonVision Pose",visionPose);
     }
 
   
@@ -82,7 +82,8 @@ public class PhotonVision extends SubsystemBase {
         Pose2d currentPose = drivetrain.getState().Pose;
             for (PhotonPoseEstimator poseEstimator : m_photonPoseEstimators) {
                 // print out the time for this line to run 
-                Optional<EstimatedRobotPose> pose = poseEstimator.update();
+                Optional<EstimatedRobotPose> pose = poseEstimator.update(m_frontLeftCamera.getAllUnreadResults().get(0)); 
+                // Hard coded it to left camera as placeholder because 1) update() now wants an argument 2) the right camera was commented out in photon pose estimator 
                 if (pose.isPresent()) {
                     Pose3d pose3d = pose.get().estimatedPose;
                     Pose2d pose2d = pose3d.toPose2d();
