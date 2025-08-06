@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
+
 // import com.pathplanner.lib.auto.AutoBuilder;
 // import com.pathplanner.lib.auto.NamedCommands;
 
@@ -23,6 +25,7 @@ import frc.robot.RobotState.TARGET;
 import frc.robot.Util.LaserCanSensor;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.ElevatorJoint.State;
 
 public class RobotContainer {
 
@@ -58,9 +61,9 @@ public class RobotContainer {
 
 	//Photonvision and Limelight cameras
 	PhotonVision photonVision = new PhotonVision(drivetrain);
-	Limelight limelight = new Limelight();
+	// Limelight limelight = new Limelight();
 
-    //Logic Triggers
+	//Logic Triggers
 	private Trigger noteStored = new Trigger(() -> (lc1.isClose() || lc2.isClose())); //Note in YSplitRollers trigger
 	private Trigger noteAmp = new Trigger(() -> ampDebouncer.calculate(!bb1.get())); //Note in ElevatorRollers
 
@@ -115,7 +118,7 @@ public class RobotContainer {
 		//Rumbled when LC2 is active
 		joystick.leftTrigger().and(LC2).whileTrue(Commands.startEnd(() -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 1), () -> rumble.setRumble(GenericHID.RumbleType.kBothRumble, 0)));
 
-		joystick.leftTrigger().and(LC2).onTrue(limelight.blinkLEDCommand());
+		//joystick.leftTrigger().and(LC2).onTrue(limelight.blinkLEDCommand());
 
 		//Subwoofer
 		joystick.a().whileTrue(
@@ -211,14 +214,21 @@ public class RobotContainer {
 		*/
 		
 		//Score Amp
+		
+		/*
 		joystick.rightTrigger().and(noteAmp).whileTrue( // .and(climbRequest.negate())
 				Commands.deadline(
 						Commands.waitUntil(noteAmp.negate()),
 						elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE),
 						Commands.waitUntil(readyToAmp)
 								.andThen(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE))));
+		*/
+			
+		joystick.rightTrigger().and(noteAmp).whileTrue( // .and(climbRequest.negate())
+				Commands.deadline(
+					elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE)));
 
-		joystick.rightTrigger().and(joystick.leftBumper())
+		joystick.rightTrigger().and(joystick.leftBumper()).and(noteAmp)
 				.whileTrue(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE));	
 
 		// //Score Trap
