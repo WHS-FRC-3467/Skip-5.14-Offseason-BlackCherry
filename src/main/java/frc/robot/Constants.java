@@ -42,7 +42,7 @@ public class Constants {
 
     public static final class DriveConstants {
         public static final double headingAngleTolerance = 5.0;
-        public static final double MaxSpeed = TunerConstants.kSpeedAt12VoltsMps; // kSpeedAt12VoltsMps desired top speed
+        public static final double MaxSpeed = TunerConstants.kSpeedAt12Volts.magnitude(); // kSpeedAt12VoltsMps desired top speed
         public static final double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
         public static final double driverSpeed = 0.75; //Multiplier to the controller input
     }
