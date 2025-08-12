@@ -204,30 +204,31 @@ public class RobotContainer {
 					shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
 					elevatorJoint.setStateCommand(ElevatorJoint.State.TRAP),
 					climberJoint.setStateCommand(ClimberJoint.State.STOW)));
-
+		*/
 		//Score Shooter
-		joystick.rightTrigger().and(noteAmp.negate()).and(climbRequest.negate()).whileTrue(
+		joystick.rightTrigger().and(noteAmp.negate()).whileTrue(  // .and(climbRequest.negate())
 				Commands.deadline(
 						Commands.waitUntil(noteStored.negate()),
-						Commands.waitUntil(readyToShoot)
-								.andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER))));
-		*/
+						// Commands.waitUntil(readyToShoot)
+								ySplitRollers.setStateCommand(YSplitRollers.State.SHOOTER)));
+		
 		
 		//Score Amp
 		
-		/*
+		
 		joystick.rightTrigger().and(noteAmp).whileTrue( // .and(climbRequest.negate())
 				Commands.deadline(
 						Commands.waitUntil(noteAmp.negate()),
 						elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE),
 						Commands.waitUntil(readyToAmp)
 								.andThen(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE))));
-		*/
+		
 			
 		joystick.rightTrigger().and(noteAmp).whileTrue( // .and(climbRequest.negate())
 				Commands.deadline(
 					elevatorJoint.setStateCommand(ElevatorJoint.State.SCORE)));
 
+		// USE THIS
 		joystick.rightTrigger().and(joystick.leftBumper()).and(noteAmp)
 				.whileTrue(elevatorRollers.setStateCommand(ElevatorRollers.State.SCORE));	
 
@@ -246,13 +247,13 @@ public class RobotContainer {
 		joystick.povLeft().whileTrue(
 				Commands.parallel(
 						intakeJoint.setStateCommand(IntakeJoint.State.HOMING).until(() -> intakeJoint.hasHomed),
-						elevatorJoint.setStateCommand(ElevatorJoint.State.HOMING).until(() -> elevatorJoint.hasHomed) //,
-						// Commands.deadline(
-						// 		Commands.waitUntil(() -> climberJoint.hasHomed),
-						// 		shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
-						// 		Commands.waitUntil(() -> shooterJoint.getState() == ShooterJoint.State.CLIMBCLEARANCE && shooterJoint.atGoal())
-						// 				.andThen(climberJoint.setStateCommand(ClimberJoint.State.HOMING)))
-										));
+						elevatorJoint.setStateCommand(ElevatorJoint.State.HOMING).until(() -> elevatorJoint.hasHomed), //,
+						Commands.deadline(
+						 		//Commands.waitUntil(() -> climberJoint.hasHomed),
+						 		shooterJoint.setStateCommand(ShooterJoint.State.CLIMBCLEARANCE),
+						 		Commands.waitUntil(() -> shooterJoint.getState() == ShooterJoint.State.CLIMBCLEARANCE && shooterJoint.atGoal()
+						 				// .andThen(climberJoint.setStateCommand(ClimberJoint.State.HOMING)))
+										))));
 		//Eject
 		joystick.povRight().whileTrue(
 				Commands.parallel(
