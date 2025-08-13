@@ -28,9 +28,10 @@ public class ShooterRollers extends SubsystemBase {
     public enum State { // RPS
         OFF(() -> 0.0),
         // SUBWOOFER(() -> 35.0),
-        // SPEAKER(() -> 45.0),
+        SPEAKER(() -> 45.0),
+        DEMO_LONG(() -> 90.0),
         SUBWOOFER(() -> 15.0),
-        SPEAKER(() -> 20.0),
+        DEMO_SHORT(() -> 20.0),
         FEED(() -> 22.0),
         REVERSE(() -> -20.0),
         TUNING(() -> RobotState.getInstance().getShooterTuningSpeed().get());

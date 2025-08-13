@@ -160,13 +160,19 @@ public class RobotContainer {
 						shooterRollers.setStateCommand(ShooterRollers.State.FEED),
 						shooterJoint.setStateCommand(ShooterJoint.State.DEMO_FEED))); // was ShooterJoint.State.DYNAMIC, now a set value for demos
 
-		//Speaker
+		// X: Demo short toss
 		joystick.x().whileTrue(
 				Commands.parallel(
 						// robotState.setTargetCommand(RobotState.TARGET.SPEAKER),
-						shooterRollers.setStateCommand(ShooterRollers.State.SPEAKER),
-						shooterJoint.setStateCommand(ShooterJoint.State.DEMO_SPEAKER)));
+						shooterRollers.setStateCommand(ShooterRollers.State.DEMO_SHORT),
+						shooterJoint.setStateCommand(ShooterJoint.State.DEMO_SHORT)));
 
+		// START: Demo shoot far
+		joystick.start().whileTrue(
+			Commands.parallel(
+					// robotState.setTargetCommand(RobotState.TARGET.SPEAKER),
+					shooterRollers.setStateCommand(ShooterRollers.State.DEMO_LONG),
+					shooterJoint.setStateCommand(ShooterJoint.State.DEMO_LONG)));
 		/* Demo code: Comment out climbing
 		//Climb Request (toggle)
 		joystick.back().onTrue(Commands.runOnce(() -> climbRequested = !climbRequested));
