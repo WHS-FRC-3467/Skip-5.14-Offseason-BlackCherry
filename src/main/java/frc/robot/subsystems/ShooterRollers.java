@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -51,7 +52,8 @@ public class ShooterRollers extends SubsystemBase {
     TalonFX m_motor = new TalonFX(ShooterRollersConstants.ID_LEADER);
     TalonFX m_follower = new TalonFX(ShooterRollersConstants.ID_FOLLOWER); 
     
-    private final VelocityVoltage m_velocity = new VelocityVoltage(0).withSlot(1);
+    //private final VelocityVoltage velocityControl = new VelocityVoltage(0).withSlot(1);
+    private final MotionMagicVelocityTorqueCurrentFOC velocityControl = new MotionMagicVelocityTorqueCurrentFOC(0).withSlot(1).withEnableFOC(true);
     private final NeutralOut m_neutral = new NeutralOut();
 
     private double goalSpeed;
@@ -70,7 +72,7 @@ public class ShooterRollers extends SubsystemBase {
             m_motor.setControl(m_neutral);
         } else {
             goalSpeed = MathUtil.clamp(state.getStateOutput(), ShooterRollersConstants.lowerLimit, ShooterRollersConstants.upperLimit); //TODO:Remove 
-            m_motor.setControl(m_velocity.withVelocity(goalSpeed).withSlot(1)); // create a velocity closed-loop request, voltage output, slot 1 configs
+            m_motor.setControl(velocityControl.withVelocity(goalSpeed).withSlot(1)); // create a velocity closed-loop request, slot 1 configs
         }
 
         displayInfo(true);
