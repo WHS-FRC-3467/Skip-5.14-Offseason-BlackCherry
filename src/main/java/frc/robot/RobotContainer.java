@@ -112,18 +112,17 @@ public class RobotContainer {
 		// Intake
 		joystick.leftTrigger().whileTrue(Commands.parallel(
 			// robotState.setTargetCommand(RobotState.TARGET.NOTE),
-			Commands.deadline(
-				Commands.waitUntil(LC2),
-				ySplitRollers.setStateCommand(YSplitRollers.State.INTAKE)
-			// .until(LC1)
-			// .andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SLOWINTAKE)),
-			// Commands.parallel(
-			// intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
-			// Commands.waitUntil(intakeJoint::atGoal)
-			// .andThen(Commands.deadline(
-			// Commands.waitUntil(LC2),
-			// intakeRollers.setStateCommand(IntakeRollers.State.INTAKE))))))
-			)));
+
+			ySplitRollers.setStateCommand(YSplitRollers.State.INTAKE)
+		// .until(LC1)
+		// .andThen(ySplitRollers.setStateCommand(YSplitRollers.State.SLOWINTAKE)),
+		// Commands.parallel(
+		// intakeJoint.setStateCommand(IntakeJoint.State.INTAKE),
+		// Commands.waitUntil(intakeJoint::atGoal)
+		// .andThen(Commands.deadline(
+		// Commands.waitUntil(LC2),
+		// intakeRollers.setStateCommand(IntakeRollers.State.INTAKE))))))
+		));
 
 		// Rumbled when LC2 is active
 		joystick.leftTrigger().and(LC2).whileTrue(

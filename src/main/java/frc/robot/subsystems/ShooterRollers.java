@@ -30,9 +30,9 @@ public class ShooterRollers extends SubsystemBase {
         OFF(() -> 0.0),
         // SUBWOOFER(() -> 35.0),
         SPEAKER(() -> 45.0),
-        DEMO_LONG(() -> 35.0),
+        DEMO_LONG(() -> 65.0),
         SUBWOOFER(() -> 15.0),
-        DEMO_SHORT(() -> 30.0),
+        DEMO_SHORT(() -> 45.0),
         FEED(() -> 22.0),
         REVERSE(() -> -20.0),
         TUNING(() -> RobotState.getInstance().getShooterTuningSpeed().get());

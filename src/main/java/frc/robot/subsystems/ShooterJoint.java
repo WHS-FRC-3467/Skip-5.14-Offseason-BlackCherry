@@ -33,9 +33,9 @@ public class ShooterJoint extends SubsystemBase {
         CLIMBCLEARANCE(() -> 40.0),
         DYNAMIC(() -> RobotState.getInstance().getShotAngle()), // Dynamic aiming, data fed by
                                                                 // RobotState for lookup tables
-        DEMO_FEED(() -> 38),
-        DEMO_SHORT(() -> 32),
-        DEMO_LONG(() -> 44),
+        DEMO_FEED(() -> 38.0),
+        DEMO_SHORT(() -> 24.0),
+        DEMO_LONG(() -> 30.0),
         TUNING(() -> RobotState.getInstance().getShooterTuningAngle().get()); // Dashboard tunable
                                                                               // number
 
