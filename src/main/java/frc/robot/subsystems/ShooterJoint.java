@@ -31,15 +31,18 @@ public class ShooterJoint extends SubsystemBase {
         STOW(() -> 35.0),
         SUBWOOFER(() -> 42.0),
         CLIMBCLEARANCE(() -> 40.0),
-        DYNAMIC(() -> RobotState.getInstance().getShotAngle()), //Dynamic aiming, data fed by RobotState for lookup tables
+        DYNAMIC(() -> RobotState.getInstance().getShotAngle()), // Dynamic aiming, data fed by
+                                                                // RobotState for lookup tables
         DEMO_FEED(() -> 38),
         DEMO_SHORT(() -> 32),
-        DEMO_LONG(() -> 18),
-        TUNING(() -> RobotState.getInstance().getShooterTuningAngle().get()); //Dashboard tunable number
+        DEMO_LONG(() -> 44),
+        TUNING(() -> RobotState.getInstance().getShooterTuningAngle().get()); // Dashboard tunable
+                                                                              // number
 
         private final DoubleSupplier outputSupplier;
 
-        private double getStateOutput() {
+        private double getStateOutput()
+        {
             return Units.degreesToRotations(outputSupplier.getAsDouble());
         }
     }
@@ -57,16 +60,18 @@ public class ShooterJoint extends SubsystemBase {
     private final static PositionVoltage m_position = new PositionVoltage(0);
     // private final NeutralOut m_neutral = new NeutralOut();
 
-    public ShooterJoint() {
+    public ShooterJoint()
+    {
         m_encoder.getConfigurator().apply(ShooterJointConstants.encoderConfig());
         m_motor.getConfigurator().apply(ShooterJointConstants.motorConfig());
     }
 
     @Override
-    public void periodic() {
+    public void periodic()
+    {
         if (state == State.DYNAMIC) {
             m_motor.setControl(m_position.withPosition(state.getStateOutput()).withSlot(0));
-            //m_motor.setControl(m_magic.withPosition(state.getStateOutput()).withSlot(1));
+            // m_motor.setControl(m_magic.withPosition(state.getStateOutput()).withSlot(1));
         } else {
             m_motor.setControl(m_magic.withPosition(state.getStateOutput()).withSlot(1));
         }
@@ -74,22 +79,31 @@ public class ShooterJoint extends SubsystemBase {
         displayInfo(true);
     }
 
-    public boolean atGoal() {
-        return m_debounce.calculate(MathUtil.isNear(state.getStateOutput(), m_motor.getPosition().getValueAsDouble(), ShooterJointConstants.tolerance));
+    public boolean atGoal()
+    {
+        return m_debounce.calculate(MathUtil.isNear(state.getStateOutput(),
+            m_motor.getPosition().getValueAsDouble(), ShooterJointConstants.tolerance));
     }
 
-    public Command setStateCommand(State state) {
+    public Command setStateCommand(State state)
+    {
         return startEnd(() -> this.state = state, () -> this.state = State.STOW);
     }
 
-    private void displayInfo(boolean debug) {
+    private void displayInfo(boolean debug)
+    {
         if (debug) {
             SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint ", state.getStateOutput());
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint (deg) ", Units.rotationsToDegrees(state.getStateOutput()));
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", m_motor.getPosition().getValueAsDouble());
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output deg ", Units.rotationsToDegrees(m_motor.getPosition().getValueAsDouble()));
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw", m_motor.getSupplyCurrent().getValueAsDouble());
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint ",
+                state.getStateOutput());
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint (deg) ",
+                Units.rotationsToDegrees(state.getStateOutput()));
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ",
+                m_motor.getPosition().getValueAsDouble());
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output deg ",
+                Units.rotationsToDegrees(m_motor.getPosition().getValueAsDouble()));
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw",
+                m_motor.getSupplyCurrent().getValueAsDouble());
             SmartDashboard.putBoolean(this.getClass().getSimpleName() + " atGoal", atGoal());
         }
 

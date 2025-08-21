@@ -30,16 +30,17 @@ public class ShooterRollers extends SubsystemBase {
         OFF(() -> 0.0),
         // SUBWOOFER(() -> 35.0),
         SPEAKER(() -> 45.0),
-        DEMO_LONG(() -> 90.0),
+        DEMO_LONG(() -> 35.0),
         SUBWOOFER(() -> 15.0),
-        DEMO_SHORT(() -> 20.0),
+        DEMO_SHORT(() -> 30.0),
         FEED(() -> 22.0),
         REVERSE(() -> -20.0),
         TUNING(() -> RobotState.getInstance().getShooterTuningSpeed().get());
 
         private final DoubleSupplier velocitySupplier;
 
-        private double getStateOutput() {
+        private double getStateOutput()
+        {
             return velocitySupplier.getAsDouble();
         }
     }
@@ -50,48 +51,64 @@ public class ShooterRollers extends SubsystemBase {
 
     // Initialize motor controllers
     TalonFX m_motor = new TalonFX(ShooterRollersConstants.ID_LEADER);
-    TalonFX m_follower = new TalonFX(ShooterRollersConstants.ID_FOLLOWER); 
-    
-    //private final VelocityVoltage velocityControl = new VelocityVoltage(0).withSlot(1);
-    private final MotionMagicVelocityTorqueCurrentFOC velocityControl = new MotionMagicVelocityTorqueCurrentFOC(0).withSlot(1).withEnableFOC(true);
+    TalonFX m_follower = new TalonFX(ShooterRollersConstants.ID_FOLLOWER);
+
+    // private final VelocityVoltage velocityControl = new VelocityVoltage(0).withSlot(1);
+    private final MotionMagicVelocityTorqueCurrentFOC velocityControl =
+        new MotionMagicVelocityTorqueCurrentFOC(0).withSlot(1).withEnableFOC(true);
     private final NeutralOut m_neutral = new NeutralOut();
 
     private double goalSpeed;
 
     /** Creates a new Flywheel. */
-    public ShooterRollers() {
+    public ShooterRollers()
+    {
         m_motor.getConfigurator().apply(ShooterRollersConstants.motorConfig());
         m_follower.getConfigurator().apply(ShooterRollersConstants.motorConfig());
         m_follower.setControl(new Follower(m_motor.getDeviceID(), true));
     }
 
     @Override
-    public void periodic() {
-      
+    public void periodic()
+    {
+
         if (state == State.OFF) {
             m_motor.setControl(m_neutral);
         } else {
-            goalSpeed = MathUtil.clamp(state.getStateOutput(), ShooterRollersConstants.lowerLimit, ShooterRollersConstants.upperLimit); //TODO:Remove 
-            m_motor.setControl(velocityControl.withVelocity(goalSpeed).withSlot(1)); // create a velocity closed-loop request, slot 1 configs
+            goalSpeed = MathUtil.clamp(state.getStateOutput(), ShooterRollersConstants.lowerLimit,
+                ShooterRollersConstants.upperLimit); // TODO:Remove
+            m_motor.setControl(velocityControl.withVelocity(goalSpeed).withSlot(1)); // create a
+                                                                                     // velocity
+                                                                                     // closed-loop
+                                                                                     // request,
+                                                                                     // slot 1
+                                                                                     // configs
         }
 
         displayInfo(true);
     }
 
-    public boolean atGoal() {
-        return Math.abs(state.getStateOutput() - m_motor.getVelocity().getValueAsDouble()) < ShooterRollersConstants.tolerance;
+    public boolean atGoal()
+    {
+        return Math.abs(state.getStateOutput()
+            - m_motor.getVelocity().getValueAsDouble()) < ShooterRollersConstants.tolerance;
     }
 
-    public Command setStateCommand(State state) {
+    public Command setStateCommand(State state)
+    {
         return startEnd(() -> this.state = state, () -> this.state = State.OFF);
     }
 
-    public void displayInfo(boolean debug) {
+    public void displayInfo(boolean debug)
+    {
         if (debug) {
             SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint ", state.getStateOutput());
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", m_motor.getVelocity().getValueAsDouble());
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw", m_motor.getSupplyCurrent().getValueAsDouble());
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint ",
+                state.getStateOutput());
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ",
+                m_motor.getVelocity().getValueAsDouble());
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw",
+                m_motor.getSupplyCurrent().getValueAsDouble());
             SmartDashboard.putBoolean(this.getClass().getSimpleName() + " atGoal", atGoal());
         }
     }

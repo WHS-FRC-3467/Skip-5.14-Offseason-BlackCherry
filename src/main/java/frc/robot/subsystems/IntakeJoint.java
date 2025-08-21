@@ -28,7 +28,7 @@ public class IntakeJoint extends SubsystemBase {
     public enum State {
         STOW(-0.05),
         HOMING(0.0),
-        INTAKE(-0.31);
+        INTAKE(-0.32);
 
         private final double output;
     }
@@ -37,37 +37,41 @@ public class IntakeJoint extends SubsystemBase {
     @Setter
     private State state = State.STOW;
     private final SendableChooser<State> stateChooser = new SendableChooser<>();
-    
+
 
     public TalonFX m_motor = new TalonFX(IntakeJointConstants.ID_Motor);
     private final MotionMagicVoltage m_position = new MotionMagicVoltage(state.getOutput());
     private final DutyCycleOut m_duty = new DutyCycleOut(0.0);
-    //private final NeutralOut m_neutral = new NeutralOut();
+    // private final NeutralOut m_neutral = new NeutralOut();
 
     public boolean hasHomed = false;
 
     /** Creates a new ComplexSubsystem. */
-    public IntakeJoint() {
+    public IntakeJoint()
+    {
         m_motor.getConfigurator().apply(IntakeJointConstants.motorConfig());
         m_motor.setPosition(-0.0234);
         for (State states : State.values()) {
-                stateChooser.addOption(states.toString(), states);  
+            stateChooser.addOption(states.toString(), states);
         }
         stateChooser.setDefaultOption(state.toString(), state);
         SmartDashboard.putData("IntakeJoint State Chooser", stateChooser);
-        SmartDashboard.putData("IntakeJoint Override Command",Commands.runOnce(() -> setState(stateChooser.getSelected()), this));
+        SmartDashboard.putData("IntakeJoint Override Command",
+            Commands.runOnce(() -> setState(stateChooser.getSelected()), this));
 
     }
 
     @Override
-    public void periodic() {
-/*         if (state == State.STOW && atGoal()) {
-            m_motor.setControl(m_neutral);
-        } else  */
+    public void periodic()
+    {
+        /*
+         * if (state == State.STOW && atGoal()) { m_motor.setControl(m_neutral); } else
+         */
         if (state == State.HOMING) {
-            m_motor.setControl(m_duty.withOutput(0.05));
+            m_motor.setControl(m_duty.withOutput(0.25));
 
-            if (m_motor.getSupplyCurrent().getValueAsDouble() > IntakeJointConstants.homingCurrent) {
+            if (m_motor.getSupplyCurrent()
+                .getValueAsDouble() > IntakeJointConstants.homingCurrent) {
                 m_motor.setPosition(0.0);
                 System.out.println("HOMED Elevator");
                 this.hasHomed = true;
@@ -81,21 +85,27 @@ public class IntakeJoint extends SubsystemBase {
         displayInfo(true);
     }
 
-    public boolean atGoal() {
+    public boolean atGoal()
+    {
         return MathUtil.isNear(state.getOutput(), m_motor.getPosition().getValueAsDouble(),
-                IntakeJointConstants.tolerance);
+            IntakeJointConstants.tolerance);
     }
 
-    public Command setStateCommand(State state) {
+    public Command setStateCommand(State state)
+    {
         return startEnd(() -> this.state = state, () -> this.state = State.STOW);
     }
 
-    private void displayInfo(boolean debug) {
+    private void displayInfo(boolean debug)
+    {
         if (debug) {
             SmartDashboard.putString(this.getClass().getSimpleName() + " State ", state.toString());
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint ", state.getOutput());
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ", (m_motor.getPosition().getValueAsDouble()));
-            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw", m_motor.getSupplyCurrent().getValueAsDouble());
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Setpoint ",
+                state.getOutput());
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Output ",
+                (m_motor.getPosition().getValueAsDouble()));
+            SmartDashboard.putNumber(this.getClass().getSimpleName() + " Current Draw",
+                m_motor.getSupplyCurrent().getValueAsDouble());
             SmartDashboard.putBoolean(this.getClass().getSimpleName() + " atGoal", atGoal());
             SmartDashboard.putBoolean(this.getClass().getSimpleName() + " has homed", hasHomed);
         }
