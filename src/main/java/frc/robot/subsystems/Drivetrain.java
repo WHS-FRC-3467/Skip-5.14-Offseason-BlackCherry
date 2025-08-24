@@ -267,8 +267,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     }
 
     public void setControllerInput(double controllerX, double controllerY, double controllerOmega) {
-         this.xVelocity = MathUtil.applyDeadband(controllerX, 0.1, 1) * DriveConstants.MaxSpeed * DriveConstants.driverSpeed.get();
-        this.yVelocity = MathUtil.applyDeadband(controllerY, 0.1,1) * DriveConstants.MaxSpeed * DriveConstants.driverSpeed.get();
+         this.xVelocity = MathUtil.applyDeadband(controllerX, 0.1, 1) * DriveConstants.MaxSpeed * (double)DriveConstants.driverSpeed.get() / 100;
+        this.yVelocity = MathUtil.applyDeadband(controllerY, 0.1,1) * DriveConstants.MaxSpeed * (double)DriveConstants.driverSpeed.get() / 100;
         this.omegaVelocity = MathUtil.applyDeadband(controllerOmega, 0.1,1) * DriveConstants.MaxAngularRate;
         //this.xVelocity = controllerX * DriveConstants.MaxSpeed;
         //this.yVelocity = controllerY * DriveConstants.MaxSpeed;

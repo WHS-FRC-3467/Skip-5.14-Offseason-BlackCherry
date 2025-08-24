@@ -50,7 +50,7 @@ public class Constants {
         public static final double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second
                                                                    // max angular velocity
         //LINE TO ADJUST DRIVEBASE SPEED
-        public static final TunableNumber driverSpeed = new TunableNumber("Drivebase Speed Multiplier", 0.6); // Multiplier to the controller input
+        public static final TunableNumber driverSpeed = new TunableNumber("Drivebase Speed Percentage", 60.0); // Multiplier to the controller input
 
         
     }
