@@ -2,6 +2,8 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+
+//ALL INTAKE CODE COMMENTED OUT FOR THE TIME BEING
 package frc.robot;
 
 import java.util.function.BooleanSupplier;
@@ -30,6 +32,8 @@ import frc.robot.subsystems.ElevatorJoint.State;
 
 public class RobotContainer {
 
+	
+
 	// TODO: test new shooterjoint positional pid
 	// TODO: change shooter rollers to MMVelocity
 	// TODO: test auto intake
@@ -48,6 +52,7 @@ public class RobotContainer {
 	private final CommandXboxController joystick = new CommandXboxController(0);
 	private final GenericHID rumble = joystick.getHID();
 
+	
 	// Lasercan sensors in YSplitRollers to determine note location
 	private final LaserCanSensor lc1 = new LaserCanSensor(SensorConstants.ID_LC1, 180);
 	private final LaserCanSensor lc2 = new LaserCanSensor(SensorConstants.ID_LC2, 180);
@@ -71,6 +76,8 @@ public class RobotContainer {
 																						// trigger
 	private Trigger noteAmp = new Trigger(() -> ampDebouncer.calculate(!bb1.get())); // Note in
 																						// ElevatorRollers
+
+															
 
 	// private Trigger jointsHaveHomed =
 	// new Trigger(() -> (elevatorJoint.hasHomed && intakeJoint.hasHomed)); // climberJoint.hasHomed

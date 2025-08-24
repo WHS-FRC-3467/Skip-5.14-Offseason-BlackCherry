@@ -11,6 +11,7 @@ import com.ctre.phoenix6.hardware.core.CoreCANcoder;
 import com.ctre.phoenix6.hardware.core.CoreTalonFX;
 import com.ctre.phoenix6.swerve.*;
 
+
 // import com.pathplanner.lib.auto.AutoBuilder;
 // import com.pathplanner.lib.commands.PathPlannerAuto;
 // import com.pathplanner.lib.config.ModuleConfig;
@@ -72,12 +73,15 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     private double yVelocity = 0.0;
     private double omegaVelocity = 0.0;
 
+    
+
     // private final ModuleConfig moduleConfig = new ModuleConfig(Units.inchesToMeters(3.92/2), 5.1, 1.2, DCMotor.getKrakenX60(1).withReduction(6.122), 90, 1);
     
     // private final RobotConfig robotConfig = new RobotConfig(Units.lbsToKilograms(129), 4.785, moduleConfig, Units.inchesToMeters(10.375*2), Units.inchesToMeters(10.375*2));
 
 
     // private final SwerveRequest.ApplyChassisSpeeds AutoRequest = new SwerveRequest.ApplyChassisSpeeds();
+
 
     private SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
             .withDeadband(DriveConstants.MaxSpeed * 0.01).withRotationalDeadband(DriveConstants.MaxAngularRate * 0.01)
@@ -263,8 +267,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     }
 
     public void setControllerInput(double controllerX, double controllerY, double controllerOmega) {
-         this.xVelocity = MathUtil.applyDeadband(controllerX, 0.1, 1) * DriveConstants.MaxSpeed * DriveConstants.driverSpeed;
-        this.yVelocity = MathUtil.applyDeadband(controllerY, 0.1,1) * DriveConstants.MaxSpeed * DriveConstants.driverSpeed;
+         this.xVelocity = MathUtil.applyDeadband(controllerX, 0.1, 1) * DriveConstants.MaxSpeed * DriveConstants.driverSpeed.get();
+        this.yVelocity = MathUtil.applyDeadband(controllerY, 0.1,1) * DriveConstants.MaxSpeed * DriveConstants.driverSpeed.get();
         this.omegaVelocity = MathUtil.applyDeadband(controllerOmega, 0.1,1) * DriveConstants.MaxAngularRate;
         //this.xVelocity = controllerX * DriveConstants.MaxSpeed;
         //this.yVelocity = controllerY * DriveConstants.MaxSpeed;

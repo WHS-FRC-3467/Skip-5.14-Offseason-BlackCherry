@@ -68,6 +68,7 @@ public class IntakeJoint extends SubsystemBase {
          * if (state == State.STOW && atGoal()) { m_motor.setControl(m_neutral); } else
          */
         if (state == State.HOMING) {
+            //m_motor.setControl(m_duty.withOutput)(0.1)); is with kraken
             m_motor.setControl(m_duty.withOutput(0.25));
 
             if (m_motor.getSupplyCurrent()

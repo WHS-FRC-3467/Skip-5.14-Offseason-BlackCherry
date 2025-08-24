@@ -27,12 +27,15 @@ public class ShooterRollers extends SubsystemBase {
     @RequiredArgsConstructor
     @Getter
     public enum State { // RPS
+        //MM Velocitry torque current is slow compared to other profile types
         OFF(() -> 0.0),
         // SUBWOOFER(() -> 35.0),
         SPEAKER(() -> 45.0),
-        DEMO_LONG(() -> 65.0),
+        DEMO_LONG_OUTSIDE(() -> 65.0),
+        DEMO_LONG(() -> 35.0),
         SUBWOOFER(() -> 15.0),
-        DEMO_SHORT(() -> 45.0),
+        DEMO_SHORT_OUTSIDE(() -> 45.0),
+        DEMO_SHORT(() -> 25.0),
         FEED(() -> 22.0),
         REVERSE(() -> -20.0),
         TUNING(() -> RobotState.getInstance().getShooterTuningSpeed().get());

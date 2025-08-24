@@ -23,6 +23,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import frc.robot.Util.TunableNumber;
 import frc.robot.generated.TunerConstants;
 
 /** Add your docs here. */
@@ -48,7 +49,10 @@ public class Constants {
                                                                                           // speed
         public static final double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second
                                                                    // max angular velocity
-        public static final double driverSpeed = 0.75; // Multiplier to the controller input
+        //LINE TO ADJUST DRIVEBASE SPEED
+        public static final TunableNumber driverSpeed = new TunableNumber("Drivebase Speed Multiplier", 0.6); // Multiplier to the controller input
+
+        
     }
 
     public static final class ClimberJointConstants {
@@ -270,6 +274,7 @@ public class Constants {
 
         public static final double tolerance = Units.degreesToRotations(5);
         public static final double homingCurrent = 1.0;
+        //public static final double homingCurrent = 0.5 for kraken
 
         public static TalonFXConfiguration motorConfig()
         {
